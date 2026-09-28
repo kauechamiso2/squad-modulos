@@ -1,0 +1,20 @@
+/*
+ * Sobrou só o botão de ação principal desta barra. A casca (posição, pílula,
+ * contagem, botões de ícone) virou @squad/ui/BarraSelecao na etapa 0, e a ação
+ * entra lá por slot — então este módulo mantém o estilo do seu próprio botão.
+ */
+.bulk-action-bar__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 360px;
+  background: var(--color-bg);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}

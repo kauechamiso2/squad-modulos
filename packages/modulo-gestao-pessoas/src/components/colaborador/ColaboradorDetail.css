@@ -1,0 +1,460 @@
+/*
+ * A casca deste painel - veu, caixa de 540, deslize de 280ms - vem do
+ * @squad/ui/PainelLateral desde que o Fluxo de Caixa passou a usar a mesma no
+ * resumo de transacao. Aqui ficam as medidas deste painel e o modo tela cheia.
+ *
+ * O modo tela cheia continua sendo classe extra no MESMO elemento do modo
+ * painel: os dois animam largura, posicao e padding um para o outro, e separar
+ * em dois componentes quebraria esse morph.
+ */
+.colaborador-detail {
+  --painel-largura: 540px;
+  --painel-margem-direita: 24px;
+  --painel-altura: calc(100vh - 40px);
+  --painel-padding-baixo: 24px;
+  --painel-espaco-rodape: 0;
+
+  transition:
+    top 280ms ease-out,
+    right 280ms ease-out,
+    width 280ms ease-out,
+    height 280ms ease-out,
+    padding 280ms ease-out,
+    border-radius 280ms ease-out,
+    border-color 280ms ease-out,
+    transform 280ms ease-out;
+}
+
+/* Em tela cheia nao ha veu. */
+.colaborador-detail-overlay--oculto { display: none; }
+
+
+
+
+
+
+
+
+
+/* Em tela cheia tudo vem pelas variaveis do PainelLateral: elas e as regras
+   dele tem a mesma especificidade, e disputar na ordem do arquivo seria
+   fragil - foi assim que a altura ficou presa no max-height do modo painel. */
+.colaborador-detail--full {
+  --painel-largura: 100vw;
+  --painel-altura: 100vh;
+  --painel-altura-maxima: 100vh;
+  --painel-margem-direita: 0;
+  --painel-padding-baixo: 0;
+  --painel-gap: 0;
+
+  top: 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 0;
+  z-index: 200;
+  transform: none;
+}
+
+
+
+/* O cabecalho base (h40, gap 8, titulo 16/500) vem do PainelLateral; em tela
+   cheia ele cresce e ganha margem lateral, pelas variaveis dele. */
+.colaborador-detail--full {
+  --painel-cabecalho-altura: 64px;
+  --painel-cabecalho-padding: 0 40px;
+}
+
+
+
+.colaborador-detail__power-button,
+.colaborador-detail__expand-button {
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__power-button--active {
+  color: #ff2633;
+}
+
+.colaborador-detail__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.colaborador-detail--full .colaborador-detail__scroll {
+  overflow: visible;
+}
+
+/* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
+   independently of each other and of the header, so each is capped to the
+   viewport height below the fixed 64px header with its own overflow-y. */
+.colaborador-detail--full .colaborador-detail__columns {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  column-gap: 20px;
+  padding: 0 40px;
+  height: calc(100vh - 64px);
+}
+
+.colaborador-detail__column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.colaborador-detail--full .colaborador-detail__column {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.colaborador-detail--full .colaborador-detail__column--main {
+  grid-column: 3 / 7;
+}
+
+.colaborador-detail--full .colaborador-detail__column--notes {
+  grid-column: 7 / 9;
+}
+
+/* Profile header */
+
+.colaborador-detail__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.colaborador-detail__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--color-overlay);
+}
+
+.colaborador-detail__name {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.colaborador-detail__pipo-bar {
+  box-sizing: border-box;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  background: #fbedd0;
+  border-radius: 4px;
+  padding: 12px 2px 12px 12px;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  color: #5d4309;
+}
+
+.colaborador-detail__pipo-bar strong {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Info list */
+
+.colaborador-detail__info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.colaborador-detail__row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  padding: 16px 0;
+}
+
+.colaborador-detail__row-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__row-label {
+  flex-shrink: 0;
+  width: 140px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.colaborador-detail__value-button {
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.colaborador-detail__value-button:not(:disabled):hover {
+  background: var(--color-overlay);
+}
+
+.colaborador-detail__value-button:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-secondary);
+}
+
+.colaborador-field {
+  position: relative;
+}
+
+.colaborador-field--fill {
+  flex: 1;
+  min-width: 0;
+}
+
+.colaborador-field__inline-search-input {
+  width: 200px;
+  border: none;
+  outline: none;
+  background: var(--color-overlay);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: -4px 0 -4px -8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.colaborador-field__dropdown {
+  position: fixed;
+  z-index: 220;
+  box-sizing: border-box;
+  width: 280px;
+  max-height: 288px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 4px 16px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.colaborador-field__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-overlay);
+  padding: 0 12px;
+}
+
+.colaborador-field__pill:disabled {
+  cursor: not-allowed;
+}
+
+.colaborador-field__pill-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.colaborador-field__pill-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.colaborador-field__reporta-display {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.colaborador-field__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--color-overlay);
+}
+
+/* Notes */
+
+.colaborador-detail__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 30px;
+  padding-bottom: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.colaborador-detail__nota {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 1px solid var(--color-text-secondary);
+  padding-left: 16px;
+}
+
+.colaborador-detail__nota-date {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__nota-text {
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.colaborador-detail__add-nota {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.colaborador-detail__add-nota-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: var(--color-overlay);
+  border-radius: 4px;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+/* Beneficios */
+
+.colaborador-detail__beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.colaborador-detail__section-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.colaborador-detail__beneficio-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.colaborador-detail__beneficio-row:hover {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.colaborador-detail__beneficio-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: var(--color-overlay);
+  color: var(--color-text);
+}
+
+.colaborador-detail__beneficio-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  overflow: hidden;
+}
+
+.colaborador-detail__beneficio-tipo {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__beneficio-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.colaborador-detail__beneficio-value {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+/* Date field dropdown */
+
+.colaborador-date-field__dropdown {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.colaborador-date-field__no-end-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+}
+
+.colaborador-date-field__no-end-label {
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}

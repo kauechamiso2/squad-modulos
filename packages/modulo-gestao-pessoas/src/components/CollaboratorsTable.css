@@ -1,0 +1,69 @@
+/*
+ * O que sobrou e proprio do Gestao de Pessoas. A casca da tabela - cabecalho,
+ * linha, hover com sombra e celulas - virou @squad/ui/tabela na auditoria da
+ * etapa 3, quando o Fluxo de Caixa passou a desenhar a mesma tabela.
+ *
+ * As medidas do GP sao os DEFAULTS do componente compartilhado (linha 64px,
+ * cabecalho 48px sem radius), entao este modulo nao precisa sobrescrever nada.
+ */
+.collaborators-table__header-cell--button {
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+}
+
+.collaborators-table__header-filter {
+  position: relative;
+}
+
+.collaborators-table__filter-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.collaborators-table__filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.collaborators-table__filter-option:hover {
+  background: var(--color-overlay);
+}
+
+.collaborators-table__header-spacer {
+  width: 40px;
+}
+
+.collaborators-table__checkbox-cell {
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+.collaborators-table__body {
+  display: flex;
+  flex-direction: column;
+}
+

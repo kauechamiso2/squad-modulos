@@ -1,0 +1,27 @@
+.tabs {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.tabs__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 60px;
+  padding: 20px 24px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: -0.26px;
+  color: var(--color-text-secondary);
+}
+
+.tabs__item--active {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+}

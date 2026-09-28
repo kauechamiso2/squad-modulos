@@ -1,0 +1,130 @@
+/*
+ * O que sobrou e proprio do Gestao de Pessoas (secoes, pilulas, datas).
+ * A casca do painel - veu, painel deslizante, cabecalho, area rolavel e
+ * rodape - virou @squad/ui/PainelLateral, porque o Fluxo de Caixa usa a
+ * mesma em todos os paineis do fluxo.
+ */
+.filtros-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filtros-panel__section--last {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.filtros-panel__label {
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.filtros-panel__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.filtros-panel__dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 360px;
+  flex-shrink: 0;
+}
+
+.filtros-panel__periodo-row {
+  display: flex;
+  align-items: center;
+}
+
+.filtros-panel__periodo-connector {
+  flex-shrink: 0;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.filtros-panel__date-pill {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  position: relative;
+}
+
+.filtros-panel__date-pill-text {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.filtros-panel__date-pill-text--placeholder {
+  color: var(--color-text-secondary);
+}
+
+.filtros-panel__date-native-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filtros-panel__range-row {
+  display: flex;
+  align-items: center;
+}
+
+.filtros-panel__range-connector {
+  flex-shrink: 0;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.filtros-panel__number-pill {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.filtros-panel__number-pill::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.filtros-panel__number-pill::-webkit-inner-spin-button,
+.filtros-panel__number-pill::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filtros-panel__number-pill[type='number'] {
+  -moz-appearance: textfield;
+}
+

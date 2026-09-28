@@ -1,0 +1,15 @@
+.color-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.color-picker__swatch {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  box-sizing: border-box;
+  cursor: pointer;
+}

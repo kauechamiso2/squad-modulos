@@ -1,0 +1,19 @@
+.descricao-modal__textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  box-sizing: border-box;
+  border: 1px solid #b2b9b9;
+  border-radius: 4px;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  padding: 16px;
+}
+
+.descricao-modal__textarea::placeholder {
+  color: var(--color-text-secondary);
+}

@@ -1,0 +1,23 @@
+.activity-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+}
+
+.activity-tag--freelancer {
+  color: #0091ff;
+  background: rgba(0, 145, 255, 0.1);
+}
+
+.activity-tag--consultor {
+  color: #60c60c;
+  background: rgba(1, 180, 108, 0.1);
+}
+
+.activity-tag--desligado {
+  color: #ff2633;
+  background: rgba(255, 38, 51, 0.1);
+}

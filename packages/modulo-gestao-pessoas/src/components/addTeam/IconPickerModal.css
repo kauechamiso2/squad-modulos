@@ -1,0 +1,44 @@
+.icon-picker__categories {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.icon-picker__category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.icon-picker__category-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.icon-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 8px;
+}
+
+.icon-picker__option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.icon-picker__option--selected {
+  border-color: var(--color-text);
+  background: var(--color-overlay);
+}

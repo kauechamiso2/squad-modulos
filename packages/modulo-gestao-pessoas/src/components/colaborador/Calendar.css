@@ -1,0 +1,77 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.calendar__nav-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  padding: 0;
+}
+
+.calendar__nav-button:hover {
+  background: var(--color-overlay);
+}
+
+.calendar__title {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.calendar__weekdays,
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar__weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  font-size: 12px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.calendar__cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.calendar__cell:not(.calendar__cell--empty):hover {
+  background: var(--color-overlay);
+}
+
+.calendar__cell--empty {
+  cursor: default;
+}
+
+.calendar__cell--selected,
+.calendar__cell--selected:hover {
+  background: #000000;
+  color: #ffffff;
+}
