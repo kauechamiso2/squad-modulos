@@ -1,0 +1,100 @@
+.envolucro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 40px;
+  width: 428px;
+  margin: 30px auto 0;
+}
+
+.ilustracao {
+  position: relative;
+  width: 428px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Grade pontilhada de fundo, opacidade 31% como no Figma. */
+.grade {
+  position: absolute;
+  inset: 0;
+  opacity: 0.31;
+  background-image:
+    linear-gradient(to right, #e3e6e6 1px, transparent 1px),
+    linear-gradient(to bottom, #e3e6e6 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(60% 60% at 50% 50%, #000 0%, transparent 100%);
+}
+
+.cartao {
+  position: relative;
+  display: flex;
+  width: 83px;
+  height: 83px;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(5.73deg);
+  border: 0.5px solid #d3d3d3;
+  border-radius: 6.472px;
+  background: var(--cor-fundo);
+  box-shadow: 0px 1.506px 0px 0px #f0f0f0;
+}
+
+.textos {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: var(--cor-texto);
+}
+
+.subtitulo {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: var(--cor-texto-secundario);
+}
+
+.botaoNovo {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  gap: var(--espaco-8);
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.exemplo {
+  margin-top: -24px;
+  padding: 4px 8px;
+  border: none;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font-family: inherit;
+  font-size: 12px;
+  text-decoration: underline;
+  cursor: pointer;
+}

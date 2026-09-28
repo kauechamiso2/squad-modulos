@@ -1,0 +1,759 @@
+/* Titulo de todos os passos: 32px semibold, line-height 1.1 (Figma 2279:94289). */
+.tituloPasso {
+  margin: 0;
+  width: 100%;
+  font-size: 32px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+  white-space: pre-line;
+}
+
+.bloco {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-40);
+}
+
+/* ---- Passo 1: categorias (Figma 2279:94290) ---- */
+.gradeCategorias {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.cardCategoria {
+  display: flex;
+  width: 256px;
+  height: 180px;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--espaco-24);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 150ms ease;
+}
+
+.cardCategoria:hover { box-shadow: var(--shadow-card-hover); }
+
+.cardTopo {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* Tile de 56px com o emoji, fundo azul-claro (Figma 2279:94295). */
+.cardTile {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-tile);
+  background: #d6eff9;
+  font-size: 24px;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.cardNome {
+  width: 100%;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+/* Linha "Criar categoria +" (Figma 2279:94328) */
+.linhaCriar {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa, 8px);
+  background: var(--cor-fundo);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.linhaCriarTexto {
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+.linhaCriarIcone {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Passo 2: valor (Figma 2279:94789 preenchido, 94840 vazio) ---- */
+.blocoValorTopo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  /* 24px entre o titulo e a linha do valor */
+  gap: var(--espaco-24);
+}
+
+/*
+ * "R$" e o numero centrados verticalmente entre si (align-items: center), com
+ * 8px de gap. O mock alinha pela base, mas o enunciado corrige para centro.
+ */
+.campoValor {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-8);
+  cursor: text;
+}
+
+.cifrao {
+  font-size: 24px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+.numero {
+  font-size: 64px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+  white-space: nowrap;
+}
+
+.cursor {
+  width: 1px;
+  height: 52px;
+  background: var(--cor-texto);
+  animation: piscar 1s step-end infinite;
+}
+
+@keyframes piscar { 50% { opacity: 0; } }
+
+.entradaEscondida {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 1px;
+  height: 1px;
+}
+
+/* 40px do valor ate o rotulo; 24px do rotulo ate as linhas. */
+.blocoComuns {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-24);
+  margin-top: var(--espaco-40);
+}
+
+.rotuloComuns {
+  margin: 0;
+  width: 100%;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+/* O nome da categoria E os dois-pontos ficam no cinza. */
+.rotuloComunsCategoria { color: var(--cor-texto-secundario); }
+
+.listaComuns {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-12);
+}
+
+.linhaComum {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 8px;
+  background: var(--cor-fundo);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.linhaComumValor {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.linhaComumDireita {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espaco-8);
+}
+
+.avatar {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 270px;
+  color: var(--cor-texto-invertido);
+  font-size: 12px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.linhaComumNome {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  white-space: nowrap;
+}
+
+.linhaComumDoc {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+  white-space: nowrap;
+}
+
+/* ---- Passo 3: nome + pagador (Figma 94939 / 94919 / 94955 / 94977 / 95001) ---- */
+.blocoPasso3 {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  /* 40px do titulo (ou da linha de ajuda) ate a busca */
+  gap: var(--espaco-40);
+}
+
+.envolucroTitulo { position: relative; width: 100%; }
+
+/*
+ * O nome e inline dentro do paragrafo: flui com o texto e quebra linha como
+ * qualquer palavra. `display: inline` e proposital - inline-block, block ou
+ * um <input> quebrariam a frase depois de "Aqui esta".
+ */
+.nomeInline {
+  display: inline;
+  color: #47bff1;
+  outline: none;
+  cursor: text;
+  /* Enter e tratado no onKeyDown; isto evita quebra visual enquanto edita. */
+  white-space: pre-wrap;
+}
+
+.nomeHover { color: #006496; }
+
+/* Balao preto centralizado sobre o trecho do nome na primeira linha. */
+.dica {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.dica::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--cor-marca);
+}
+
+/* Linha de ajuda: so enquanto edita. 24px abaixo do titulo. */
+.ajudaNome {
+  display: flex;
+  width: 100%;
+  margin: calc(var(--espaco-24) - var(--espaco-40)) 0 0;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.ajudaEsquerda { display: flex; gap: var(--espaco-24); }
+
+.blocoBusca {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  /* 4px entre o input e o card de resultado (Figma: input termina em 318, card em 322) */
+  gap: 4px;
+}
+
+.campoBusca,
+.campoSelecionado {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 8px;
+  background: var(--cor-fundo);
+}
+
+/* Estado selecionado: o proprio campo vira cinza com o check verde. */
+.campoSelecionado { background: var(--cor-superficie); }
+
+.selecionadoEsquerda {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.textoSelecionado {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.docSelecionado {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.limparSelecao {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.entradaBusca {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.entradaBusca::placeholder { color: var(--cor-texto-secundario); }
+
+/* Card de resultado (Figma 2279:94992): 4px abaixo do input. */
+.cardResultado {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-24);
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 8px;
+  background: var(--cor-fundo);
+  overflow: hidden;
+}
+
+.rotuloResultado {
+  margin: 0;
+  width: 100%;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto-secundario);
+}
+
+.linhaResultado {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-16);
+  cursor: pointer;
+}
+
+.resultadoEsquerda {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.textoResultado {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.docResultado {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+/* Avatar de 2 iniciais: circulo de 24px com o texto em 10/500 branco. */
+.avatarDuplo {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 360px;
+  color: var(--cor-texto-invertido);
+  font-size: 10px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+}
+
+.botaoSalvarContato {
+  display: flex;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+/* ---- Passo 4: informacoes (Figma 2279:95036 / 95228 / 95082) ---- */
+.listaInfo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/*
+ * 72px de passo vertical entre as linhas: a linha tem 56 e sobram 16 de gap.
+ * Rotulo recuado 16 da borda esquerda da coluna, controle a 16 da direita -
+ * e o padding da propria linha.
+ */
+.linhaInfo {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--espaco-16);
+  margin-bottom: 16px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: inherit;
+}
+
+.rotuloInfo {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  white-space: nowrap;
+}
+
+/* Segmented do Status (Figma 2279:95048) */
+.segmentado {
+  display: flex;
+  height: 40px;
+  box-sizing: border-box;
+  align-items: center;
+  padding: 4px;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+}
+
+.segmento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-desabilitado);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.segmentoAtivo { background: var(--cor-fundo); color: var(--cor-texto); }
+
+.grupoPilulas {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espaco-8);
+}
+
+/* Pilula de data: h42 (Figma 2279:95057) */
+.pilulaData {
+  display: flex;
+  height: 42px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 8px var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.botaoCalendario {
+  display: flex;
+  height: 42px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 8px var(--espaco-16);
+  border: 1px solid #c2c8c8;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-fundo);
+  cursor: pointer;
+}
+
+/* Pilulas de repeticao: h35 (Figma 2279:95067) */
+.pilula {
+  display: flex;
+  height: 35px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  padding: 8px var(--espaco-16);
+  border: 1px solid #c2c8c8;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-fundo);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-desabilitado);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pilulaAtiva {
+  border-color: transparent;
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+}
+
+/* Observacao: container que cresce quando preenchido (Figma 2279:95082). */
+/*
+ * Vazio: 56px exatos. Com padding 16 + icone de 24 + borda de 1px a caixa
+ * daria 58, entao o estado vazio usa altura fixa e padding so na horizontal;
+ * quando preenchido volta o padding vertical e a caixa cresce com o texto.
+ */
+.observacao {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-16);
+  padding: 0 var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 8px;
+  background: var(--cor-fundo);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.observacaoPreenchida {
+  height: auto;
+  min-height: 56px;
+  align-items: flex-start;
+  padding: var(--espaco-16);
+  background: var(--cor-superficie);
+}
+
+.observacaoTextos {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.observacaoRotulo {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.observacaoRotuloPreenchido { color: var(--cor-texto); }
+
+.observacaoTexto {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+  color: var(--cor-texto);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Data futura desabilita o status concluido (decisao 2 do enunciado). */
+.segmento:disabled {
+  color: var(--cor-texto-desabilitado);
+  cursor: not-allowed;
+}
+
+/*
+ * Configuracoes avancadas do mensal (Figma 2279:96831). Aparece abaixo da
+ * linha "Repete" quando a repeticao e mensal.
+ */
+/* `align-self: stretch` porque a .listaInfo alinha os filhos no inicio; sem
+   isso o bloco encolhe e o caret para no meio da linha em vez de encostar na
+   borda direita, como as pilulas das linhas de cima (Figma 2279:96832). */
+.avancadas {
+  display: flex;
+  width: 100%;
+  align-self: stretch;
+  flex-direction: column;
+  gap: var(--espaco-16);
+  /* A .listaInfo nao usa `gap`: o respiro entre as linhas vem do
+     margin-bottom de cada uma. Este bloco segue a mesma regra, senao o card de
+     Observacao encosta nele (Figma: avancadas termina em 360, Observacao
+     comeca em 376). */
+  margin-bottom: 16px;
+}
+
+.avancadasCabecalho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--espaco-16);
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  color: var(--cor-texto-secundario);
+  cursor: pointer;
+}
+
+.avancadasOpcoes {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+.opcaoRadio {
+  display: flex;
+  height: 48px;
+  align-items: center;
+  gap: var(--espaco-16);
+  padding: 0 var(--espaco-16);
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  color: var(--cor-texto);
+  text-align: left;
+  cursor: pointer;
+}
+
+.radio {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  box-sizing: border-box;
+  border: 1.5px solid var(--cor-texto-desabilitado);
+  border-radius: 360px;
+}
+
+/* Selecionado: anel preto com o miolo preenchido, desenhado pela propria
+   borda para nao precisar de um elemento a mais. */
+.radioAtivo {
+  border-color: var(--cor-marca);
+  background: var(--cor-marca);
+  box-shadow: inset 0 0 0 3.5px var(--cor-fundo);
+}

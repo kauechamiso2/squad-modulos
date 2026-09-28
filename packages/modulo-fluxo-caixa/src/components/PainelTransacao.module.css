@@ -1,0 +1,224 @@
+/* Figma 2279:101815. */
+
+/*
+ * Titulo, faixa do Fin e lista de linhas sao uma coluna com 16 entre eles
+ * (Figma: y124, y180, y236). O respiro de 40 entre o cabecalho e o titulo vem
+ * do gap do proprio PainelLateral.
+ */
+.blocosTopo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-16);
+}
+
+.painel {
+  --painel-largura: 540px;
+  --painel-margem-direita: 20px;
+  --painel-altura: calc(100vh - 40px);
+  --painel-padding-baixo: 24px;
+  --painel-espaco-rodape: 0;
+  --linha-rotulo-largura: 190px;
+  --linha-gap: 12px;
+  --campo-inline-peso: var(--peso-medio);
+  --campo-inline-valor-padding: 0;
+  --campo-inline-valor-margem: 0;
+  /* Chip de categoria e de repeticao: h32 (Figma 2279:101815). */
+  --pilula-altura: 32px;
+  --pilula-padding: 0 12px;
+  --dropdown-largura: 163px;
+  --dropdown-borda-largura: 0;
+  --dropdown-sombra: 0px 0px 51.4px rgba(0, 0, 0, 0.12);
+  --dropdown-padding: 0;
+  --dropdown-item-altura: 40px;
+  --dropdown-item-padding: 12px;
+  --dropdown-item-raio: 0;
+  --dropdown-item-gap: 8px;
+  --dropdown-texto: 12px;
+  --dropdown-peso: var(--peso-medio);
+}
+
+.acao {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  cursor: pointer;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.nomeTitulo {
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+/* Faixa do Fin: so visual (Figma 2279:101815). */
+.faixaFin {
+  display: flex;
+  height: 40px;
+  box-sizing: border-box;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 2px var(--espaco-12);
+  border-radius: 4px;
+  background: var(--fc-fin-faixa);
+  font-size: 12px;
+  font-weight: var(--peso-regular);
+  line-height: 1.2;
+  color: var(--fc-fin-texto);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.faixaFin b { font-weight: var(--peso-medio); }
+
+.linhas { display: flex; flex-direction: column; }
+
+.linha { width: 100%; }
+
+.valor,
+.valorBotao {
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.valorBotao {
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tipoDoc {
+  margin-left: var(--espaco-8);
+  color: var(--cor-texto-secundario);
+}
+
+/* Ancora dos popovers (calendario) e das listas suspensas. */
+.ancora {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+}
+
+.emojiCategoria {
+  display: flex;
+  width: 16px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 360px;
+  background: var(--cor-fundo);
+  font-size: 10px;
+  line-height: 1;
+}
+
+.emojiLista { font-size: 14px; line-height: 1.2; }
+
+/* Campo de data em edicao: mesmo desenho do CampoInline. */
+.campoData {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: 10px;
+  border-radius: 4px;
+  background: var(--cor-superficie);
+}
+
+.campoDataTexto {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.limparData {
+  display: flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* A observacao quebra linha, entao a linha cresce e o rotulo sobe. */
+.linhaObservacao { --linha-alinhamento: flex-start; }
+
+/* Notas (Figma 2279:102890). */
+.notas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding-top: 30px;
+  padding-bottom: var(--espaco-16);
+  border-top: 1px solid var(--cor-borda-acao);
+}
+
+.nota {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-16);
+  padding-left: var(--espaco-16);
+  border-left: 1px solid var(--cor-texto-secundario);
+}
+
+.notaData {
+  font-size: 12px;
+  font-weight: var(--peso-regular);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.notaTexto {
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  line-height: 1.4;
+  color: var(--cor-texto);
+  white-space: pre-wrap;
+}
+
+.adicionarNota {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--espaco-8);
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto);
+  cursor: pointer;
+}

@@ -1,0 +1,87 @@
+/*
+ * Regras de escopo do modulo. O escopo vai em :where() de proposito: escrito
+ * como `.modulo-fluxo-caixa button` a regra teria especificidade (0,1,1) e
+ * venceria as classes dos componentes, zerando font-size e font-weight de todo
+ * botao - foi exatamente o bug que apareceu no Pesquisa de Clima.
+ */
+:where(.modulo-fluxo-caixa) button {
+  font: inherit;
+}
+
+.modulo-fluxo-caixa {
+  font-family: var(--fonte, 'Inter', system-ui, sans-serif);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+.modulo-fluxo-caixa *::before,
+.modulo-fluxo-caixa *::after {
+  box-sizing: border-box;
+}
+
+/*
+ * Casca do fluxo com as medidas do Figma deste modulo (2279:94275 / 94789):
+ * cabecalho de 64px com titulo de 16px (o default do @squad/ui e 96px/20px,
+ * que e o do Pesquisa de Clima), miolo comecando em 152px do topo do
+ * documento - 64 do cabecalho = 88 de respiro - e fundo em gradiente.
+ */
+/*
+ * Painel lateral com as medidas do Figma deste modulo. Os defaults do
+ * @squad/ui sao os do Gestao de Pessoas; aqui mudam a margem direita, o blur
+ * do veu, o peso do titulo e a duracao da entrada.
+ */
+.modulo-fluxo-caixa {
+  --painel-margem-direita: 20px;
+  --painel-veu-filtro: blur(14px);
+  --painel-peso-titulo: var(--peso-medio);
+  --painel-altura: calc(100vh - 40px);
+  /* A pilula de filtro daqui usa peso 500; o default do @squad/ui e o do
+     Gestao de Pessoas (400). */
+  --pilula-peso: var(--peso-medio);
+  /* Os modais deste modulo abrem sobre o painel lateral (z 151). */
+  --modal-z: 200;
+  /* --painel-duracao fica no default do @squad/ui (280ms ease-out), que e a
+     animacao do painel de Filtros do Gestao de Pessoas. */
+}
+
+.fluxo-caixa-casca {
+  --altura-cabecalho-fluxo: 64px;
+  --cabecalho-fluxo-titulo-tamanho: 16px;
+  --largura-miolo: 534px;   /* Figma: coluna de 534 centrada em x=453 */
+  --fluxo-coluna-topo: 88px;
+  --fluxo-coluna-topo-largo: 88px;
+  --fluxo-tela-fundo:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%),
+    linear-gradient(179.32deg, #eef6fb 0.89%, #ffffff 99.1%);
+}
+
+/*
+ * Sai o contorno azul do navegador de todo campo do modulo, inclusive do
+ * <input> que vive dentro de um container ja estilizado - senao aparecem dois
+ * contornos, o do container e o retangulo preto do input por dentro.
+ *
+ * O estado ativo NAO e uniforme: cada campo segue o que o Figma desenha para
+ * ele, no proprio CSS do componente. A busca de emoji (2279:94620) e a unica
+ * com borda preta; as demais mantem a borda de repouso (#e3e6e6, #d3d7d7) ou
+ * so o fundo cinza.
+ *
+ * `:where()` mantem a especificidade em (0,0,1), abaixo de qualquer classe.
+ */
+:where(.modulo-fluxo-caixa) :is(input, textarea, select, [contenteditable]),
+:where(.modulo-fluxo-caixa) :is(input, textarea, select, [contenteditable]):focus,
+:where(.modulo-fluxo-caixa) :is(input, textarea, select, [contenteditable]):focus-visible {
+  outline: none;
+}
+
+/*
+ * Nenhum botao do modulo mostra o anel azul do navegador. Quem navega por
+ * teclado continua vendo onde esta: `:focus-visible` so dispara nesse caso e
+ * usa o mesmo fundo do hover dos botoes redondos do @squad/ui.
+ */
+:where(.modulo-fluxo-caixa) button:focus { outline: none; }
+
+:where(.modulo-fluxo-caixa) button:focus-visible {
+  outline: none;
+  background: var(--cor-superficie);
+}

@@ -1,0 +1,17 @@
+/* Tile do tipo da transacao (Figma 2279:95838). */
+/* Tile do tipo de transacao (Figma 2279:100437 / 100423 / 100465). */
+.tile {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.entrada { background: var(--fc-tile-entrada); }
+.saida { background: var(--fc-tile-saida); }
+.futuro { background: var(--fc-tile-futuro); }
+

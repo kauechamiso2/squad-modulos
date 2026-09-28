@@ -1,0 +1,80 @@
+/*
+ * So o que e proprio deste modulo. Cabecalho, linha, hover e celulas vem do
+ * @squad/ui (components/tabela), iguais aos do Gestao de Pessoas.
+ */
+.marcador {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.grupoCabecalho {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 24px;
+}
+
+.grupoNome {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 24px;
+}
+
+.emoji { margin-right: 8px; }
+
+.valorPositivo { color: var(--fc-valor-positivo); }
+
+/*
+ * Valor de transacao fora do saldo (Figma 2279:97217): futura ou com a data
+ * ja chegada mas sem confirmacao. O (i) so aparece no segundo caso.
+ */
+.celulaValor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.valorFuturo { color: var(--fc-valor-futuro); }
+
+.aviso {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--fc-valor-futuro);
+  cursor: pointer;
+}
+
+/* Ancora do dropdown de filtro da coluna: o popover abre logo abaixo do
+   rotulo, alinhado a esquerda com ele (Figma 2279:107226). */
+.colunaFiltravel {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Ancora do menu da linha; usa a mesma lista suspensa do painel de resumo. */
+.menuLinha {
+  position: relative;
+  display: flex;
+  --dropdown-largura: 163px;
+  --dropdown-borda-largura: 0;
+  --dropdown-sombra: 0px 0px 51.4px rgba(0, 0, 0, 0.12);
+  --dropdown-padding: 0;
+  --dropdown-item-altura: 40px;
+  --dropdown-item-padding: 12px;
+  --dropdown-item-raio: 0;
+  --dropdown-texto: 12px;
+  --dropdown-peso: var(--peso-medio);
+}

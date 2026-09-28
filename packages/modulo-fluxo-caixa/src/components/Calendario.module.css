@@ -1,0 +1,112 @@
+/*
+ * Um calendario, dois tamanhos:
+ *   - passo 4 do fluxo (Figma 2279:96912): 380x380, raio 16, padding 20
+ *   - popover dos Filtros (Figma 2279:108290): 292x292, raio 12, padding 15.37
+ * Os defaults sao os do passo 4; o popover sobrescreve as variaveis.
+ */
+.cartao {
+  display: flex;
+  width: var(--cal-largura, auto);
+  box-sizing: border-box;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--cal-gap, var(--espaco-16));
+  padding: var(--cal-padding, 20px);
+  border: var(--cal-borda-largura, 1.289px) solid var(--cor-borda-acao);
+  border-radius: var(--cal-raio, 16px);
+  background: var(--cor-fundo);
+}
+
+.cabecalho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-16);
+  padding: var(--cal-cabecalho-padding, 10.313px 15.47px);
+}
+
+.mes {
+  font-size: var(--cal-mes-tamanho, 16px);
+  font-weight: 600;
+  color: var(--cor-texto);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.seta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.grade {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: var(--cal-linha-gap, var(--espaco-16));
+}
+
+.diaSemana,
+.celula {
+  display: flex;
+  height: var(--cal-celula-altura, 33.164px);
+  align-items: center;
+  justify-content: center;
+  font-size: var(--cal-dia-tamanho, 14px);
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.2971px;
+  color: var(--cor-texto);
+}
+
+.celula {
+  position: relative;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  font-family: inherit;
+}
+
+.dia { cursor: pointer; }
+
+/* O numero fica acima do ponto, dentro do circulo de selecao de 28px. */
+.numero {
+  display: flex;
+  width: var(--cal-selecao, 28px);
+  height: var(--cal-selecao, 28px);
+  align-items: center;
+  justify-content: center;
+  border-radius: 360px;
+}
+
+.dia:not(:disabled):hover .numero { background: var(--cor-superficie); }
+
+.dia:disabled {
+  color: var(--cor-texto-desabilitado);
+  cursor: not-allowed;
+}
+
+/* Dias do mes anterior e do seguinte, que completam as semanas. */
+.diaForaDoMes { color: var(--cor-texto-desabilitado); }
+
+.diaAtivo .numero {
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+}
+
+/* "Scheduling Indicator": ponto de 3px sob os dias que ja tem lancamento. */
+.ponto {
+  position: absolute;
+  bottom: -1px;
+  left: 50%;
+  width: 3.455px;
+  height: 3.455px;
+  transform: translateX(-50%);
+  border-radius: 360px;
+  background: var(--cor-texto-desabilitado);
+}

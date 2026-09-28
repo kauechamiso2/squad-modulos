@@ -1,0 +1,91 @@
+/* Figma 2279:107610. As duas secoes ficam a 24px uma da outra. */
+.bloco {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+}
+
+.secao {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+}
+
+/* A secao de Data fecha o bloco com uma linha e 24px de respiro. */
+.secaoData {
+  padding-bottom: var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.rotulo {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.pilulas {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: var(--espaco-12);
+}
+
+.campos {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* `position: relative` para o popover do calendario ancorar no campo. */
+.envolucroCampo {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+}
+
+.conector {
+  flex: none;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.campoData {
+  display: flex;
+  height: 40px;
+  flex: 1 0 0;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: 12px var(--espaco-16);
+  border: none;
+  border-radius: 360px;
+  background: var(--cor-superficie);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Calendario aberto neste campo (Figma 2279:107969). */
+.campoAberto { background: var(--cor-borda-acao); }
+
+/* Data escolhida na mao: os dois campos ficam pretos (Figma 2279:107811). */
+.campoEscolhido,
+.campoEscolhido.campoAberto {
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+}

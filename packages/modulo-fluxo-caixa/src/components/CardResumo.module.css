@@ -1,0 +1,184 @@
+/*
+ * Cards de resumo. Figma: 2241:46998 (expandido), 2279:105668 (fechado).
+ *
+ * A linha tem 1100 de largura e 200 de altura. Fechados sao tres de 353 com
+ * gap 20; com um expandido, os outros dois viram 128 e o aberto fica com 804.
+ */
+.card {
+  position: relative;
+  display: flex;
+  height: 200px;
+  flex: 1 1 0;
+  min-width: 0;
+  box-sizing: border-box;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 16px;
+  background: var(--cor-fundo);
+  font-family: inherit;
+  text-align: left;
+  /* Corta as manchas do card de Lucro. */
+  overflow: hidden;
+  isolation: isolate;
+  transition: flex-grow var(--movimento-entrada), flex-basis var(--movimento-entrada);
+}
+
+.cardEstreito {
+  flex: 0 0 128px;
+  cursor: pointer;
+}
+
+.cardExpandido { flex: 1 1 auto; }
+
+/* --- Gradiente do card de Lucro: base + manchas desfocadas --- */
+.cardLucro {
+  border-color: transparent;
+  background: var(--fc-lucro-fundo);
+  color: var(--cor-texto-invertido);
+}
+
+.mancha {
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/*
+ * Ellipse 8 (Figma: -52, -134, 1027x351 num card de 804x200). Entra pelo topo
+ * e clareia a faixa de cima.
+ */
+.manchaAzul {
+  left: -6.5%;
+  top: -67%;
+  width: 127.7%;
+  height: 175.5%;
+  background: #47bff1;
+  filter: blur(50px);
+}
+
+/*
+ * Ellipse 10 (Figma: 430, 271, 388x249). Ela nasce ABAIXO do card - so o
+ * brilho desfocado da borda de cima entra, no canto inferior direito. Foi o
+ * que errei primeiro: com ela dentro do card, o Linear Dodge lavava tudo.
+ */
+.manchaBranca {
+  left: 53.5%;
+  top: 135.7%;
+  width: 48.3%;
+  height: 124.5%;
+  transform: rotate(11deg);
+  background: #ffffff;
+  filter: blur(87px);
+  mix-blend-mode: plus-lighter;
+}
+
+/* Ellipse 9: so no card fechado (2279:105668), alarga o brilho a direita. */
+.manchaClara {
+  left: 62%;
+  top: 26%;
+  width: 262%;
+  height: 223%;
+  background: #8fd7f5;
+  filter: blur(80px);
+  opacity: 0.7;
+}
+
+.topo {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.tile {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.tileEntrada { background: var(--fc-tile-entrada); }
+.tileSaida { background: var(--fc-tile-saida); }
+.tileLucro { background: var(--cor-fundo); }
+
+.expandir {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  cursor: pointer;
+}
+
+/* Nome no pe do card estreito (Figma 2241:47005: y=161 num card de 200). */
+.nomePe {
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: inherit;
+}
+
+.texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rotulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  white-space: pre-line;
+  color: inherit;
+}
+
+.valor {
+  margin: 0;
+  font-size: 40px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: inherit;
+}
+
+.centavos { opacity: 0.3; }
+
+/*
+ * Expandido: texto a esquerda, grafico a direita, os dois no pe.
+ * Figma: texto em x=20 com 292 de largura e grafico em x=312 com 472 - sem
+ * espaco entre eles, os 20 de cada lado sao o padding do card.
+ */
+.corpoExpandido {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+}
+
+.cardExpandido .texto { flex: 0 0 292px; max-width: 292px; }
+
+/* O rotulo do Lucro expandido e maior que o dos outros dois. */
+.cardExpandido.cardLucro .rotulo { font-size: 20px; }
+
+.grafico {
+  flex: 0 0 472px;
+  min-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+}

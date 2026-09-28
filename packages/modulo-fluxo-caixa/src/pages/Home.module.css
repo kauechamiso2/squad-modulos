@@ -1,0 +1,128 @@
+/*
+ * Grid da pagina, igual ao dos outros dois modulos e ao Figma 2279:100344:
+ * sidebar de 76px fixa a esquerda, conteudo de 1100px comecando em 208px.
+ * 208 = 76 da sidebar + 132 de respiro; no Figma o conteudo fica centrado na
+ * area restante, entao aqui e margin auto com largura maxima.
+ */
+.pagina {
+  min-height: 100vh;
+  padding-left: var(--largura-sidebar);
+  background: var(--cor-fundo);
+}
+
+.conteudo {
+  width: var(--fc-largura-conteudo);
+  max-width: calc(100% - 64px);
+  margin: 0 auto;
+  padding: 48px 0 140px;
+}
+
+/* Cabecalho: voltar + titulo a esquerda, controles a direita (Figma 2279:100346) */
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.voltar {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+.titulo {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: none;
+}
+
+.botaoRedondo {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+.botaoNovo {
+  display: flex;
+  height: 40px;
+  align-items: center;
+  gap: var(--espaco-8);
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+/* Cards de resumo: top 120 do Figma = 72px abaixo do cabecalho de 40px */
+.cards {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  margin-top: 32px;
+}
+
+/* Barra Total / Filtros (Figma 2279:100495, top 344) */
+.barraTotal {
+  width: 100%;
+  margin-top: 24px;
+}
+
+/*
+ * Medidas da tabela que divergem do Gestao de Pessoas. O componente e o mesmo
+ * (@squad/ui/tabela); so estes quatro valores mudam, e o Figma deste modulo
+ * (2279:100397) e que manda neles.
+ *
+ *   linha    80px aqui, 64px no GP
+ *   cabecalho  sem altura fixa e com radius 4px aqui; 48px e sem radius no GP
+ *   peso do nome  500 aqui (--peso-medio); o GP usa --font-weight-medium (510)
+ */
+.tabelaEnvolucro {
+  --tabela-linha-altura: 80px;
+  --tabela-cabecalho-altura: auto;
+  --tabela-cabecalho-radius: 4px;
+  --tabela-cabecalho-padding: 12px;
+  --tabela-peso-nome: var(--peso-medio);
+  --toolbar-peso: var(--peso-medio);
+}
+
+.tabelaEnvolucro { margin-top: 20px; width: 100%; }
+
+.opcaoPeriodo:hover { background: var(--cor-superficie); }

@@ -1,0 +1,23 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  width: var(--largura-sidebar);
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-16) 0;
+  background: var(--cor-superficie);
+}
+
+.espaco {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--cor-borda-acao);
+}

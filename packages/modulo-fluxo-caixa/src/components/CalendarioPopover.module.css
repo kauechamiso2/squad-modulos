@@ -1,0 +1,24 @@
+/* Figma 2279:108290: 292x291.7, 11px abaixo do campo. */
+.popover {
+  position: absolute;
+  top: calc(100% + 11px);
+  left: 0;
+  z-index: 20;
+
+  --cal-largura: 292px;
+  --cal-raio: 12px;
+  --cal-borda-largura: 1px;
+  --cal-padding: 15.368px;
+  --cal-gap: 12.3px;
+  --cal-cabecalho-padding: 7.925px 32.895px;
+  --cal-mes-tamanho: 12px;
+  --cal-dia-tamanho: 11px;
+  --cal-celula-altura: 25.484px;
+  --cal-linha-gap: 12.294px;
+  --cal-selecao: 22px;
+}
+
+/* O segundo campo fica a 206px da borda esquerda do miolo (380 de largura) e
+   o popover tem 292: ancorado pela esquerda ele vazaria 118px para fora do
+   painel. `right: 0` no segundo resolve; quem decide e o PainelFiltros. */
+.aDireita { left: auto; right: 0; }

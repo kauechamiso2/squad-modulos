@@ -1,0 +1,423 @@
+/* Conteudo dos paineis laterais do fluxo. A casca vem do @squad/ui. */
+
+/* --- Todas as categorias (Figma 2279:94433) --- */
+.listaCategorias {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-12);
+}
+
+.linhaCategoria {
+  display: flex;
+  width: 100%;
+  height: 72px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--cor-superficie);
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Estado selecionado: nao existe no Figma, inventado para o painel poder
+   confirmar com Salvar. Ver docs/modulo-fluxo-caixa.md. */
+.linhaCategoriaSelecionada { border-color: var(--cor-marca); }
+
+.tileCategoria {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--fc-tile-categoria);
+  font-size: 24px;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.nomeCategoria {
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+  text-align: right;
+}
+
+/* --- Nova categoria (Figma 2279:94479) --- */
+.secaoPainel {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-40);
+}
+
+.campoCinza {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16);
+  /* Nome da categoria: so o fundo cinza, sem borda em nenhum estado
+     (Figma 2279:94620). */
+  border: none;
+  border-radius: 8px;
+  background: var(--cor-superficie);
+}
+
+/* O campo do Novo contato tem borda, ao contrario dos outros (Figma 95336). */
+.campoComBorda {
+  border: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+.entradaPainel {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.entradaPainel::placeholder { color: var(--cor-texto-secundario); }
+
+.secaoIcone {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding-bottom: var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.cabecalhoIcone {
+  display: flex;
+  width: 100%;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-8);
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+
+/* Sem emoji escolhido o Figma usa o Smiley do Phosphor (contorno preto), nao
+   um emoji colorido - por isso o inline-flex, que serve para os dois. */
+.emojiEscolhido {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  font-size: 19px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+/*
+ * Busca de emoji (Figma 2279:94479 em repouso, 2279:94620 digitando).
+ * A borda fica sempre presente e so muda de cor, senao a caixa cresceria 2px
+ * ao focar e empurraria a grade.
+ */
+.buscaEmoji {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-12);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: var(--cor-superficie);
+}
+
+.buscaEmoji:focus-within,
+.buscaEmojiAtiva { border-color: var(--cor-marca); }
+
+.limparBuscaEmoji {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.entradaBuscaEmoji {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto);
+}
+
+.entradaBuscaEmoji::placeholder { color: var(--cor-texto-secundario); }
+
+.gradeEmojis {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 8px;
+  column-gap: 0;
+  justify-items: center;
+  width: 100%;
+}
+
+/* Hover e selecionado: circulo de 48px com fundo #f4f5f5 atras do emoji
+   (Figma 2279:94620). */
+.botaoEmoji {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.botaoEmoji:hover { background: var(--cor-superficie); }
+
+.botaoEmojiAtivo { background: var(--cor-superficie); }
+
+/* --- Observacao (Figma 2279:95228) --- */
+.areaObservacao {
+  width: 100%;
+  height: 221px;
+  box-sizing: border-box;
+  padding: var(--espaco-16);
+  border: 1px solid #d3d7d7;
+  border-radius: 8px;
+  background: var(--cor-fundo);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+  color: var(--cor-texto);
+  resize: none;
+}
+
+.areaObservacao::placeholder { color: var(--cor-texto-secundario); }
+
+/* --- Resumo (Figma 2279:95131) --- */
+.valorResumo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 0 0 var(--espaco-24);
+}
+
+.valorResumoSimbolo {
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+.valorResumoNumero {
+  font-size: 32px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.26px;
+  color: var(--cor-texto);
+}
+
+.linhasResumo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-16);
+}
+
+.linhaResumo {
+  display: flex;
+  width: 100%;
+  min-height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-16);
+  padding: var(--espaco-16);
+  border-radius: 8px;
+  background: var(--cor-superficie);
+}
+
+.linhaResumoAlta {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.rotuloResumo {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+  white-space: nowrap;
+}
+
+.valorLinhaResumo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  text-align: right;
+}
+
+.valorLinhaResumoEsquerda { text-align: left; white-space: pre-wrap; }
+
+.docResumoTipo { color: var(--cor-texto-secundario); }
+
+/* Emoji da categoria dentro de circulo branco de 24px. */
+.circuloEmoji {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 270px;
+  background: var(--cor-fundo);
+  font-size: 14px;
+  line-height: 1;
+}
+
+/*
+ * Painel "Novo contato" (Figma 2279:95361 e 2279:95577).
+ * Bloco de cima com UserCircle 64 + identificador, bloco de baixo com o campo
+ * que falta; os dois separados por uma linha e 24px de respiro.
+ */
+.blocoContato {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-40);
+  padding-bottom: var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.identificacao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-40);
+  padding: var(--espaco-16);
+  padding-bottom: calc(var(--espaco-16) + var(--espaco-24));
+}
+
+.identificador {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+  text-align: center;
+}
+
+.blocoOpcional {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-16);
+}
+
+/* "Opcional" e italico de 12px no Figma. */
+.rotuloOpcional {
+  font-size: 12px;
+  font-style: italic;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.campoContato {
+  display: flex;
+  height: 56px;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: 8px;
+  background: var(--cor-fundo);
+}
+
+/* Nome vindo da Receita: fundo cinza e texto preto, ainda editavel. */
+.campoContatoPreenchido { background: var(--cor-superficie); }
+
+/* Campo opcional com documento digitado: mesmo fundo, mas o texto e cinza. */
+.campoContatoOpcionalCheio { background: var(--cor-superficie); }
+.campoContatoOpcionalCheio .entradaContato { color: var(--cor-texto-secundario); }
+
+.lapisPequeno {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.entradaContato {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  /* A borda de repouso do <input> do navegador tem 2px e aparecia por dentro
+     da borda do container - eram os dois contornos. */
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  color: var(--cor-texto);
+}
+
+.entradaContato::placeholder { color: var(--cor-texto-secundario); }
+.entradaContato:disabled { color: var(--cor-texto-secundario); }
+
+.botaoLapis {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  cursor: pointer;
+}

@@ -1,0 +1,15 @@
+/* Figma 2279:97351: 14/500 #798282, com os trechos do valor, do contato e da
+   data em preto. */
+.texto {
+  display: block;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+  color: var(--cor-texto-secundario);
+}
+
+.destaque {
+  font-weight: inherit;
+  color: var(--cor-texto);
+}

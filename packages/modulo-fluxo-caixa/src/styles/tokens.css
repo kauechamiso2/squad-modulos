@@ -1,0 +1,57 @@
+/*
+ * Tokens do modulo Fluxo de Caixa.
+ *
+ * So entram aqui as cores que o @squad/ui ainda nao tem. Tudo o que ja existe
+ * la (preto, branco, #e3e6e6, #f4f5f5, raios, pesos, espacos) vem de
+ * packages/ui/src/tokens.css e NAO e redefinido aqui.
+ *
+ * Valores lidos do Figma "Fluxo de Caixa 2.0", secao 2279:76405.
+ */
+:root {
+  /*
+   * O Figma deste modulo especifica #798282 para texto secundario. O
+   * @squad/ui herdou do Pesquisa de Clima o #6a7272, escurecido para passar
+   * no WCAG AA. Aqui seguimos o Figma, como o enunciado manda - a divergencia
+   * esta relatada e entra na decisao de propagar (ou nao) a paleta WCAG.
+   */
+  --cor-texto-secundario: #798282;
+
+  /* Tile dos cartoes de categoria do fluxo (Figma 2279:94295) */
+  --fc-tile-categoria: #d6eff9;
+
+  /* Tiles de tipo de transacao (Figma 2279:100362 e irmaos) */
+  --fc-tile-entrada: #e5f4ff;   /* status/highlight */
+  --fc-tile-saida: #ffe9ea;     /* status/negative */
+  --fc-tile-futuro: #f4f5f5;    /* background/overlay-1, ocorrencia futura */
+
+  /* Setas dentro dos tiles */
+  --fc-cor-entrada: #0091ff;
+  --fc-cor-saida: #ff2633;
+
+  /* Valor positivo na tabela (Figma 2279:100442, status/positive-text) */
+  --fc-valor-positivo: #60c60c;
+
+  /* Card de Lucro: fundo azul com elipses por cima (Figma 2279:100382) */
+  --fc-lucro-fundo: #8cb6ee;
+
+  /* Valor de transacao futura ou pendente de confirmacao (Figma 2279:97217 e
+     a anotacao 2279:96453: nao entra no verde porque ainda nao aconteceu). */
+  --fc-valor-futuro: #ff9500;
+
+  /* bordas/overlay-2: a borda das pilulas nao selecionadas do passo 4. */
+  --fc-borda-pilula: #c2c8c8;
+
+  /* Centavos em cinza claro: 30% sobre o fundo do card */
+  --fc-centavos: rgba(0, 0, 0, 0.3);
+  --fc-centavos-invertido: rgba(255, 255, 255, 0.3);
+
+  /* Pilula do assistente Fin na barra de busca (Figma 2279:100493) */
+  --fc-fin-fundo: #d0effb;
+  /* Faixa do Fin dentro do painel de resumo (Figma 2279:101815). */
+  --fc-fin-faixa: #f1fbff;
+  --fc-fin-texto: #04232f;
+
+  /* Medidas da pagina, iguais as dos outros modulos */
+  --fc-largura-conteudo: 1100px;
+  --fc-altura-linha-tabela: 80px;
+}

@@ -1,0 +1,95 @@
+/*
+ * Figma 2241:46998. A area toda tem 472x88 e escala com o card; por isso as
+ * posicoes do halo e do balao vem em porcentagem.
+ */
+.envolucro {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 472 / 88;
+}
+
+.svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.linha {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1;
+  stroke-linejoin: round;
+}
+
+.tracejado {
+  stroke: var(--gr-cor-eixo);
+  stroke-width: 1;
+  stroke-dasharray: 2.2 2.2;
+}
+
+.eixo text {
+  font-size: 8px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  fill: var(--gr-cor-eixo);
+}
+
+.diaFuturo { opacity: 0.4; }
+
+/* Halo de 14px com o ponto de 8px dentro. */
+.halo {
+  position: absolute;
+  display: flex;
+  width: 14px;
+  height: 14px;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  border-radius: 360px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(11px);
+  pointer-events: none;
+}
+
+.ponto {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 360px;
+  background: #fdfdfd;
+}
+
+.balao {
+  position: absolute;
+  padding: 6px;
+  transform: translateX(-50%);
+  border-radius: 360px;
+  background: var(--cor-marca);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: var(--cor-texto-invertido);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Variantes: o que muda e a cor do eixo e o degrade do preenchimento. */
+.lucro {
+  --gr-cor-eixo: #ffffff;
+}
+.lucro .paradaTopo { stop-color: #ffffff; stop-opacity: 1; }
+.lucro .paradaBase { stop-color: #ffffff; stop-opacity: 0; }
+
+.saidas {
+  --gr-cor-eixo: var(--cor-texto);
+}
+.saidas .paradaTopo { stop-color: #d2290b; stop-opacity: 1; }
+.saidas .paradaBase { stop-color: #ffffff; stop-opacity: 0; }
+
+.entradas {
+  --gr-cor-eixo: var(--cor-texto);
+}
+.entradas .paradaTopo { stop-color: #0091ff; stop-opacity: 1; }
+.entradas .paradaBase { stop-color: #ffffff; stop-opacity: 0; }
