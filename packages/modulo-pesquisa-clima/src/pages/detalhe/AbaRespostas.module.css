@@ -1,0 +1,147 @@
+/* Mesma coluna das outras abas do detalhe; o respiro de 16 entre cards é o
+   que o Figma desenha aqui. */
+.coluna {
+  display: flex;
+  width: var(--largura-miolo-largo);
+  flex-direction: column;
+  gap: var(--espaco-16);
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+}
+
+.cartao {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+}
+
+/* Sem padding embaixo no card do topo: as sub-abas encostam na borda dele,
+   do mesmo jeito que as abas do cabeçalho encostam na divisória. */
+.coluna > .cartao:first-child {
+  padding-bottom: 0;
+}
+
+.topoCartao {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.total {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+/* ---- menu de três pontos ---- */
+
+.envoltorioMenu {
+  position: relative;
+  flex: none;
+}
+
+/* O Figma desenha o ícone solto, sem botão em volta. */
+.maisOpcoes {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Mesmo suspenso da linha da lista: 168 de largura mínima, sombra e borda. */
+.suspenso {
+  position: absolute;
+  top: calc(100% + var(--espaco-8));
+  right: 0;
+  z-index: 5;
+  display: flex;
+  min-width: 168px;
+  flex-direction: column;
+  padding: var(--espaco-8);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.itemSuspenso {
+  padding: var(--espaco-8) var(--espaco-12);
+  border: none;
+  border-radius: var(--raio-campo);
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.destrutivo {
+  color: var(--cor-vermelho);
+}
+
+.itemSuspenso:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+/* ---- sub-abas ---- */
+
+.subabas {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--espaco-40);
+}
+
+/* A borda transparente nas inativas reserva os 2px que a ativa gasta, senão
+   o texto dela subiria um pixel — mesma solução das abas do cabeçalho. */
+.subaba {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-20) var(--espaco-32);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  white-space: nowrap;
+}
+
+.ativa {
+  border-bottom-color: var(--cor-aba-ativa);
+}
+
+.vazio {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}

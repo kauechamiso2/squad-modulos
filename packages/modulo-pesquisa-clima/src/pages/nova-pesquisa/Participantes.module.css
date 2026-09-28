@@ -1,0 +1,242 @@
+/*
+ * Mesma moldura dos outros modais do projeto (ModalFluxo, Editor): respiro
+ * entre o modal e a borda da janela, altura limitada à janela e o miolo
+ * rolando por dentro.
+ *
+ * Este aqui tinha ficado sem nada disso, e numa janela baixa — 560px de
+ * altura, com a lista de grupos aberta — o modal passava de 635px, era
+ * centralizado e o topo subia para fora da tela sem jeito de descer até ele:
+ * `overflow: visible` num contêiner centralizado não rola, então o cabeçalho
+ * e o X ficavam inalcançáveis.
+ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40);
+  overflow-y: auto;
+  background: var(--cor-scrim);
+}
+
+.modal {
+  display: flex;
+  width: var(--largura-miolo);
+  max-height: 100%;
+  flex-direction: column;
+  gap: var(--espaco-32);
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+}
+
+/* O que rola quando não cabe: cabeçalho e rodapé ficam parados, como nos
+   outros modais, e a lista no meio é que anda. O mesmo vão de 32px de antes,
+   porque era o `gap` do modal que separava estes blocos. */
+.corpo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-32);
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.cabecalho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 20px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.45px;
+  line-height: 25px;
+}
+
+.grupos {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-20);
+  align-items: flex-start;
+}
+
+/* O rádio de "Toda empresa" mora num grupo só dele, e o grupo tem de ocupar
+   a linha inteira para o item dentro não encolher. */
+.blocoEmpresa {
+  width: 100%;
+}
+
+.item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16) 0;
+  border: none;
+  border-radius: var(--raio-icone);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.caixa {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.itemNome {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.itemContagem {
+  margin: 0;
+  color: var(--cor-texto-tenue);
+  font-size: 12px;
+  font-weight: var(--peso-medio);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.linhaGrupos {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  /* Sem isto o "Grupos:" ficava centralizado — <button> centraliza texto
+     por padrão do navegador, e .item (o rádio/caixa acima) só escapa disso
+     porque já pedia text-align: left explicitamente. */
+  text-align: left;
+  gap: var(--espaco-24);
+}
+
+/* A seta aponta para baixo fechada e para cima aberta. */
+.setaAberta {
+  transform: rotate(180deg);
+}
+
+.rotuloGrupos {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.sublista {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-12);
+  align-items: flex-start;
+}
+
+.divisor {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-20);
+}
+
+.divisorLinha {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 1px;
+  background: var(--cor-borda-acao);
+}
+
+.divisorTexto {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.busca {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-12);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-superficie);
+}
+
+.buscaIcone {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.buscaCampo {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+}
+
+.buscaCampo::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.buscaCampo:focus {
+  outline: none;
+}
+
+.rodape {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Resultados da busca, abaixo do campo, com o mesmo respiro da lista de
+   cima. */
+.resultados {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espaco-12);
+}
+
+.semResultado {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+}

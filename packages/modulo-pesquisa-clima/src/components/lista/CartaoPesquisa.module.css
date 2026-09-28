@@ -1,0 +1,204 @@
+/* Linha de tabela, não cartão avulso: fundo branco (o da página, atrás),
+   dividida da vizinha só pela borda de baixo — mesmo tratamento do
+   CollaboratorsTable de lá. */
+.cartao {
+  display: flex;
+  width: 100%;
+  height: 64px;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-12);
+  border-bottom: 1px solid var(--cor-borda-acao);
+  cursor: pointer;
+}
+
+/* Mesmo tratamento do CollaboratorsTable de lá: sombra no lugar de mudar a
+   cor de fundo, para não brigar visualmente com o cinza da linha marcada. */
+.cartao:hover {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.selecionado {
+  background: var(--cor-superficie);
+}
+
+/* A linha é clicável mas não é um link; sem isso o foco de teclado nela
+   ficaria invisível. */
+.cartao:focus-visible {
+  outline: 2px solid var(--cor-aba-ativa);
+  outline-offset: 2px;
+}
+
+.checkbox {
+  display: flex;
+  flex: none;
+  width: 24px;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.celula {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto-secundario);
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+/* Nenhuma coluna de texto invade a vizinha: todas cortam com reticências.
+   As larguras do Figma entram como base do flex, não como largura fixa —
+   assim elas valem enquanto couberem e cedem proporcionalmente quando não,
+   em vez de o nome absorver sozinho toda a falta de espaço. O piso de 80px
+   evita a coluna virar duas letras numa tela estreita. */
+.nome {
+  flex: 0 1 198px;
+  min-width: 80px;
+  color: var(--cor-texto);
+  font-weight: var(--peso-medio);
+}
+
+.publico,
+.tipo {
+  flex: 0 1 120px;
+}
+
+/* O selo não corta: ou cabe, ou a linha rola. */
+.status {
+  display: flex;
+  flex: none;
+  width: 140px;
+  align-items: center;
+}
+
+.evento {
+  flex: 0 1 140px;
+}
+
+.taxa {
+  flex: 0 1 110px;
+}
+
+/* Ciclos absorve a sobra e é o primeiro a ceder quando a tela aperta. */
+.ciclos {
+  flex: 1 1 0;
+}
+
+.acoes {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* Botão de play/pause: quadrado cinza-superfície sobre o fundo branco da
+   linha. Selecionada, a linha já é cinza-superfície, e o quadrado precisa
+   virar branco para não desaparecer nela. */
+.selecionado .transporte {
+  background: var(--cor-fundo);
+}
+
+.transporte {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: none;
+  border-radius: var(--raio-caixa);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+/* Quando não há play nem pause (Encerrada, Rascunho), o botão some mas o
+   espaço continua reservado — invisível, e não ausente — para os menus de
+   todas as linhas ficarem na mesma coluna. */
+.semTransporte {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: var(--raio-caixa);
+  background: var(--cor-borda-sutil);
+  opacity: 0;
+}
+
+.envoltorioMenu {
+  position: relative;
+  flex: none;
+}
+
+.menu {
+  display: flex;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu:hover {
+  background: var(--cor-superficie);
+}
+
+/* DotsThree do Phosphor é horizontal; girado 90°, os três pontos colineares
+   ficam na vertical — mesma conta que o BeneficiosGrid de lá faz ao girar
+   o próprio DotsThree.svg. */
+.iconeMenu {
+  transform: rotate(90deg);
+}
+
+/* ---- menu de três pontos ---- */
+.suspenso {
+  position: absolute;
+  top: calc(100% + var(--espaco-8));
+  right: 0;
+  z-index: 5;
+  display: flex;
+  min-width: 168px;
+  flex-direction: column;
+  padding: var(--espaco-8);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+}
+
+.itemSuspenso {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-campo);
+  background: transparent;
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.itemSuspenso:hover {
+  background: var(--cor-superficie);
+}
+
+.destrutivo {
+  color: var(--cor-vermelho);
+}

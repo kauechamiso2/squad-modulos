@@ -1,0 +1,158 @@
+.tela {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--cor-fundo);
+}
+
+/* A capa da pesquisa, largura toda e 200px de altura, como no resto do
+   projeto. O fundo vem do estado (lib/capa.js). */
+.capa {
+  height: 200px;
+  flex: none;
+}
+
+/* Coluna de 808px centrada. O cartão começa em 140 no Figma e a capa acaba
+   em 200: sobe 60px para cavalgar o fim dela. */
+.coluna {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: var(--largura-miolo-largo);
+  flex: 1;
+  flex-direction: column;
+  margin: -60px auto 0;
+  padding-bottom: var(--espaco-24);
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+  gap: var(--espaco-24);
+}
+
+/* A tela final centraliza título e mensagem; as outras alinham à esquerda. */
+.cartaoCentrado {
+  align-items: stretch;
+  text-align: center;
+}
+
+.nome {
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  font-size: 40px;
+  font-weight: var(--peso-medio);
+  line-height: normal;
+  /* Rede de segurança: o campo já limita o nome, mas uma palavra só, sem
+     espaço, esticaria o cartão para fora da tela. Aqui ela quebra. */
+  overflow-wrap: anywhere;
+}
+
+.paragrafo {
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  line-height: normal;
+}
+
+.email {
+  font-weight: var(--peso-semibold);
+}
+
+/* Tem cara de link e ainda não leva a lugar nenhum: por isso é um span, e
+   não um <a> sem destino. */
+.mudarConta {
+  color: var(--cor-azul);
+}
+
+.linhaAnonima {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.iconeAnonimo {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+.notaAnonima {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.notaObrigatoria {
+  margin: 0;
+  color: var(--cor-vermelho);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+/* O "Começar pesquisa" fica no meio do que sobra abaixo do cartão. No Figma
+   ele aparece lá embaixo, mas encostado no fim da tela ele fica longe demais
+   do que se acabou de ler — centrado, continua sendo o próximo passo óbvio
+   sem sumir no rodapé. */
+.acaoCentral {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40) 0;
+}
+
+/* Mesma caixa do enunciado da lista do administrador, sem a divisória: nesta
+   vista o Figma desenha o bloco sem linha embaixo. */
+.linhaEnunciado {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  padding: var(--espaco-16) 0;
+}
+
+.asterisco {
+  color: var(--cor-vermelho);
+}
+
+/* A caixa do Figma tem 580x324 e o arquivo é o @2x dela; o `contain` guarda
+   a proporção do desenho dentro dela. */
+.ilustracao {
+  display: block;
+  width: 580px;
+  height: 324px;
+  flex: none;
+  align-self: center;
+  margin-top: var(--espaco-24);
+  object-fit: contain;
+}
+
+/* Nas telas sem Voltar/Continuar a barra de baixo é só a trilha de 8px. A
+   ponta esquerda começa 4px para fora para o raio ser cortado na borda,
+   igual à do fluxo. */
+.trilhaSozinha {
+  height: 8px;
+  flex: none;
+  overflow: hidden;
+  background: var(--cor-superficie);
+}
+
+.trilhaPreenchida {
+  height: 8px;
+  margin-left: -4px;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+}

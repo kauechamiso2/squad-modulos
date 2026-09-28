@@ -1,0 +1,59 @@
+/* Tela cheia, sem cabeçalho, sem rodapé, sem X — só a ilustração no centro.
+   O .palco é o slot que vai receber o vídeo mais para a frente: trocar o
+   <img> por um <video> aqui não mexe em mais nada. */
+.tela {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--espaco-40);
+  background: var(--cor-fundo);
+}
+
+/* 670px é a largura natural do PNG: com width 100% na imagem, o teto evita
+   que ela suba de resolução em telas largas, e ela encolhe nas estreitas. */
+.palco {
+  display: flex;
+  width: 100%;
+  max-width: 670px;
+  align-items: center;
+  justify-content: center;
+}
+
+.ilustracao {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* A geração não produziu pergunta nenhuma, ou o rascunho pedido não existe.
+   Ocupa o lugar da ilustração: é o fim da espera, e não um aviso passageiro
+   por cima dela. */
+.falha {
+  display: flex;
+  max-width: 520px;
+  flex-direction: column;
+  gap: var(--espaco-16);
+  align-items: flex-start;
+  margin: auto;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-vermelho);
+  border-radius: var(--raio-card);
+  background: var(--selo-negativo-fundo);
+}
+
+.falhaTitulo {
+  margin: 0;
+  color: var(--cor-vermelho);
+  font-size: 18px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.3;
+}
+
+.falhaTexto {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  line-height: 1.5;
+}

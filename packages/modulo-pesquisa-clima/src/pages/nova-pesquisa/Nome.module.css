@@ -1,0 +1,88 @@
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-60);
+  align-items: flex-end;
+}
+
+/* Campo grande: só a linha de baixo, texto de 24px encostado nela. */
+.campoGrande {
+  display: flex;
+  width: 100%;
+  height: 61px;
+  align-items: flex-end;
+  padding: var(--espaco-16) 0;
+  border: none;
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: transparent;
+  color: var(--cor-texto);
+  font-size: 24px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.campoGrande::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.campoGrande:focus {
+  outline: none;
+}
+
+.bloco {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-20);
+  align-items: flex-start;
+}
+
+.rotulo {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.linha {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.linhaTexto {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.linhaChave {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.linhaValor {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+  white-space: nowrap;
+}

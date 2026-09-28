@@ -1,0 +1,96 @@
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-40);
+  align-items: flex-start;
+}
+
+.rotulo {
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.contador {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+/* Círculos de 56px com borda, maiores que os botões de ícone do cabeçalho. */
+.passo {
+  display: flex;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  cursor: pointer;
+}
+
+.icone {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.numero {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 80px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+.estimativaBloco {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+.estimativa {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--espaco-8);
+  font-size: 16px;
+  letter-spacing: -0.31px;
+  line-height: 21px;
+  white-space: nowrap;
+}
+
+/* A ressalva de que o tempo pode variar — a pergunta extra condicional faz
+   o total de passos de quem responde crescer conforme a resposta. Menor e
+   mais discreta que a linha de cima: é um aviso, não a estimativa em si. */
+.estimativaNota {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+}
+
+.estimativaTexto {
+  margin: 0;
+  color: var(--cor-texto-apoio);
+  font-weight: var(--peso-regular);
+}
+
+.estimativaValor {
+  margin: 0;
+  color: var(--cor-destaque);
+  font-weight: var(--peso-medio);
+}
+
+.passo:disabled {
+  cursor: default;
+  opacity: 0.4;
+}

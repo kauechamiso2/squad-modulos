@@ -1,0 +1,360 @@
+.layout {
+  min-height: 100vh;
+  background: var(--cor-fundo);
+}
+
+/* A sidebar é fixa, então a coluna de conteúdo anda para o lado dela. O
+   deslocamento é de 80px, e não os 76px da sidebar: no Figma o conteúdo
+   começa em 80 e fica uma faixa de 4px de fundo entre os dois. */
+.coluna {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin-left: var(--deslocamento-conteudo);
+  padding: 48px var(--espaco-40) 0;
+}
+
+/*
+ * Título, busca, cabeçalho da tabela e linhas dividem a mesma coluna centrada.
+ *
+ * Antes cada bloco tinha 1100px de largura fixa e um recuo de 128 à esquerda.
+ * Isso só parecia centrado em 1440, onde sobravam 128 de um lado e 132 do
+ * outro por coincidência; em 1920 já sobravam 612 à direita contra 128 à
+ * esquerda, e em 2560, 1252. Agora os 1100 são teto e as margens automáticas
+ * repartem o que sobra, então a lista fica no meio da área de conteúdo em
+ * qualquer largura — e em 1440 cai a 2px de onde o Figma a desenha.
+ */
+.cabecalho,
+.ferramentas,
+.tabela,
+.linhas,
+.falha {
+  width: 100%;
+  max-width: var(--largura-lista);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Mesma escala do Gestão de Pessoas (.home__inner de lá): o teto de 1100
+   vale até 1440px de tela; dali até 1800 ele acompanha a viewport em vez de
+   ficar parado, e acima de 1800 trava em 1440 para a lista não esticar sem
+   fim numa tela muito larga. Sempre centrada — só o teto muda de regra. */
+@media (min-width: 1441px) and (max-width: 1800px) {
+  .cabecalho,
+  .ferramentas,
+  .tabela,
+  .linhas,
+  .falha {
+    max-width: 80vw;
+  }
+}
+
+@media (min-width: 1801px) {
+  .cabecalho,
+  .ferramentas,
+  .tabela,
+  .linhas,
+  .falha {
+    max-width: 1440px;
+  }
+}
+
+.cabecalho {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-32);
+  align-items: flex-start;
+}
+
+.tituloLinha {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tituloGrupo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.acoesGrupo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* "Voltar" e "Tutorial": pílula de 40px em cinza-superfície, sem ícone
+   próprio — o Phosphor entra direto como filho, sem passar por um <img>. */
+.iconeCirculo {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-texto);
+  font-size: 24px;
+  font-weight: var(--peso-medio);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+
+/* Barra "Total: X pesquisas" + "Filtros" (Figma 8222:2410, porte do
+   CollaboradoresToolbar de lá). O botão em si é o `Botao` variante contorno
+   que o fluxo já usa — mesma pílula de 40px, só com borda em vez de fundo. */
+.ferramentas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  margin-top: var(--espaco-56);
+}
+
+.total {
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto-secundario);
+}
+
+.acoesFerramentas {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* Resumo dos filtros ativos, ao lado do botão "Filtros" — mesmo padrão do
+   CollaboradoresToolbar de lá. */
+.resumoFiltros {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 var(--espaco-16);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+}
+
+.resumoFiltrosTexto {
+  max-width: 180px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.resumoFiltrosLimpar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Cabeçalho da tabela: porte do CollaboratorsTable de lá — fundo cinza,
+   cantos de 4px, uma célula por coluna com o rótulo e o ícone de
+   ordenar/filtrar. As larguras espelham as células de `CartaoPesquisa` para
+   as colunas baterem entre cabeçalho e linha. */
+.tabela {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+  margin-top: var(--espaco-24);
+  padding: var(--espaco-12);
+  border-radius: var(--raio-campo);
+  background: var(--cor-superficie);
+  color: var(--cor-texto-secundario);
+  font-size: 12px;
+  font-weight: var(--peso-regular);
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.checkboxCabecalho {
+  display: flex;
+  flex: none;
+  width: 24px;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.celulaCabecalho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-8);
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Envoltório das três colunas filtráveis (Público, Tipo, Status): a largura
+   já entra pela classe da coluna (.publicoCabecalho etc.), aqui só ganha o
+   `position: relative` que ancora o dropdown. */
+.envoltorioFiltroCabecalho {
+  position: relative;
+  display: flex;
+}
+
+/* Evento: só rótulo agora, sem função — não usa `.celulaCabecalho` porque
+   não é botão, e cursor de clique nela seria mentira. */
+.rotuloCabecalho {
+  display: flex;
+  align-items: center;
+}
+
+.dropdownFiltro {
+  position: absolute;
+  top: calc(100% + var(--espaco-8));
+  left: 0;
+  z-index: 10;
+  display: flex;
+  min-width: 200px;
+  flex-direction: column;
+  padding: var(--espaco-8);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12);
+  /* Cor e peso de texto normais aqui dentro — o cabeçalho é cinza/12px, mas
+     as opções do dropdown não são rótulo de coluna. */
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+}
+
+.opcaoFiltro {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-8);
+  border: none;
+  border-radius: var(--raio-campo);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.opcaoFiltro:hover {
+  background: var(--cor-superficie);
+}
+
+/* Mesmas larguras de `CartaoPesquisa.module.css` (.nome, .publico, .tipo,
+   .status, .evento, .taxa, .ciclos), para as colunas do cabeçalho e da
+   linha ficarem alinhadas. */
+.nomeCabecalho {
+  flex: 0 1 198px;
+  min-width: 80px;
+}
+
+.publicoCabecalho,
+.tipoCabecalho {
+  flex: 0 1 120px;
+}
+
+.statusCabecalho {
+  flex: none;
+  width: 140px;
+}
+
+.eventoCabecalho {
+  flex: 0 1 140px;
+}
+
+.taxaCabecalho {
+  flex: 0 1 110px;
+}
+
+.ciclosCabecalho {
+  flex: 1 1 0;
+}
+
+/* Mesma largura das duas ações (play/pause + menu) no fim de cada linha,
+   para o cabeçalho não ficar mais curto que elas: 40 + 12 de vão + 40. */
+.acoesCabecalho {
+  flex: none;
+  width: 92px;
+}
+
+/* Sem vão entre linhas: elas se tocam e a borda de baixo de cada uma é que
+   divide — um vão aqui deixaria cada linha flutuando com borda nos quatro
+   lados, e não a tabela contínua do Figma. Sem vão do cabeçalho para a
+   primeira linha também: encostados, como o resto da tabela. Os 120px de
+   baixo são o mesmo respiro do .home__panel de lá: sem eles a última linha
+   fica escondida atrás da barra de busca flutuante. */
+.linhas {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 120px;
+}
+
+/* Recado de busca sem resultado, no lugar onde as linhas estariam. */
+.vazio {
+  margin: var(--espaco-40) 0 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  text-align: center;
+}
+
+/* Falha ao ler o que estava guardado. Fica na tela — não é aviso passageiro:
+   a tabela vazia logo abaixo é que precisa da explicação, e ela não some.
+   Largura, teto responsivo e centralização já vêm do seletor combinado lá
+   em cima — repeti-los aqui depois das media queries as sobrescreveria de
+   volta para o teto fixo. */
+.falha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-8);
+  margin-bottom: var(--espaco-24);
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-vermelho);
+  border-radius: var(--raio-caixa);
+  background: var(--selo-negativo-fundo);
+}
+
+.falhaTitulo {
+  margin: 0;
+  color: var(--cor-vermelho);
+  font-size: 14px;
+  font-weight: var(--peso-semibold);
+  line-height: 1.4;
+}
+
+.falhaApoio {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 13px;
+  font-weight: var(--peso-regular);
+  line-height: 1.5;
+}

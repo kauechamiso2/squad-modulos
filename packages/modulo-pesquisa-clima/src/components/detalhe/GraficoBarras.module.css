@@ -1,0 +1,93 @@
+.grafico {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-12);
+  padding-top: var(--espaco-24);
+}
+
+/* 121px é a altura da área de plotagem no Figma, com a divisória fechando
+   embaixo. As colunas se alinham pela base. */
+.barras {
+  display: flex;
+  height: 121px;
+  align-items: flex-end;
+  gap: var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.coluna {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 100%;
+  align-items: flex-end;
+  cursor: default;
+}
+
+.barra {
+  display: block;
+  width: 100%;
+  border: 2px solid transparent;
+  border-radius: 2px;
+  background: var(--cor-borda-acao);
+}
+
+/* Sob o ponteiro: contorno preto na barra e o balão acima dela. */
+.emFoco .barra {
+  border-color: var(--cor-texto);
+}
+
+.balao {
+  position: absolute;
+  bottom: calc(100% + var(--espaco-8));
+  left: 50%;
+  z-index: 5;
+  display: flex;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: var(--raio-campo);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 120ms ease;
+  white-space: nowrap;
+}
+
+/* A pontinha que liga o balão à barra. */
+.balao::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  border: 6px solid transparent;
+  border-top-color: var(--cor-marca);
+  content: '';
+  transform: translateX(-50%);
+}
+
+.emFoco .balao {
+  opacity: 1;
+}
+
+.rotulos {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espaco-24);
+}
+
+.rotulo {
+  flex: 1 0 0;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  text-align: center;
+}

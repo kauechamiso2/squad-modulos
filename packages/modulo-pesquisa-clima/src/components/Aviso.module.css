@@ -1,0 +1,14 @@
+/* Pílula escura presa no rodapé, centrada na janela. */
+.aviso {
+  position: fixed;
+  bottom: var(--espaco-24);
+  left: 50%;
+  z-index: 20;
+  padding: var(--espaco-12) var(--espaco-20);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  transform: translateX(-50%);
+}

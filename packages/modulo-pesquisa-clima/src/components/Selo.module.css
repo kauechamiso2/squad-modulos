@@ -1,0 +1,47 @@
+.selo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px var(--espaco-12);
+  border-radius: 90px;
+  font-size: 12px;
+  font-weight: var(--peso-medio);
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.positivo {
+  background: var(--selo-positivo-fundo);
+  color: var(--selo-positivo-texto);
+}
+
+.destaque {
+  background: var(--selo-destaque-fundo);
+  color: var(--cor-azul);
+}
+
+.acao {
+  background: var(--selo-acao-fundo);
+  color: var(--cor-destaque);
+}
+
+.negativo {
+  background: var(--selo-negativo-fundo);
+  color: var(--cor-vermelho);
+}
+
+.padrao {
+  background: var(--selo-padrao-fundo);
+  color: var(--selo-padrao-texto);
+}
+
+/* Status que não é nenhum dos conhecidos. Fundo neutro como o padrão, mas em
+   vermelho e com borda tracejada: precisa ler como problema de dado, e não
+   como mais um estado normal da pesquisa. O padding perde 1px para a borda
+   não deixar a pílula mais alta que as vizinhas na mesma linha. */
+.desconhecido {
+  padding: 3px calc(var(--espaco-12) - 1px);
+  border: 1px dashed var(--cor-vermelho);
+  background: var(--selo-padrao-fundo);
+  color: var(--selo-desconhecido-texto);
+}

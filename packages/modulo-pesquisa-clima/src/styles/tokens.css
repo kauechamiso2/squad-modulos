@@ -1,0 +1,151 @@
+/*
+ * Tokens do modulo Pesquisa de Clima.
+ *
+ * ALIASES PARA O @squad/ui: os tokens abaixo marcados com "<- ui" tinham
+ * exatamente o mesmo valor de um token de packages/ui/src/tokens.css e agora
+ * apontam para ele. O valor computado nao mudou; o que mudou e que existe uma
+ * fonte da verdade so. Os demais tokens sao especificos deste modulo e
+ * continuam com valor proprio aqui.
+ *
+ * DUAS DIVERGENCIAS DELIBERADAS em relacao ao Gestao de Pessoas, mantidas:
+ *
+ *  1. --peso-medio e 500 aqui e --font-weight-medium e 510 la. Os dois vieram
+ *     do mesmo Figma (SF Pro, peso 510); este modulo mapeia para 500 no Inter.
+ *     Em aberto - ver docs/divida-tecnica.md.
+ *
+ *  2. Cinco cores foram escurecidas para passar no WCAG AA (detalhe abaixo).
+ *     O Gestao de Pessoas ainda usa as originais. A propagacao esta planejada
+ *     em docs/divida-tecnica.md; ate la os dois convivem.
+ */
+:root {
+  /* Cores */
+  --cor-borda-sutil: #ebeded;      /* BG/Overlay-2 — a divisória */
+  --cor-avatar-fundo: #dee8ed;     /* Color/Neutral/90 — fundo do avatar */
+  /* Fundo do item ativo da navegação. Sai como hex cru do Figma, sem
+     variável própria no arquivo. */
+  --cor-item-ativo: #e5e5e5;
+
+  /*
+   * Cinco cores de texto saíram do Figma abaixo do contraste mínimo do WCAG
+   * AA (4.5:1 para texto normal) e foram escurecidas o suficiente para
+   * passar — matiz e saturação preservados, só a luminosidade caiu. O que
+   * cada uma era, e a razão de contraste que tinha e passou a ter no pior
+   * fundo em que aparece:
+   *
+   *   --cor-texto-secundario  #798282 -> #6a7272   3.61 -> 4.51 (sidebar)
+   *   --cor-texto-tenue       #9ba4a4 -> #6d7878   2.55 -> 4.56 (branco)
+   *   --cor-azul              #0091ff -> #006bbc   2.71 -> 4.51 (selo)
+   *   --cor-vermelho          #ff2633 -> #d0000c   3.05 -> 4.51 (selo)
+   *   --cor-destaque          #ff9230 -> #b45500   2.05 -> 4.54 (selo)
+   *
+   * Os fundos dos selos translúcidos foram medidos na tela, e não calculados
+   * sobre branco: eles se assentam na linha da lista, que já é cinza-clara,
+   * então o fundo efetivo é mais escuro do que a conta ingênua diz. Os
+   * valores acima passam nos dois lugares onde o mesmo selo aparece — a
+   * linha da home e o cartão branco do detalhe.
+   *
+   * O laranja é o que mais muda de aparência: laranja saturado não alcança
+   * 4.5:1 sobre fundo claro, e escurecê-lo o bastante o aproxima do marrom.
+   * Vale confirmar os cinco com o design — a decisão aqui foi ficar do lado
+   * de quem precisa enxergar o texto.
+   *
+   * O verde ficou como estava: ele é o fundo do interruptor ligado, não é
+   * texto ali, e trocá-lo mudaria um controle que já contrasta. O texto do
+   * selo verde ganhou token próprio, mais abaixo.
+   */
+
+  /* Fluxo de criação de pesquisa (Figma 8057:3447 e irmãos). */
+  --cor-texto-tenue: #6d7878;        /* Gray/Gray 4, escurecido */
+  --cor-texto-apoio: var(--color-icon-muted);        /* "Em média ... para responder" */
+  --cor-borda-forte: #b2b9b9;        /* borda do campo de prompt */
+  --cor-destaque: #b45500;           /* accent/orange, escurecido */
+  /*
+   * Verde do interruptor ligado. Escurecido de #60c60c: como fundo de um
+   * controle ele tinha 2.19:1 contra a página, abaixo dos 3:1 que o WCAG
+   * pede para o que identifica um componente de interface (1.4.11) — o
+   * interruptor era difícil de achar na página, e o botão branco dentro
+   * dele, de enxergar. Agora são 4.05:1 nos dois.
+   *
+   * Só o interruptor usa este token: o texto do selo verde tem o seu.
+   */
+
+  /*
+   * Cinza do interruptor desligado. Token próprio, e não o de texto
+   * desabilitado que ele usava: aquele veste texto de controle desligado,
+   * que é isento de contraste, e escurecê-lo faria texto desabilitado
+   * parecer ativo.
+   *
+   * Fica mais claro que o ligado de propósito — assim os dois estados
+   * diferem em luminosidade, e não só em matiz, para quem não separa verde
+   * de cinza. A posição do botão e o `aria-checked` continuam sendo o que
+   * diz o estado sem depender de cor nenhuma.
+   */
+  --cor-azul: #006bbc;               /* accent/blue, escurecido */
+
+  /* Sublinhado da aba ativa no detalhe da pesquisa. Vem como hex cru do
+     Figma, sem variável própria, e é um azul mais fechado que o accent/blue
+     da lista — por isso token próprio, e não reaproveitar --cor-azul. */
+  --cor-aba-ativa: var(--color-accent-blue);
+
+  /* Aba Geral do detalhe (Figma 8032:1573). */
+  --cor-pipo-fundo: #fbedd0;
+  --cor-pipo-borda: #ba8512;
+  /* Rosca da taxa de resposta. O trilho e o amarelo saem como vetor no Figma
+     e o host de assets está bloqueado neste ambiente, então foram lidos do
+     render — vale confirmar com o design. O verde e o vermelho da escala são
+     os accents que a lista já usa. */
+  --cor-rosca-trilho: #f1f3f3;
+  --cor-rosca-amarelo: #f2de1e;
+
+  /* Selos de status da lista. O fundo é a mesma cor do texto a 10%, menos o
+     laranja, que no Figma vem como um tom sólido próprio. */
+  --selo-positivo-fundo: rgba(1, 180, 108, 0.1);
+  --selo-destaque-fundo: rgba(0, 145, 255, 0.1);
+  --selo-acao-fundo: #fff3e9;
+  --selo-negativo-fundo: rgba(255, 38, 51, 0.1);
+  --selo-padrao-fundo: #e3e6e6;      /* status/default */
+
+  /* Texto dos selos que não pode usar o accent direto: sobre o fundo tingido
+     do próprio selo, o accent não alcança 4.5:1. Os dois abaixo são o mesmo
+     tom, só mais escuros — e só o texto do selo os usa, então o verde do
+     interruptor e o cinza dos rótulos continuam como estavam. */
+  --selo-positivo-texto: #3a7807;    /* accent/green escurecido */
+  --selo-padrao-texto: #616868;      /* secundário escurecido para o cinza */
+  /* O selo de status desconhecido é vermelho sobre o cinza do selo padrão, e
+     é o par mais apertado dos dois: o vermelho de erro fica em 4.16:1 ali. */
+  --selo-desconhecido-texto: #d1000d;
+
+  /* Tipografia — Inter em todo o projeto. */
+  --fonte: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --altura-linha: 1.2;
+
+  /* O Figma desenha em SF Pro; os pesos 510 e 590 viram 500 e 600 no Inter,
+     mesmo mapeamento usado no calendario-conteudo. */
+
+  /* Raios */
+  --raio-icone: 12px;   /* slots da navegação */
+  --raio-avatar: 300px;
+  --raio-campo: 4px;
+  --raio-caixa: 8px;
+  --raio-cartao: 12px;  /* cartões do detalhe */
+
+  /* Espaçamentos */
+  --espaco-14: 14px;
+  --espaco-20: 20px;
+  --espaco-26: 26px;  /* folga entre os blocos da sidebar */
+  --espaco-32: 32px;
+  --espaco-56: 56px;  /* título até a barra Total/Filtros */
+  --espaco-60: 60px;
+
+  /* Medidas de layout.
+     A sidebar tem 76px, mas o conteúdo começa em 80px: sobra uma faixa de 4px
+     de fundo entre os dois. Por isso são duas medidas, e não uma. */
+  --deslocamento-conteudo: 80px;
+
+  /* Fluxo de criação: moldura fixa e as duas larguras de miolo do Figma.
+     O miolo é centrado — 1440 menos a largura dá margens iguais. */
+  /* Coluna da lista da home. O Figma desenha 1100 numa tela de 1440; aqui ela
+     é teto, e não largura fixa, para a lista centrar na área de conteúdo em
+     vez de ficar presa à esquerda numa tela larga. */
+  --largura-lista: 1100px;
+}

@@ -1,0 +1,390 @@
+.tela {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--cor-fundo);
+}
+
+/* Cabeçalho de 80px: voltar, nome ocupando a sobra, e o X à direita — o nome
+   não fica preso a 300px como no detalhe, porque aqui não há abas no meio. */
+.cabecalho {
+  display: flex;
+  height: 80px;
+  flex: none;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-20) var(--espaco-40) 0;
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+.voltar {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  cursor: pointer;
+}
+
+/* O arquivo usa um CaretLeft; o projeto tem o direito, e meia volta dá o
+   mesmo desenho. */
+.paraTras {
+  display: block;
+  width: 24px;
+  height: 24px;
+  transform: rotate(180deg);
+}
+
+.titulo {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  overflow-wrap: break-word;
+}
+
+.acoes {
+  display: flex;
+  width: 300px;
+  flex: none;
+  justify-content: flex-end;
+}
+
+.coluna {
+  display: flex;
+  width: var(--largura-miolo-largo);
+  flex-direction: column;
+  gap: var(--espaco-16);
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+}
+
+.cartao {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+}
+
+/* Sem padding embaixo: as sub-abas encostam na borda do card, do mesmo jeito
+   que as abas do cabeçalho encostam na divisória. */
+.cartaoTopo {
+  padding-bottom: 0;
+}
+
+.topoCartao {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.nomeCiclo {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.enunciado {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+/* ---- menu de três pontos ---- */
+
+.envoltorioMenu {
+  position: relative;
+  flex: none;
+}
+
+/* O Figma desenha o ícone solto, sem botão em volta. */
+.maisOpcoes {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.suspenso {
+  position: absolute;
+  top: calc(100% + var(--espaco-8));
+  right: 0;
+  z-index: 5;
+  display: flex;
+  min-width: 240px;
+  flex-direction: column;
+  padding: var(--espaco-8);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Aqui os itens têm ícone, ao contrário do menu da aba Respostas. */
+.itemSuspenso {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-8) var(--espaco-12);
+  border: none;
+  border-radius: var(--raio-campo);
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.itemSuspenso img {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.destrutivo {
+  color: var(--cor-vermelho);
+}
+
+/* ---- resumo do ciclo ---- */
+
+.linhaTaxa {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-24);
+}
+
+.taxa {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.textoTaxa {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto-secundario);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.totalRespostas {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.linhaCampos {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-24);
+}
+
+.campo {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  min-width: 0;
+  gap: var(--espaco-24);
+}
+
+.rotulo {
+  flex: none;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto-secundario);
+  letter-spacing: -0.08px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.valor {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* ---- sub-abas ---- */
+
+.subabas {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--espaco-40);
+}
+
+/* A borda transparente nas inativas reserva os 2px que a ativa gasta, senão
+   o texto dela subiria um pixel — mesma solução das abas do cabeçalho. */
+.subaba {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-20) var(--espaco-32);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  white-space: nowrap;
+}
+
+.ativa {
+  border-bottom-color: var(--cor-aba-ativa);
+}
+
+/* ---- perguntas abertas ---- */
+
+/* Mesmo bloco do resumo da aba Geral: peso normal, itálico no corpo e raio
+   de 8, contra os 12 dos cards brancos. */
+.pipo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-pipo-borda);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-pipo-fundo);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  gap: var(--espaco-16);
+  letter-spacing: -0.4px;
+}
+
+.pipo p {
+  margin: 0;
+}
+
+.resumo {
+  font-style: italic;
+}
+
+.trechos {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+/* Cada trecho fecha com uma divisória, inclusive o "Ver mais" no fim. */
+.trecho,
+.verMais {
+  margin: 0;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: none;
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  text-align: left;
+}
+
+.verMais {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  padding-top: 0;
+  padding-bottom: 0;
+  cursor: pointer;
+}
+
+.vazio {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+/* ---- folha das perguntas do ciclo ---- */
+
+/* Cobre a tela como os modais do fluxo, mas alta: a lista de perguntas é
+   longa e precisa rolar dentro dela. */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40);
+  background: var(--cor-scrim);
+}
+
+.folha {
+  display: flex;
+  width: min(880px, 100%);
+  max-height: 100%;
+  flex-direction: column;
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+  overflow: hidden;
+}
+
+.cabecalhoFolha {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-20) var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.tituloFolha {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.corpoFolha {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-16);
+  overflow-y: auto;
+  padding: var(--espaco-24);
+}

@@ -1,0 +1,101 @@
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.rotulo {
+  width: 100%;
+  margin: 0 0 var(--espaco-40);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.cartoes {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.cartao {
+  display: flex;
+  height: 200px;
+  flex: 1 0 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+  text-align: left;
+  cursor: pointer;
+}
+
+.topoCartao {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Quadrado branco de 40px com o ícone de 24px dentro. */
+.selo {
+  display: flex;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-radius: var(--raio-icone);
+  background: var(--cor-fundo);
+}
+
+.icone {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.nomeCartao {
+  width: 100%;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.23px;
+  line-height: 20px;
+}
+
+/* O Figma deixa 14px entre a fileira de cartões e a linha do branco — os
+   cartões terminam em 477 e a linha começa em 491. */
+.branco {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+  text-align: left;
+  cursor: pointer;
+}
+
+.nomeBranco {
+  display: flex;
+  height: 40px;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.23px;
+  line-height: 20px;
+}

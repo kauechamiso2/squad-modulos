@@ -1,0 +1,265 @@
+/* Mesma casca do FiltrosPanel do Gestão de Pessoas: pílula deslizante presa
+   ao canto superior direito, cabeçalho e rodapé fixos com o miolo rolando
+   entre os dois. */
+.sobreposicao {
+  position: fixed;
+  inset: 0;
+  background: rgba(227, 230, 230, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms ease-out;
+  z-index: 150;
+}
+
+.sobreposicaoAberta {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.painel {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  width: 428px;
+  max-height: calc(100vh - 40px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-40);
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  padding: var(--espaco-24) var(--espaco-24) 0;
+  overflow: hidden;
+  /* translateX(100%) sozinho só desloca pela própria largura do painel,
+     deixando os 24px de `right` ainda visíveis como uma tira. Passar do
+     100% empurra o painel inteiro para fora da tela enquanto fechado. */
+  transform: translateX(calc(100% + 24px));
+  transition: transform 280ms ease-out;
+  z-index: 151;
+}
+
+.painelAberto {
+  transform: translateX(0);
+}
+
+.cabecalho {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.botaoFechar {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+.rolagem {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 169px;
+}
+
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding-bottom: var(--espaco-24);
+  margin-bottom: var(--espaco-24);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.secaoUltima {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.rotulo {
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.pilulas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espaco-12);
+}
+
+.linhaIntervalo {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+}
+
+.conector {
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.pilulaData {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: var(--espaco-8);
+  height: 40px;
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  position: relative;
+  cursor: pointer;
+}
+
+.textoData {
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.textoDataVazio {
+  color: var(--cor-texto-secundario);
+}
+
+.campoDataNativo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pilulaNumero {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  padding: var(--espaco-12) var(--espaco-16);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.pilulaNumero::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.pilulaNumero::-webkit-inner-spin-button,
+.pilulaNumero::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.pilulaNumero[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Mesma pílula do campo simples, só que como container flexível: o número
+   fica de um lado e o ícone (só a Taxa de resposta usa) do outro. */
+.pilulaNumeroComIcone {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espaco-8);
+  height: 40px;
+  box-sizing: border-box;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  padding: var(--espaco-12) var(--espaco-16);
+}
+
+.campoNumeroInterno {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+}
+
+.campoNumeroInterno::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.campoNumeroInterno::-webkit-inner-spin-button,
+.campoNumeroInterno::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.campoNumeroInterno[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.rodape {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espaco-12);
+  padding: var(--espaco-24);
+  border-top: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+.botaoCancelar {
+  height: 40px;
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  color: var(--cor-texto);
+  cursor: pointer;
+}
+
+.botaoSalvar {
+  height: 40px;
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: #000000;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  cursor: pointer;
+}

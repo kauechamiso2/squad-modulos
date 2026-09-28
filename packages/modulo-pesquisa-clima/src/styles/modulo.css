@@ -1,0 +1,46 @@
+/*
+ * O que o index.css do projeto original aplicava no <body>, agora limitado ao
+ * subtree do modulo.
+ *
+ * No monorepo o <body> e compartilhado com a home e com o Gestao de Pessoas.
+ * `line-height: 1.2` e `-webkit-font-smoothing: antialiased` globais mudariam
+ * a renderizacao dos dois - o GP nunca teve line-height no body e herda o
+ * default do navegador. Como o modulo nao usa portal nenhum, herdar por este
+ * wrapper cobre tudo, inclusive as telas full-bleed do fluxo, que sao
+ * position: fixed mas continuam filhas dele no DOM.
+ *
+ * box-sizing em ::before/::after: o apps/web ja declara para `*`, mas nao para
+ * os pseudo-elementos, e o CSS do clima conta com isso.
+ */
+.modulo-pesquisa-clima {
+  /* A pilula de filtro deste modulo sempre usou peso 500; o default do
+     @squad/ui e o do Gestao de Pessoas (400). */
+  --pilula-peso: var(--peso-medio);
+  --pilula-fundo: var(--cor-superficie);
+
+  font-family: var(--fonte);
+  line-height: var(--altura-linha);
+  color: var(--cor-texto);
+  -webkit-font-smoothing: antialiased;
+}
+
+.modulo-pesquisa-clima *::before,
+.modulo-pesquisa-clima *::after {
+  box-sizing: border-box;
+}
+
+/*
+ * O original fazia `button { font: inherit }` global. Aqui precisa ficar
+ * escopado - no apps/web o equivalente e `font-family: inherit`, e trocar por
+ * `font` mudaria tamanho e peso dos botoes do Gestao de Pessoas.
+ *
+ * O escopo vai em :where() de proposito. Escrito como
+ * `.modulo-pesquisa-clima button` a regra teria especificidade (0,1,1) e
+ * venceria as classes dos componentes - `.botao` e (0,1,0) -, zerando
+ * font-size e font-weight de todo botao do modulo. Com :where() a
+ * especificidade cai para (0,0,1), igual a do `button` global do projeto
+ * original, e as classes de componente voltam a vencer.
+ */
+:where(.modulo-pesquisa-clima) button {
+  font: inherit;
+}

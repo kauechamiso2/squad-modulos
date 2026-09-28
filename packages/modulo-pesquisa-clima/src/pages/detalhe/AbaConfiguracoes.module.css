@@ -1,0 +1,81 @@
+/* Coluna de 532px centrada, a mesma largura de miolo do fluxo de criação. O
+   Figma posiciona por um `left` absoluto que dá margens iguais; os 40px de
+   cima são a distância entre a divisória do cabeçalho e o primeiro cartão. */
+.coluna {
+  display: flex;
+  width: var(--largura-miolo);
+  flex-direction: column;
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+  gap: var(--espaco-16);
+}
+
+/* Cartão do Figma: 24px de padding, 24px entre título, lista e rodapé. O
+   `align-items: center` é o que centra a pílula "Copiar link da pesquisa" —
+   por isso o título e a lista precisam esticar sozinhos. */
+.cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+  gap: var(--espaco-24);
+}
+
+.secao {
+  align-self: stretch;
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.linhas {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-16);
+}
+
+/* O ícone da pílula: 24px, do lado direito do texto. */
+.iconeDoLink {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+
+/* A capa põe a amostra antes da seta, e as duas ocupam o lugar que nas
+   outras linhas é só da seta. */
+.controleDaCapa {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--espaco-8);
+}
+
+/* Amostra da capa: 32px de lado, cantos de 4px. É botão, e não um quadrado
+   solto, porque abre o modal como a seta ao lado. */
+.amostra {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-campo);
+  cursor: pointer;
+}
+
+/* Recado do cartão "Opções publicadas" quando uma pesquisa Única já encerrou:
+   os dois interruptores de cima ficam travados, e sem uma linha explicando
+   isso eles pareceriam quebrados. Fica logo abaixo das linhas, esticado. */
+.nota {
+  align-self: stretch;
+  margin: 0;
+  color: var(--cor-texto-apoio);
+  font-size: 14px;
+  line-height: 20px;
+}

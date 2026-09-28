@@ -1,0 +1,231 @@
+/* Coluna de 1130 centrada — mais larga que os 808 das outras abas porque a
+   tabela tem cinco colunas. Larguras de coluna do Figma; a de taxa cresce,
+   que é onde sobra o espaço da linha. */
+.tela {
+  display: flex;
+  width: min(1130px, 100%);
+  flex-direction: column;
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+  --col-ciclo: 160px;
+  --col-data: 160px;
+  --col-atividade: 200px;
+}
+
+/* Os 16px de recuo são os mesmos do padding interno da linha: é o que faz a
+   coluna do cabeçalho cair em cima da célula que ela nomeia. Fundo e
+   tipografia no mesmo padrão da tabela da Home (Figma), inclusive aqui,
+   onde antes não tinha nenhum dos dois. */
+.cabecalho {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--espaco-12);
+  padding: var(--espaco-12) var(--espaco-16) var(--espaco-16);
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: var(--cor-superficie);
+}
+
+.coluna {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  gap: var(--espaco-12);
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--cor-texto-secundario);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: var(--peso-regular);
+  letter-spacing: 0;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+}
+
+button.coluna {
+  cursor: pointer;
+}
+
+/* Sem o ícone de ordenação, a coluna em uso se distingue pela cor do rótulo.
+   É o que dá para fazer com os tokens que existem. */
+.colunaAtiva {
+  color: var(--cor-texto);
+}
+
+.rotuloColuna {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.icone16 {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.linhas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-12);
+  margin-top: var(--espaco-12);
+}
+
+.linha {
+  display: flex;
+  height: 64px;
+  align-items: center;
+  gap: var(--espaco-12);
+  padding: var(--espaco-12) var(--espaco-16);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+/* A linha é clicável mas não é um link; sem isso o foco de teclado nela
+   ficaria invisível. */
+.linha:focus-visible {
+  outline: 2px solid var(--cor-aba-ativa);
+  outline-offset: 2px;
+}
+
+.celula {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  color: var(--cor-texto-secundario);
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+/* As classes de coluna dão a largura, e valem para o cabeçalho e para a
+   célula — é o que mantém um em cima do outro. A cor é só da célula. */
+.numero {
+  width: var(--col-ciclo);
+  flex: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Só o número do ciclo vem em preto e com peso 500; o resto da linha é
+   secundário e regular. */
+.celula.numero {
+  color: var(--cor-texto);
+  font-weight: var(--peso-medio);
+}
+
+.inicio,
+.fim {
+  width: var(--col-data);
+  flex: none;
+  gap: var(--espaco-12);
+}
+
+/* A taxa absorve a sobra da linha, como no arquivo. */
+.taxa {
+  flex: 1 0 0;
+  gap: var(--espaco-16);
+}
+
+.textoTaxa {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atividade {
+  width: var(--col-atividade);
+  flex: none;
+  gap: var(--espaco-8);
+}
+
+/* Ponto de 12px do arquivo: é um círculo cheio, não um ícone — por isso vem
+   de CSS e não de um arquivo. */
+.ponto {
+  display: block;
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--cor-destaque);
+}
+
+.textoAtividade {
+  color: var(--cor-destaque);
+  white-space: nowrap;
+}
+
+/* A seta da linha e o vão equivalente no cabeçalho: sem o vão, "Atividade"
+   cairia 52px à direita da célula que ela nomeia. */
+.abrir,
+.vaoDaSeta {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.abrir img {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+/* ---- aviso de encerramento antecipado ---- */
+
+.aviso {
+  position: relative;
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+/* Pílula que aparece no hover, acima do aviso. */
+.balao {
+  position: absolute;
+  bottom: calc(100% + var(--espaco-8));
+  left: 50%;
+  z-index: 10;
+  width: max-content;
+  max-width: 260px;
+  padding: var(--espaco-8) var(--espaco-12);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+  font-size: 12px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity 120ms ease;
+  white-space: normal;
+}
+
+.aviso:hover .balao,
+.linha:focus-visible .balao {
+  opacity: 1;
+}
+
+/* ---- lista vazia ---- */
+
+.vazio {
+  display: flex;
+  width: var(--largura-miolo-largo);
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+}
+
+.textoVazio {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}

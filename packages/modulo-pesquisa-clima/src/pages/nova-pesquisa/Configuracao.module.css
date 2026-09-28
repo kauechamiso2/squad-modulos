@@ -1,0 +1,455 @@
+.tela {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--cor-fundo);
+}
+
+.miolo {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+/* Coluna de 532 começando 60px abaixo do cabeçalho. */
+.coluna {
+  display: flex;
+  width: var(--largura-miolo);
+  flex-direction: column;
+  gap: var(--espaco-60);
+  align-items: center;
+  padding-top: 60px;
+  padding-bottom: var(--espaco-40);
+}
+
+.lista {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  align-items: flex-start;
+}
+
+.secao {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+  white-space: nowrap;
+}
+
+/* ---- miolos dos modais ---- */
+
+/* Lista de opções de rádio: linhas de 50px com 8 de folga. */
+.opcoes {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-8);
+  align-items: flex-start;
+}
+
+.opcao {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  gap: var(--espaco-16);
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.icone {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.textoOpcao {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Par de campos data + hora. */
+.parDeCampos {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-20);
+}
+
+.campoData {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  padding: var(--espaco-16) var(--espaco-24);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+  background: transparent;
+  color: var(--cor-texto-apoio);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+  line-height: 1.1;
+}
+
+.campoData:focus {
+  outline: none;
+}
+
+/* Desligado quando a data não vale — imediato marcado, ou prazo por período. */
+.campoData:disabled {
+  border-color: var(--cor-borda-acao);
+  color: var(--cor-texto-desabilitado);
+  cursor: default;
+}
+
+/* "Dias" ao lado do campo de número: rótulo, não campo. */
+.unidadeCampo {
+  flex: none;
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+/* Bloco do modal de Data e Hora: campos e o checkbox, com 20 de folga. */
+.blocoEnvio {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-20);
+  align-items: flex-start;
+}
+
+.linhaCheck {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16) 0;
+  border: none;
+  border-radius: var(--raio-icone);
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.textoCheck {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+/* Divisória "ou" do modal de prazo. */
+.divisor {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-20);
+  padding: var(--espaco-20) 0;
+}
+
+.divisorLinha {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 1px;
+  background: var(--cor-borda-acao);
+}
+
+.divisorTexto {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Última linha do prazo: o rádio e, ao lado, o par data + hora.
+   O par divide o que sobra em vez de tomar a largura toda — senão o rádio e
+   o gap somam por cima dos 484 do miolo e a hora vaza para fora do card. */
+.opcaoComCampos {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-20);
+}
+
+.opcaoComCampos .parDeCampos {
+  width: auto;
+  flex: 1 0 0;
+  min-width: 0;
+}
+
+/* Textarea da mensagem final. */
+.mensagem {
+  width: 100%;
+  height: 160px;
+  padding: var(--espaco-16) var(--espaco-24);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+  background: transparent;
+  color: var(--cor-texto-secundario);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+  line-height: 1.4;
+  resize: none;
+}
+
+.mensagem:focus {
+  outline: none;
+}
+
+/* Campo fora da faixa: a borda vermelha diz onde está o problema, e o texto
+   ao lado do Salvar diz qual é. */
+.campoInvalido {
+  border-color: var(--cor-vermelho);
+}
+
+/* ---- campos de data e hora ----
+ *
+ * A máscara do Figma por cima, o seletor nativo por baixo. O <input> ocupa a
+ * caixa inteira e é transparente: ele é quem tem o foco e o teclado, e é o
+ * clique nele que abre o calendário ou o relógio em qualquer ponto do campo.
+ */
+.campo {
+  position: relative;
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  height: 56px;
+  align-items: center;
+  gap: var(--espaco-10, 10px);
+  padding: var(--espaco-16) var(--espaco-24);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+  cursor: pointer;
+}
+
+/* O foco vive no input invisível; sem isto ele não apareceria em lugar
+   nenhum, e quem anda de Tab não saberia onde está. */
+.campo:focus-within {
+  border-color: var(--cor-texto);
+}
+
+.campoTexto {
+  flex: 1 0 0;
+  min-width: 0;
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+  line-height: 1.1;
+}
+
+/* CalendarBlank no campo de data, Clock no de hora, CaretUpDown no de número.
+   Decorativos: quem abre o seletor é a caixa inteira. */
+.campoIcone {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.campoNativo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: transparent;
+  font-family: inherit;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.campoNativo:focus {
+  outline: none;
+}
+
+/* O indicador nativo sai: quem abre o seletor é o campo inteiro, e deixá-lo
+   à mostra poria dois ícones lado a lado. */
+.campoNativo::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.campoNativo::-webkit-datetime-edit,
+.campoNativo::-webkit-inner-spin-button,
+.campoNativo::-webkit-clear-button {
+  display: none;
+}
+
+/* Desligado quando a data não vale — imediato marcado, ou prazo por período. */
+.campoDesligado {
+  border-color: var(--cor-borda-acao);
+  cursor: default;
+}
+
+.campoDesligado .campoTexto {
+  color: var(--cor-texto-desabilitado);
+}
+
+.campoDesligado .campoNativo {
+  cursor: default;
+}
+
+/* ---- número de ciclos ---- */
+
+.blocoCiclos {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-32);
+  align-items: flex-start;
+}
+
+/* O campo do número, ao lado do rádio: 210px no Figma (8201:8046). A caixa é
+   a moldura; o input mora dentro dela, junto do par de setas. */
+.campoNumero {
+  display: flex;
+  flex: none;
+  width: 210px;
+  height: 56px;
+  align-items: center;
+  gap: var(--espaco-10, 10px);
+  padding: var(--espaco-16) var(--espaco-24);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+}
+
+.campoNumero:focus-within {
+  border-color: var(--cor-texto);
+}
+
+.campoNumeroEntrada {
+  flex: 1 0 0;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--cor-texto-apoio);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+  line-height: 1.1;
+}
+
+.campoNumeroEntrada:focus {
+  outline: none;
+}
+
+/* O esticador do navegador sai: o par de setas do Figma faz o mesmo, e os
+   dois lado a lado seriam dois controles para um número só. */
+.campoNumeroEntrada::-webkit-outer-spin-button,
+.campoNumeroEntrada::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.campoNumeroEntrada {
+  appearance: textfield;
+}
+
+/* As setas do Figma são um desenho só, então quem clica são duas metades
+   invisíveis por cima dele: a de cima soma, a de baixo subtrai. */
+.esticador {
+  position: relative;
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
+.meiaSeta {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.meiaSeta:first-of-type {
+  top: 0;
+}
+
+.meiaSeta:last-of-type {
+  bottom: 0;
+}
+
+.esticador .campoIcone {
+  position: absolute;
+  inset: 0;
+}
+
+/* A linha que abre e fecha as avançadas. */
+.linhaAvancadas {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.rotuloAvancadas {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+/* A seta aponta para baixo fechada e para cima aberta. */
+.setaAberta {
+  transform: rotate(180deg);
+}
+
+/* A opção do número divide a linha com o campo, então o texto dela não pode
+   empurrar: sem isto "Quantidade definida" e os 210px do campo somam por cima
+   dos 484 do miolo. */
+.opcaoComCampos .textoOpcao {
+  flex: 1 0 0;
+  min-width: 0;
+  white-space: normal;
+}
+
+/* As frases das avançadas são longas e passam da largura do card. */
+.opcoes .textoOpcao {
+  white-space: normal;
+  text-align: left;
+}

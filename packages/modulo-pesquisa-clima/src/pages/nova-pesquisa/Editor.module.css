@@ -1,0 +1,381 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40);
+  background: var(--cor-scrim);
+  overflow-y: auto;
+}
+
+.modal {
+  display: flex;
+  width: 640px;
+  max-height: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding: var(--espaco-24);
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+}
+
+.modalCompacto {
+  width: 480px;
+}
+
+/* Espaço entre cabeçalho, corpo e rodapé no editor de pergunta (Figma
+   8200:6794 e irmãos) é maior que o dos outros modais que dividem .modal
+   (EditorAbertura, ModalConfirmar, ModalSairDoFluxo) — por isso entra como
+   classe extra, e não como troca do gap de .modal. */
+.modalPergunta {
+  gap: var(--espaco-40);
+}
+
+.texto {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.31px;
+  line-height: 1.5;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 20px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.45px;
+  line-height: 25px;
+}
+
+.corpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  overflow-y: auto;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+.rotulo {
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+}
+
+.entrada {
+  width: 100%;
+  padding: var(--espaco-12);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.31px;
+  resize: vertical;
+}
+
+.entrada::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.entrada:focus {
+  outline: 1px solid var(--cor-texto);
+}
+
+/*
+ * .campo, .rotulo e .entrada acima são de EditorAbertura.jsx também — as
+ * medidas abaixo valem só para o corpo do editor de pergunta (Figma
+ * 8200:6794 e irmãos), então entram como o de dentro de .corpoPergunta, e
+ * não como troca das regras de cima.
+ */
+.corpoPergunta {
+  gap: var(--espaco-32);
+}
+
+.corpoPergunta .campo {
+  gap: var(--espaco-12);
+}
+
+.corpoPergunta .rotulo {
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  line-height: 1.1;
+  letter-spacing: -0.23px;
+}
+
+.corpoPergunta .entrada {
+  min-height: 56px;
+  padding: var(--espaco-16) var(--espaco-24);
+  border-color: var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+  color: var(--cor-texto-apoio);
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+}
+
+/* Select nativo sem a seta do navegador, com o ícone do Figma no lugar
+   (CaretDown no Tipo, CaretUpDown na Escala) — clique e teclado continuam do
+   <select>; o ícone só decora por cima, sem capturar o ponteiro. */
+.selecaoEnvoltorio {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.selecaoEntrada {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 58px;
+  cursor: pointer;
+}
+
+.selecaoIcone {
+  position: absolute;
+  top: 50%;
+  right: var(--espaco-24);
+  width: 24px;
+  height: 24px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* ---- Escala: "0" fixo, "a", teto configurável (Figma 8200:6811) ---- */
+
+.linhaEscala {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* As duas caixas são bem menores que o resto dos campos: só cabe um número
+   de 0 a 10 em cada, e esticá-las pela linha inteira sobrava vazio no meio
+   do "a" — o mesmo tamanho nas duas é o que faz a caixa fixa e a de
+   verdade lerem como um par. */
+.linhaEscala > .caixaEscala,
+.linhaEscala > .selecaoEnvoltorio {
+  flex: none;
+  width: 110px;
+}
+
+.caixaEscala {
+  display: flex;
+  min-height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16) var(--espaco-24);
+  border: 1px solid var(--cor-borda-forte);
+  border-radius: var(--raio-campo);
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+}
+
+/* O piso da escala é sempre zero — não é um campo, é a informação de que a
+   pergunta começa em zero. Sem seta de setinha (não muda) e no cinza de
+   desabilitado do projeto, para não parecer um controle a mais. */
+.caixaEscalaFixa {
+  justify-content: center;
+  border-color: var(--cor-borda-acao);
+  background: var(--cor-fundo-desabilitado);
+  color: var(--cor-texto-desabilitado);
+}
+
+.escalaSeparador {
+  flex: none;
+  width: 40px;
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.23px;
+  text-align: center;
+}
+
+.duasColunas {
+  display: grid;
+  gap: var(--espaco-12);
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Lista de opções: cada linha tem o campo e o botão de remover, e a última
+   é a de adicionar (Figma 8203:12280). */
+.opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-12);
+}
+
+.linhaOpcao {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* Botão de ícone solto, sem moldura — serve tanto para remover uma opção
+   quanto para confirmar a que está sendo digitada em "Adicionar opção". */
+.acaoIcone {
+  display: flex;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.acaoIcone:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.icone {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.alternador {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  cursor: pointer;
+}
+
+.dica {
+  margin: 0;
+  color: var(--cor-texto-apoio);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+  letter-spacing: -0.23px;
+}
+
+/* Escolha do tipo, no "Adicionar pergunta". */
+.tipos {
+  display: grid;
+  gap: var(--espaco-8);
+  grid-template-columns: 1fr 1fr;
+}
+
+.tipo {
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  text-align: left;
+  cursor: pointer;
+}
+
+.tipo:hover {
+  background: var(--cor-superficie);
+}
+
+.rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Erro dentro de um modal de confirmação — gravação que não passou. Fica
+   entre o texto e os botões, no vermelho dos outros erros do projeto. */
+.erroSalvar {
+  margin: 0;
+  color: var(--cor-vermelho);
+  font-size: 13px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+}
+
+/* ---- pergunta extra condicional (Figma 8203:14400, 8203:9794) ---- */
+
+.linhaExtra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-12);
+}
+
+/* Rótulo e interruptor ficam colados (Figma 8200:6834); é o chevron que vai
+   sozinho para a ponta da linha, e só quando a lista está aberta. */
+.rotuloEInterruptor {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.rotuloExtra {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+.chevronExtra {
+  flex: none;
+  transform: rotate(180deg);
+}
+
+.tituloNegativas {
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  line-height: 25px;
+  letter-spacing: -0.45px;
+}
+
+.listaNegativas {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.opcaoNegativa {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-16) 0;
+  border: none;
+  background: transparent;
+  color: var(--cor-preto-suave);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  line-height: 21px;
+  letter-spacing: -0.31px;
+  text-align: left;
+  cursor: pointer;
+}

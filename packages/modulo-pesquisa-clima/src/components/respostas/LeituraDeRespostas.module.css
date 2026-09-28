@@ -1,0 +1,219 @@
+/*
+ * Cards e navegadores das duas leituras. Saiu de AbaRespostas.module.css
+ * quando a tela do ciclo passou a mostrar o mesmo par — as medidas continuam
+ * as do Figma 8032:1809 e 8036:2383.
+ */
+
+.cartao {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-cartao);
+  background: var(--cor-fundo);
+}
+
+/* O card do navegador individual só tem a linha de cima. */
+.cartaoNavegador {
+  gap: 0;
+}
+
+.topoCartao {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.rotuloCartao {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.enunciado {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.topoNavegador {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.setas {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-24);
+}
+
+/* O Figma desenha os ícones soltos, sem botão em volta. */
+.seta,
+.acaoIcone {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.seta {
+  width: 20px;
+  height: 20px;
+}
+
+.acaoIcone {
+  width: 24px;
+  height: 24px;
+}
+
+/* Nas pontas da lista, e onde a ação ainda não existe, o botão desliga:
+   continua no lugar, sem convidar ao clique. */
+.seta:disabled,
+.acaoIcone:disabled {
+  cursor: default;
+  opacity: 0.3;
+}
+
+.icone20 {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+/* O Chevron do Figma aponta para baixo; as setas do navegador são ele
+   girado, como o arquivo faz. */
+.paraEsquerda {
+  transform: rotate(90deg);
+}
+
+.paraDireita {
+  transform: rotate(-90deg);
+}
+
+/* ---- seletor de pergunta ---- */
+
+.envoltorioLista {
+  position: relative;
+  width: 100%;
+}
+
+/* Large-Input: a mesma caixa dos campos do fluxo, agora como seletor. */
+.seletor {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  padding: var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.textoSeletor {
+  flex: 1 0 0;
+  min-width: 0;
+  color: var(--cor-texto);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+/* Rola quando a pesquisa tem muitas perguntas — são até 20. */
+.listaPerguntas {
+  position: absolute;
+  top: calc(100% + var(--espaco-8));
+  right: 0;
+  left: 0;
+  z-index: 5;
+  display: flex;
+  max-height: 320px;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: var(--espaco-8);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.itemLista {
+  padding: var(--espaco-12);
+  border: none;
+  border-radius: var(--raio-campo);
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.itemAtual {
+  background: var(--cor-superficie);
+}
+
+/* Pergunta sem resposta: o cartão fica com o enunciado e uma linha dizendo
+   isso, em vez de um corpo vazio que parece defeito. Acontece com quem entrou
+   depois de a coleta começar, e com quem pulou uma pergunta opcional. */
+.semResposta {
+  margin: 0;
+  color: var(--cor-texto-tenue);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* ---- pergunta extra condicional (Figma 8217:2254, 8217:2397) ----
+   O card da pergunta gerada por "pergunta extra condicional"
+   (lib/perguntaExtra.js): mesma forma do cartão comum, com a borda azul do
+   Figma no lugar da cinza e o padding um tanto menor, que é como o Figma
+   desenha os dois. */
+.cartaoExtra {
+  padding: var(--espaco-20);
+  border-color: var(--cor-azul);
+}
+
+/* Sem justify-content: space-between — o rótulo e a tag ficam colados, e não
+   nas pontas do card, diferente da linha de cima do cartão comum. */
+.topoCartaoExtra {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: var(--espaco-24);
+}
+
+.tagExtra {
+  margin: 0;
+  color: var(--cor-azul);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+.textoExtra {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  line-height: normal;
+}

@@ -1,0 +1,332 @@
+/*
+ * Cards de pergunta e de abertura. Saíram de Revisao.module.css quando a aba
+ * Perguntas do detalhe passou a mostrar a mesma lista — as medidas continuam
+ * as do Figma 8065:4915, só mudaram de arquivo.
+ */
+.cartao {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-icone);
+  background: var(--cor-fundo);
+}
+
+.topoCartao {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.rotuloAbertura {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.rotuloPergunta {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* O Figma prendia as ações num bloco de 356px alinhado à direita. Com o
+   interruptor de obrigatória à esquerda dos ícones o bloco passou a ser mais
+   largo que isso, então a largura sai e o `justify-between` do topo do cartão
+   é que encosta tudo na direita. */
+.acoes {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--espaco-16);
+}
+
+.acao {
+  display: block;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.icone {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+/* Linha de baixo e texto encostado nela — o mesmo Large-Input das outras
+   telas do fluxo. */
+.linha {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  padding: var(--espaco-16) 0;
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+.nomePesquisa {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 24px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+  /* Rede de segurança: o campo já limita o nome, mas uma palavra só, sem
+     espaço, esticaria o cartão para fora da tela. Aqui ela quebra. */
+  overflow-wrap: anywhere;
+}
+
+.introducao {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+.enunciado {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.4px;
+}
+
+.campo {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  resize: none;
+}
+
+.campo::placeholder {
+  color: var(--cor-texto-secundario);
+}
+
+.campo:focus {
+  outline: none;
+}
+
+/* Escala de nota e fileira de estrelas: rótulos nas pontas, colunas no meio. */
+/*
+ * A escala: rótulo da esquerda, os degraus, rótulo da direita.
+ *
+ * A combinação que estourava era a pior de todas — onze degraus (0 a 10) com
+ * dois rótulos de ponta longos empurravam a linha para 1188px dentro de uma
+ * coluna de 808px, e a página inteira ganhava barra horizontal. Agora cada
+ * parte tem por onde ceder, nesta ordem: o vão entre os degraus encolhe com a
+ * quantidade deles, e os rótulos quebram em quantas linhas precisarem.
+ */
+.escala {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: var(--espaco-24) clamp(var(--espaco-8), 3vw, var(--espaco-40));
+  gap: var(--espaco-12);
+}
+
+.escalaCentrada {
+  justify-content: center;
+}
+
+/* Rótulo de ponta: quebra em quantas linhas precisar, em vez de esticar a
+   linha da escala. O teto de 150px é o que garante que sobra régua para onze
+   degraus numa linha só — um rótulo longo prefere ficar alto a empurrar os
+   números para baixo. */
+.pontaEscala {
+  margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: min(26%, 150px);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* O vão entre os degraus vem de quem desenha a escala, calculado a partir de
+   quantos são (components/perguntas/escala.js). Quebrar linha é a última
+   folga, se ainda assim não couber. */
+.degraus {
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px var(--vao-degraus, var(--espaco-40));
+}
+
+.degrau {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.numeroDegrau {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Listas de opção: círculo para escolha única, quadrado para múltipla. */
+.opcoes {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-16);
+  align-items: flex-start;
+}
+
+.opcao {
+  display: flex;
+  height: 50px;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+.textoOpcao {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Mesma linha do "Criar pesquisa em Branco" da tela de template. */
+.adicionar {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.textoAdicionar {
+  display: flex;
+  height: 40px;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.23px;
+  line-height: 20px;
+}
+
+/* ---- resposta em texto (Figma 8036:2486) ---- */
+
+.textoRespondido {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  padding: var(--espaco-16) 0;
+  gap: 10px;
+}
+
+.textoLivre {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+}
+
+/* Degrau e opção viram botão na vista de quem responde. A geometria é a
+   mesma; o que muda é só o que o navegador põe por conta própria num
+   <button>. */
+.alvo {
+  border: none;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Rótulo e interruptor são um controle só, então andam juntos; os 12px são
+   os do Figma (8197:3657), e os 16px do `.acoes` separam esse par dos
+   ícones. */
+.grupoObrigatoria {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* Rótulo do interruptor de obrigatória: cinza e discreto, como os outros
+   rótulos de apoio do projeto. Peso regular, e não médio: junto do
+   interruptor pequeno ele é o apoio de um controle secundário, não um
+   rótulo de linha. */
+.rotuloObrigatoria {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+}
+
+/* Risco entre os dois grupos: o que muda a pergunta de um lado, o que mexe no
+   cartão do outro. */
+.divisorAcoes {
+  width: 1px;
+  height: 24px;
+  flex: none;
+  background: var(--cor-borda-acao);
+}
+
+/* Pergunta ou resposta guardada num tipo que o projeto não conhece. Fica
+   visível e em vermelho: sumir da tela faria parecer que ela não existe, e é
+   justamente isso que precisa aparecer para alguém ir consertar o dado. */
+.semSuporte {
+  margin: 0;
+  padding: var(--espaco-12) 0;
+  color: var(--cor-vermelho);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+}
+
+/* Pergunta de escolha sem opção nenhuma. Fica visível e em vermelho: um
+   espaço em branco no lugar das opções não diz que a pergunta está quebrada,
+   e é justamente isso que precisa aparecer para alguém ir consertar. */
+.semOpcoes {
+  margin: 0;
+  padding: var(--espaco-12) 0;
+  color: var(--cor-vermelho);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.4;
+}

@@ -1,0 +1,259 @@
+.corpo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+}
+
+/* A área do arquivo e o zoom seguem o mesmo espaçamento dos campos de cor. */
+.linhaZoom + .trocar {
+  margin-top: var(--espaco-8);
+}
+
+/* Prévia com a proporção da faixa da Revisão (1440x200): é lá que a capa
+   aparece, então é essa a forma que vale a pena mostrar. */
+.previa {
+  width: 100%;
+  aspect-ratio: 1440 / 200;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--raio-caixa);
+  background-color: var(--cor-fundo-desabilitado);
+}
+
+/* Na aba Imagem a prévia é a área de recorte: o cursor precisa dizer isso, e
+   o arrasto não pode ser confundido com seleção de texto ou com o arrasto
+   nativo da imagem de fundo. */
+.previaArrastavel {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.previaArrastavel:active {
+  cursor: grabbing;
+}
+
+.previaVazia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--cor-borda-acao);
+}
+
+.previaTexto {
+  color: var(--cor-texto-desabilitado);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+}
+
+/* ---- sub-abas ---- */
+
+/* Mesmo desenho das sub-abas da aba Respostas, com padding menor: três abas
+   não cabem na largura do modal com os 32px de lá. */
+.subabas {
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--espaco-8);
+  border-bottom: 1px solid var(--cor-borda-acao);
+}
+
+/* A borda transparente nas inativas reserva os 2px que a ativa gasta, senão
+   o texto dela subiria um pixel. */
+.subaba {
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-12) var(--espaco-16);
+  margin-bottom: -1px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  white-space: nowrap;
+}
+
+.ativa {
+  border-bottom-color: var(--cor-aba-ativa);
+}
+
+/* ---- painéis ---- */
+
+/* Os painéis respiram como os outros modais: 24 entre campos, 8 entre o
+   rótulo e o controle, e 8 de folga em cima para o conteúdo não colar na
+   linha das sub-abas. */
+.painel {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding-top: var(--espaco-8);
+  gap: var(--espaco-24);
+}
+
+.campo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: var(--espaco-8);
+}
+
+.rotulo {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.08px;
+}
+
+.linhaDeCor {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-16);
+}
+
+/* Quadrado de 48px com o seletor nativo invisível por cima: o clique em
+   qualquer ponto abre o seletor do sistema. Mesma altura do campo ao lado,
+   para os dois formarem uma linha só. */
+.amostra {
+  position: relative;
+  display: block;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  overflow: hidden;
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  cursor: pointer;
+}
+
+.seletorNativo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.campoHex {
+  flex: 1 0 0;
+  min-width: 0;
+  height: 48px;
+  padding: 0 var(--espaco-16);
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  text-transform: lowercase;
+}
+
+.campoHex:focus {
+  outline: none;
+  border-color: var(--cor-texto-secundario);
+}
+
+/* ---- imagem ---- */
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Alvo do clique e do arrasto de arquivo. Tracejado porque é uma área que
+   espera algo, e não um botão cheio. */
+.area {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-32);
+  border: 1px dashed var(--cor-borda-acao);
+  border-radius: var(--raio-caixa);
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.areaAtiva {
+  border-color: var(--cor-aba-ativa);
+  border-style: solid;
+}
+
+.areaTitulo {
+  color: var(--cor-texto);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+}
+
+.areaApoio {
+  color: var(--cor-texto-secundario);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+}
+
+.linhaZoom {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.rotuloZoom {
+  flex: none;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+}
+
+.zoom {
+  flex: 1 0 0;
+  min-width: 0;
+  accent-color: var(--cor-aba-ativa);
+  cursor: pointer;
+}
+
+/* Mesma pílula contornada do "Copiar link da pesquisa". */
+.trocar {
+  align-self: flex-start;
+  height: 40px;
+  padding: 11px 15px;
+  border: 1px solid var(--cor-borda-acao);
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+}
+
+.erro {
+  margin: 0;
+  color: var(--cor-vermelho);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+}

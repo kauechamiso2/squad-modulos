@@ -1,0 +1,10 @@
+/* Mesma coluna da aba Geral, com o respiro de 16 entre cards que a revisão
+   do fluxo usa — são os mesmos cards. */
+.coluna {
+  display: flex;
+  width: var(--largura-miolo-largo);
+  flex-direction: column;
+  gap: var(--espaco-16);
+  margin: 0 auto;
+  padding: var(--espaco-40) 0;
+}

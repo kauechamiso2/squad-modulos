@@ -1,0 +1,83 @@
+.tela {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--cor-fundo);
+}
+
+/* Sem padding embaixo: as abas têm 60px de altura e encostam na divisória,
+   que é o que faz o sublinhado da ativa continuar a borda do cabeçalho.
+   Com os 20px de cima, dá os 80px do Figma. */
+.cabecalho {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-20) var(--espaco-40) 0;
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+/* Os dois lados têm 300px iguais no Figma: é isso, e não um margin auto, que
+   deixa as abas centradas independentemente do tamanho do nome. Entram como
+   base do flex para que encolham juntos numa tela estreita — encolhendo
+   igual, o centro continua sendo o centro. */
+.titulo,
+.acoes {
+  flex: 0 1 300px;
+  min-width: 0;
+}
+
+.titulo {
+  margin: 0;
+  font-size: 20px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  overflow-wrap: break-word;
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Coladas no rodapé do cabeçalho, não centradas nele: o sublinhado da ativa
+   continua a divisória, e é isso que precisa se manter quando um nome longo
+   quebra em duas ou três linhas e o cabeçalho cresce. */
+.abas {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  align-self: flex-end;
+}
+
+/* A borda transparente nas inativas reserva os mesmos 2px que a ativa gasta,
+   senão o texto dela subiria um pixel em relação às vizinhas. */
+.aba {
+  display: flex;
+  height: 60px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-20) var(--espaco-16);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--cor-texto);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: var(--altura-linha);
+  white-space: nowrap;
+}
+
+.ativa {
+  border-bottom-color: var(--cor-aba-ativa);
+}
+
+/* Vazio de propósito: o conteúdo de cada aba é um passo à parte. */
+.miolo {
+  flex: 1;
+}
