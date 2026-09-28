@@ -1,0 +1,39 @@
+/* Acima do miolo e do menu suspenso dos cartões, abaixo dos scrims de
+   modal. Sem isso a coluna da revisão, que tem z-index próprio para cavalgar
+   a faixa de gradiente, pintava por cima da barra. */
+.rodape {
+  position: sticky;
+  bottom: 0;
+  z-index: 15;
+  height: var(--altura-rodape-fluxo);
+  flex: none;
+  background: var(--cor-fundo);
+}
+
+.progresso {
+  height: 8px;
+  overflow: hidden;
+  background: var(--cor-superficie);
+}
+
+/* A trilha começa 4px à esquerda para que o raio de 360px seja cortado na
+   borda da tela — no Figma a ponta esquerda não aparece arredondada. */
+.progressoPreenchido {
+  height: 8px;
+  margin-left: -4px;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-marca);
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16) var(--espaco-40);
+}
+
+.acoesDireita {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+}

@@ -1,0 +1,71 @@
+.scrim {
+  position: fixed;
+  inset: 0;
+  /* Um modal aberto sobre o painel lateral (o resumo de transacao do Fluxo de
+     Caixa) precisa ficar acima dele - o painel esta em 151. O default continua
+     30, que e o que o Pesquisa de Clima sempre usou. */
+  z-index: var(--modal-z, 30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40);
+  overflow-y: auto;
+  background: var(--cor-scrim);
+}
+
+/* Card de 532px com 24 de padding e cantos de 16, igual aos outros modais
+   do fluxo. A folga entre cabeçalho, corpo e rodapé é 40 na maioria e 32 no
+   de configurações avançadas — daí ela vir por prop. */
+.modal {
+  display: flex;
+  width: var(--largura-miolo);
+  max-height: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: var(--espaco-24);
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+}
+
+.cabecalho {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 20px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.45px;
+  line-height: 25px;
+}
+
+.corpo {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.rodape {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espaco-16);
+}
+
+/* O motivo de o Salvar estar travado, entre os dois botões. Vermelho porque
+   é impedimento, e não recado. */
+.erro {
+  margin: 0;
+  flex: 1 1 auto;
+  color: var(--cor-vermelho);
+  font-size: 13px;
+  line-height: 18px;
+  text-align: right;
+}

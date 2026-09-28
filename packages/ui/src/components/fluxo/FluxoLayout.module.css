@@ -1,0 +1,54 @@
+/*
+ * --fluxo-tela-fundo e --fluxo-coluna-topo tem default igual ao valor que
+ * estava fixo aqui, entao quem nao sobrescreve nao muda nada. O Fluxo de Caixa
+ * sobrescreve os dois: o fundo dele e um gradiente e o miolo comeca mais
+ * abaixo, porque o cabecalho de la e mais baixo (64px contra 96px).
+ */
+.tela {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  background: var(--fluxo-tela-fundo, var(--cor-fundo));
+}
+
+.miolo {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+}
+
+/* Com fixarBordas, a tela ocupa exatamente a altura da janela e quem rola e o
+   miolo - o cabecalho e o rodape ficam parados. `min-height: 0` e o que
+   permite ao item flex encolher abaixo do conteudo e virar area de rolagem. */
+.telaFixa {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.mioloRolavel {
+  min-height: 0;
+  overflow-y: auto;
+  align-items: flex-start;
+  /* Respiro no fim da rolagem: sem ele o ultimo campo para colado no rodape. */
+  padding-bottom: var(--espaco-40, 40px);
+}
+
+/* O topo do miolo é medido a partir do documento, não do fim do cabeçalho:
+   156px na tela do nome e 216px nas demais. Descontar os 96px do cabeçalho
+   dá o respiro real de cada uma. */
+.coluna {
+  display: flex;
+  width: var(--largura-miolo);
+  flex-direction: column;
+  padding-top: var(--fluxo-coluna-topo, 60px);
+}
+
+.colunaLarga {
+  width: var(--largura-miolo-largo);
+  padding-top: var(--fluxo-coluna-topo-largo, 120px);
+}
+
+.colunaCentrada {
+  padding-top: var(--fluxo-coluna-topo-largo, 120px);
+}

@@ -1,0 +1,51 @@
+/* Interruptor do Figma: 64x28, botão branco de 39x24 correndo de ponta a
+   ponta com 2px de folga. Desligado troca o verde pelo cinza e o botão
+   volta para a esquerda. */
+.interruptor {
+  display: flex;
+  flex: none;
+  width: 64px;
+  align-items: center;
+  padding: 2px;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+}
+
+.ligado {
+  justify-content: flex-end;
+  background: var(--cor-verde-ativo);
+}
+
+.desligado {
+  justify-content: flex-start;
+  background: var(--interruptor-desligado);
+}
+
+.botao {
+  width: 39px;
+  height: 24px;
+  border-radius: 100px;
+  background: var(--cor-fundo);
+}
+
+/*
+ * Variante pequena, do interruptor de "Tornar obrigatória": 50x22 com botão
+ * de 30,5x19 e 1,5px de folga — a mesma proporção do grande, reduzida.
+ */
+.pequeno {
+  width: 50px;
+  padding: 1.5px;
+}
+
+.pequeno .botao {
+  width: 30.5px;
+  height: 19px;
+}
+
+/* Sem spec no Figma. Desligado e apagado: "Aceitando respostas" não quer
+   dizer nada enquanto o formulário não está publicado. */
+.desabilitado {
+  opacity: 0.4;
+  cursor: default;
+}

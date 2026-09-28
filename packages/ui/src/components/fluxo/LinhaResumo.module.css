@@ -1,0 +1,69 @@
+/* Linha "Resume" do Figma: 48px de altura, rótulo à esquerda em cinza, valor
+   à direita em preto, e à direita de tudo a seta ou um controle. */
+.linha {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+.conteudo {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  gap: var(--espaco-12);
+}
+
+/* A linha da mensagem final abre mais espaço entre rótulo e valor porque o
+   valor é longo e precisa da largura para cortar com reticências. */
+.conteudoLargo {
+  gap: var(--espaco-40);
+}
+
+.rotulo {
+  flex: 1 0 0;
+  min-width: 0;
+  margin: 0;
+  color: var(--cor-texto-secundario);
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+}
+
+.rotuloFixo {
+  flex: none;
+  white-space: nowrap;
+}
+
+.valor {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.31px;
+  line-height: 21px;
+  white-space: nowrap;
+}
+
+.valorCortado {
+  flex: 1 0 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.botao {
+  display: flex;
+  flex: 1 0 0;
+  min-width: 0;
+  align-items: center;
+  gap: inherit;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}

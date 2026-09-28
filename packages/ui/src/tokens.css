@@ -1,0 +1,109 @@
+/*
+ * Design tokens do Squad.
+ *
+ * As 6 cores e os 3 font-weights do primeiro bloco vieram sem alteracao de
+ * src/styles/tokens.css do projeto gestao-de-pessoa.
+ *
+ * --font-weight-medium continua 510 (e NAO 500) de proposito: e o valor do
+ * projeto original e dezenas de regras dependem dele. Convivem com ele 17
+ * ocorrencias de "font-weight: 500" hardcoded, mantidas como estavam. A
+ * normalizacao dos dois "medium" esta registrada em docs/divida-tecnica.md.
+ */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-text-secondary: #798282;
+  --color-border: #e3e6e6;
+  --color-overlay: #f4f5f5;
+  --color-accent-blue: #0f71b0;
+
+  --font-weight-semibold: 600;
+  --font-weight-medium: 510;
+  --font-weight-regular: 400;
+
+  /*
+   * Paleta pastel dos tiles da home (Figma "Product 2.0", node 313:1261).
+   * No Figma cada tile e a cor-base a 45% de opacidade sobre branco; os
+   * valores abaixo sao esse resultado ja resolvido em hex.
+   */
+  --tile-amarelo: #f7dfab;     /* base #edb845 */
+  --tile-rosa: #fbbfde;        /* base #f570b6 */
+  --tile-azul: #ace2f9;        /* base #47bff1 */
+  --tile-verde: #a1e6bc;       /* base #2dc86a */
+  --tile-verde-agua: #98dbdd;  /* base #1ab0b3 */
+  --tile-lilas: #e0d3fd;       /* base #bb9efa */
+
+  /* Radius e sombras recorrentes, extraidos do CSS do modulo. */
+  --radius-card: 16px;
+  --radius-tile: 10.349px;     /* valor exato do Figma, ja presente no original */
+  --radius-pill: 360px;
+  --shadow-card-hover: 0px 0px 6px rgba(0, 0, 0, 0.12);
+  --color-border-card: #d9d9d9;
+  --color-icon-muted: #525b5b;   /* seta do ModuleCard, Figma node 313:1270 */
+}
+
+/*
+ * Tokens da casca de fluxo e das barras flutuantes, movidos do Pesquisa de
+ * Clima na etapa 0.
+ *
+ * Os componentes em components/fluxo/, BarraSelecao e BottomSearchBar dependem
+ * destes valores. Enquanto viviam no modulo do clima, a casca so funcionava com
+ * aquele modulo montado - o Gestao de Pessoas e o Fluxo de Caixa ficariam com
+ * variavel indefinida.
+ *
+ * Os nomes seguem em portugues porque os componentes movidos os usam assim, e
+ * renomear significaria reescrever o CSS que a etapa 0 manda mover intacto.
+ * A unificacao de vocabulario (pt x en) esta em docs/divida-tecnica.md.
+ *
+ * --peso-medio e 500 aqui (o --font-weight-medium acima e 510). Cinco cores vem
+ * escurecidas para passar no WCAG AA, como no clima.
+ */
+:root {
+  --altura-cabecalho-fluxo: 96px;
+  --altura-rodape-fluxo: 80px;
+  --cor-fundo-desabilitado: #e3e6e6; /* background/disable */
+  --cor-preto-suave: #0c0d0d;        /* Gray/Black */
+  --cor-scrim: rgba(0, 0, 0, 0.2);   /* fundo atras do modal */
+  --cor-texto-desabilitado: #b2b9b9; /* texto-icones/disable */
+  --cor-texto-secundario: #6a7272;   /* texto-icones/secoundary, escurecido */
+  --cor-verde-ativo: #458f09;        /* accent/green, escurecido */
+  --cor-vermelho: #d0000c;           /* accent/red, escurecido */
+  --espaco-8: 8px;
+  --espaco-12: 12px;
+  --espaco-16: 16px;
+  --espaco-24: 24px;
+  --espaco-40: 40px;
+  --interruptor-desligado: #889393;
+  --largura-miolo: 532px;
+  --largura-miolo-largo: 808px;
+  --peso-medio: 500;                 /* Figma: 510 */
+}
+
+/*
+ * Aliases em portugues para os tokens em ingles acima, mais a largura da
+ * sidebar. Vieram do Pesquisa de Clima na etapa 0, junto com os componentes
+ * que os usam.
+ *
+ * Precisam morar aqui, e nao no modulo, pelo mesmo motivo do bloco anterior.
+ * O vocabulario duplicado (pt x en para o mesmo valor) esta em
+ * docs/divida-tecnica.md; unificar e trabalho a parte.
+ */
+:root {
+  --cor-fundo: var(--color-bg);              /* BG/Background */
+  --cor-superficie: var(--color-overlay);    /* fundo da sidebar */
+  --cor-texto: var(--color-text);            /* Texto-Icones/Default */
+  --cor-texto-invertido: var(--color-bg);    /* texto-icones/invert */
+  --cor-marca: var(--color-text);            /* background/marca — pílula preta */
+  --cor-borda-acao: var(--color-border);     /* action/stroke, bordas/default */
+  --raio-card: var(--radius-card);
+  --raio-pilula: var(--radius-pill);
+  --peso-regular: var(--font-weight-regular);
+  --peso-semibold: var(--font-weight-semibold); /* Figma: 590 */
+  --largura-sidebar: 76px;
+
+  /* Movimento. Os tempos vem da transicao do painel de Filtros do Gestao de
+     Pessoas, que e a referencia do projeto; a saida e mais curta, porque sair
+     de tela deve parecer mais rapido do que entrar. */
+  --movimento-entrada: 280ms ease-out;
+  --movimento-saida: 200ms ease-in;
+}

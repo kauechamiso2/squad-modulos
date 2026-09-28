@@ -1,0 +1,29 @@
+.cabecalho {
+  display: flex;
+  height: var(--altura-cabecalho-fluxo);
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-16) var(--espaco-40);
+  border-bottom: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+/* Os dois lados têm 300px fixos no Figma: é o que mantém o título preso à
+   esquerda e o X à direita, sem o título empurrar nada. */
+.titulo {
+  width: 300px;
+  margin: 0;
+  /* default 20px = o valor que estava fixo; o Fluxo de Caixa usa 16px. */
+  font-size: var(--cabecalho-fluxo-titulo-tamanho, 20px);
+  font-weight: var(--peso-medio);
+  letter-spacing: -0.26px;
+  line-height: 1.2;
+  overflow-wrap: break-word;
+}
+
+.acoes {
+  display: flex;
+  width: 300px;
+  justify-content: flex-end;
+}

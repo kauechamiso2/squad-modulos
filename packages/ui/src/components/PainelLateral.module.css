@@ -1,0 +1,175 @@
+/*
+ * Painel lateral colado a direita.
+ *
+ * Extraido do FiltrosPanel do Gestao de Pessoas quando o Fluxo de Caixa virou
+ * o segundo consumidor (os 5 paineis do fluxo e, depois, o detalhe e os
+ * filtros dele). Os valores que divergem entre os dois vem por custom
+ * property, com DEFAULT igual ao que o GP ja tinha:
+ *
+ *   --painel-margem-direita  24px no GP · 20px no Fluxo de Caixa
+ *   --painel-veu-filtro      none no GP · blur(14px) no Fluxo de Caixa
+ *   --painel-peso-titulo     --font-weight-medium (510) no GP · 500 no FC
+ *   --painel-duracao         280ms ease-out (a do Filtros do GP) em todos
+ *   --painel-largura-util    largura do conteudo (380 no FC)
+ */
+.veu {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  background: rgba(227, 230, 230, 0.4);
+  backdrop-filter: var(--painel-veu-filtro, none);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--painel-duracao, 280ms) ease-out;
+}
+
+.veuAberto {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.painel {
+  position: fixed;
+  top: 20px;
+  right: var(--painel-margem-direita, 24px);
+  z-index: 151;
+  display: flex;
+  width: var(--painel-largura, 428px);
+  /* O Gestao de Pessoas cresce com o conteudo ate o teto (default auto); o
+     Fluxo de Caixa ocupa sempre a altura toda menos as margens. */
+  height: var(--painel-altura, auto);
+  max-height: var(--painel-altura-maxima, calc(100vh - 40px));
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: var(--painel-gap, 40px);
+  padding: 24px 24px var(--painel-padding-baixo, 0) 24px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  overflow: hidden;
+  /* translateX(100%) sozinho deixaria a margem direita como uma fatia
+     visivel; empurra alem dela para o painel sair inteiro da tela. */
+  transform: translateX(calc(100% + var(--painel-margem-direita, 24px)));
+  transition: transform var(--painel-duracao, 280ms) ease-out;
+}
+
+.painelAberto { transform: translateX(0); }
+
+.cabecalho {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  box-sizing: border-box;
+  height: var(--painel-cabecalho-altura, 40px);
+  padding: var(--painel-cabecalho-padding, 0);
+}
+
+/* No cabecalho com acoes nas pontas o titulo ocupa o meio. */
+.tituloCentral { flex: 1; }
+
+.titulo {
+  font-size: 16px;
+  font-weight: var(--painel-peso-titulo, var(--font-weight-medium));
+  color: var(--color-text);
+}
+
+/* Mesmo desenho do .icon-button, para o botao com elemento React ficar igual
+   ao que o Gestao de Pessoas monta com IconButton. */
+.botaoFechar {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.botaoFechar:hover { background: var(--color-overlay); }
+
+/* Sem anel do navegador; o teclado ganha o mesmo fundo do hover. */
+.botaoFechar:focus { outline: none; }
+.botaoFechar:focus-visible { outline: none; background: var(--color-overlay); }
+
+/* `overflow-y: auto` sozinho deixa o conteudo transbordar na horizontal e,
+   durante a animacao de entrada, aparecer por baixo da borda do painel.
+   `overflow: hidden auto` recorta nos dois eixos. */
+.rolagem {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden auto;
+  /* Espaco para o rodape, que e absoluto sobre o painel. */
+  padding-bottom: var(--painel-espaco-rodape, 169px);
+}
+
+.rodape {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 24px;
+  border-top: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.botaoTexto {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 360px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--painel-peso-titulo, var(--font-weight-medium));
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.botaoPrincipal {
+  height: 40px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 360px;
+  background: #000000;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--painel-peso-titulo, var(--font-weight-medium));
+  cursor: pointer;
+}
+
+.botaoPrincipal:disabled {
+  background: var(--color-border);
+  color: #b2b9b9;
+  cursor: not-allowed;
+}
+
+/*
+ * Quem pediu menos movimento no sistema nao ve o painel deslizar - so o veu
+ * aparecendo. O painel entra e sai sem transformacao, e continua sendo
+ * desmontado depois do mesmo tempo.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .painel {
+    transform: none;
+    transition: opacity var(--painel-duracao, 280ms) ease-out;
+    opacity: 0;
+  }
+
+  .painelAberto {
+    transform: none;
+    opacity: 1;
+  }
+}

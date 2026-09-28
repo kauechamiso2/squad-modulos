@@ -1,0 +1,31 @@
+.field-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.field-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.field-modal__title {
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.field-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.field-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

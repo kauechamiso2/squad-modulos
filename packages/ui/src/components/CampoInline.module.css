@@ -1,0 +1,64 @@
+/* Defaults = `InlineEditField` + `.colaborador-detail__value-button` do GP. */
+.valor {
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: var(--campo-inline-valor-padding, 4px 8px);
+  /* O GP recua a margem para o texto ficar alinhado com os vizinhos; o Fluxo
+     de Caixa alinha pela coluna do rotulo e nao recua. */
+  margin: var(--campo-inline-valor-margem, -4px -8px);
+  font-size: 14px;
+  font-weight: var(--campo-inline-peso, var(--font-weight-regular));
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.valor:disabled {
+  cursor: not-allowed;
+  color: var(--color-text-secondary);
+}
+
+.campo {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-overlay);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.entrada {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--campo-inline-peso, var(--font-weight-regular));
+  color: var(--color-text);
+  text-align: left;
+}
+
+.entradaMultilinha {
+  resize: none;
+  line-height: 1.4;
+  field-sizing: content;
+}
+
+.limpar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}

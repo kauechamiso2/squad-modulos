@@ -1,0 +1,72 @@
+/*
+ * Regras copiadas na letra de pages/nova-pesquisa/Editor.module.css do modulo
+ * Pesquisa de Clima, de onde o ModalConfirmar as importava antes da extracao.
+ *
+ * Copia, e nao import: aquele arquivo continua no clima porque as telas de
+ * editor usam outras classes dele. CSS Modules gera hash por arquivo, entao as
+ * duas copias nao colidem. Se o desenho do modal mudar, os dois lugares
+ * precisam mudar juntos - anotado em docs/divida-tecnica.md.
+ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  /* Um modal aberto sobre o painel lateral (o resumo de transacao do Fluxo de
+     Caixa) precisa ficar acima dele - o painel esta em 151. O default continua
+     30, que e o que o Pesquisa de Clima sempre usou. */
+  z-index: var(--modal-z, 30);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--espaco-40);
+  background: var(--cor-scrim);
+  overflow-y: auto;
+}
+
+.modal {
+  display: flex;
+  width: 640px;
+  max-height: 100%;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding: var(--espaco-24);
+  border-radius: var(--raio-card);
+  background: var(--cor-fundo);
+}
+
+.modalCompacto {
+  width: 480px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.titulo {
+  margin: 0;
+  color: var(--cor-preto-suave);
+  font-size: 20px;
+  font-weight: var(--peso-semibold);
+  letter-spacing: -0.45px;
+  line-height: 25px;
+}
+
+.texto {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--peso-regular);
+  letter-spacing: -0.31px;
+  line-height: 1.5;
+}
+
+.rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rodapeDireita {
+  justify-content: flex-end;
+  gap: var(--espaco-12);
+}

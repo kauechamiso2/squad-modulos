@@ -1,0 +1,125 @@
+/*
+ * Defaults = o dropdown de coluna do Gestao de Pessoas
+ * (`.collaborators-table__filter-dropdown`). O Fluxo de Caixa sobrescreve as
+ * variaveis para o desenho do Figma 2279:107226.
+ */
+.caixa {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  display: flex;
+  min-width: var(--dropdown-largura, 200px);
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--dropdown-padding, 4px);
+  border: var(--dropdown-borda-largura, 1px) solid var(--dropdown-borda, var(--color-border));
+  border-radius: var(--dropdown-raio, 8px);
+  background: var(--color-bg);
+  box-shadow: var(--dropdown-sombra, 0px 4px 12px rgba(0, 0, 0, 0.12));
+}
+
+.ancoraDireita { left: auto; right: 0; }
+
+.busca {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: var(--dropdown-busca-padding, 16px 12px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.campoBusca {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--dropdown-texto, 14px);
+  font-weight: var(--dropdown-peso, var(--font-weight-medium));
+  line-height: 1.2;
+  letter-spacing: var(--dropdown-tracking, normal);
+  color: var(--color-text);
+}
+
+.campoBusca::placeholder { color: var(--color-text-secondary); }
+
+.contagem {
+  margin: 0;
+  flex: none;
+  padding: var(--dropdown-contagem-padding, 12px);
+  font-size: var(--dropdown-texto, 14px);
+  font-weight: var(--dropdown-peso, var(--font-weight-medium));
+  line-height: 1.2;
+  letter-spacing: var(--dropdown-tracking, normal);
+  color: var(--color-text-secondary);
+}
+
+/* A lista rola; a busca e a contagem ficam paradas. */
+.lista {
+  display: flex;
+  max-height: var(--dropdown-lista-altura, none);
+  min-height: 0;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.item {
+  display: flex;
+  height: var(--dropdown-item-altura, auto);
+  box-sizing: border-box;
+  flex: none;
+  align-items: center;
+  gap: var(--dropdown-item-gap, 8px);
+  padding: var(--dropdown-item-padding, 8px);
+  border: none;
+  border-radius: var(--dropdown-item-raio, 4px);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.item:hover { background: var(--color-overlay); }
+
+/* Modo acao: o item atual fica destacado e o conteudo empurra a marca. */
+.itemAtual { background: var(--dropdown-item-atual, var(--color-border)); }
+
+.item .conteudo { flex: 1; }
+
+.marca {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+
+.conteudo {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: var(--dropdown-conteudo-gap, 8px);
+}
+
+.rotulo {
+  overflow: hidden;
+  font-size: var(--dropdown-texto, 14px);
+  font-weight: var(--dropdown-peso, var(--font-weight-medium));
+  line-height: 1.2;
+  letter-spacing: var(--dropdown-tracking, normal);
+  color: var(--color-text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vazio {
+  margin: 0;
+  padding: var(--dropdown-contagem-padding, 12px);
+  font-size: var(--dropdown-texto, 14px);
+  font-weight: var(--dropdown-peso, var(--font-weight-medium));
+  line-height: 1.2;
+  letter-spacing: var(--dropdown-tracking, normal);
+  color: var(--color-text);
+}

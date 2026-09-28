@@ -1,0 +1,47 @@
+/* Pílula de 40px do Figma. O "Voltar" é a variante sem fundo; o "Continuar"
+   e o "Salvar" são a preta. */
+.botao {
+  display: flex;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-12) var(--espaco-16);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  color: var(--cor-texto);
+  font-size: 14px;
+  font-weight: var(--peso-medio);
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.marca {
+  background: var(--cor-marca);
+  color: var(--cor-texto-invertido);
+}
+
+/* Variante contornada (Figma 8072:6569): mesma pílula, só que com a borda
+   de ação no lugar do fundo. O padding é o mesmo 12/16 da base — a altura
+   de 40px já é da caixa toda (box-sizing: border-box), a borda de 1px não
+   precisa de compensação nenhuma. */
+.contorno {
+  border: 1px solid var(--cor-borda-acao);
+  background: var(--cor-fundo);
+}
+
+/* Variante desabilitada do Figma (8060:4681): fundo e texto apagados. */
+.botao:disabled {
+  cursor: default;
+}
+
+.marca:disabled {
+  background: var(--cor-fundo-desabilitado);
+  color: var(--cor-texto-desabilitado);
+}
+
+.botao:not(.marca):disabled {
+  color: var(--cor-texto-desabilitado);
+}

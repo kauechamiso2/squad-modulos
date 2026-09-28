@@ -1,0 +1,30 @@
+.icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0;
+}
+
+.icon-button:hover {
+  background: var(--color-overlay);
+}
+
+/*
+ * O anel azul do navegador sai. Quem navega por teclado continua vendo onde
+ * esta: `:focus-visible` so aparece na navegacao por teclado, e usa o mesmo
+ * fundo do hover - o clique nao deixa marca.
+ */
+.icon-button:focus { outline: none; }
+
+.icon-button:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.icon-button--overlay {
+  background: var(--color-overlay);
+}

@@ -1,0 +1,42 @@
+/*
+ * Figma 2279:107613 (Fluxo de Caixa). Defaults = valores do Gestao de Pessoas.
+ *
+ * Sem `font-family` nem `line-height` de proposito: o GP nunca os declarou
+ * nesta pilula, e declara-los aqui mudaria o modulo dele. O Fluxo de Caixa e o
+ * Pesquisa de Clima ja tem `button { font: inherit }` no escopo deles.
+ */
+.pilula {
+  display: inline-flex;
+  height: var(--pilula-altura, 40px);
+  box-sizing: border-box;
+  align-items: center;
+  gap: 8px;
+  padding: var(--pilula-padding, 12px 16px);
+  /* Borda sempre presente: a selecionada tem borda no Figma e a de repouso
+     nao, e sem isto o texto pularia 1px ao selecionar. */
+  border: 1px solid transparent;
+  border-radius: 360px;
+  background: var(--pilula-fundo, var(--color-overlay));
+  font-size: 14px;
+  font-weight: var(--pilula-peso, var(--font-weight-regular));
+  color: var(--color-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pilula:hover { background: var(--color-border); }
+
+.selecionada,
+.selecionada:hover {
+  border-color: #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
+.limpar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

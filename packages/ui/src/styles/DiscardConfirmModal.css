@@ -1,0 +1,25 @@
+.discard-confirm-modal {
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.discard-confirm-modal__title {
+  font-size: 18px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.discard-confirm-modal__message {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  margin-bottom: 24px;
+}
+
+.discard-confirm-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}

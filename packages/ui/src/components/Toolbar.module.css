@@ -1,0 +1,101 @@
+/*
+ * Barra de "Total: n · chip de filtro · botão Filtros".
+ *
+ * Extraida do Gestao de Pessoas (CollaboradoresToolbar.css) quando o Fluxo de
+ * Caixa virou o segundo consumidor. Mesmas medidas dos dois lados; so o peso
+ * do texto diverge, e por isso vem por variavel.
+ *
+ *   --toolbar-peso   peso do chip e do botao Filtros
+ *                    GP usa --font-weight-medium (510), o Fluxo de Caixa 500
+ */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 40px;
+}
+
+.total {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
+  color: var(--color-text-secondary);
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Chip do filtro ativo: "Este mês ✕" */
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-overlay);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--toolbar-peso, 500);
+  letter-spacing: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.chipTexto {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chipLimpar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Botao "Filtros" contornado */
+.botaoFiltros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--toolbar-peso, 500);
+  letter-spacing: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* Corpo clicavel do chip: um <button> sem desenho proprio, so para receber o
+   clique separado do X. Herda tipografia do .chipTexto. */
+.chipCorpo {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}

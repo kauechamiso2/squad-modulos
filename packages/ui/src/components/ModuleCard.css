@@ -1,0 +1,56 @@
+/* Serve como <a> (home) e como <button> (cartoes de categoria do fluxo). */
+.module-card {
+  box-sizing: border-box;
+  font-family: inherit;
+  cursor: pointer;
+  width: 256px;
+  height: 180px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow 150ms ease;
+}
+
+.module-card:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.module-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.module-card__tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-tile);
+  background: var(--color-overlay);
+  font-size: 24px;
+  line-height: 1.2;
+  overflow: hidden;
+}
+
+.module-card__arrow {
+  flex-shrink: 0;
+  color: var(--color-icon-muted);
+}
+
+.module-card__name {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.26px;
+  line-height: 1.2;
+  color: var(--color-text);
+}

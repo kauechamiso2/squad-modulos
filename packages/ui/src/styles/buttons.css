@@ -1,0 +1,26 @@
+.text-button {
+  border: none;
+  background: none;
+  padding: 8px 4px;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.pill-button {
+  height: 40px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 360px;
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  padding: 12px 20px;
+}
+
+.pill-button:disabled {
+  background: var(--color-border);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+}

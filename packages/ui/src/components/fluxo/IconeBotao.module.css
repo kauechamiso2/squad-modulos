@@ -1,0 +1,21 @@
+/* Botão redondo de 40px com um ícone de 24px dentro (padding de 10px no
+   Figma, que é o que sobra entre os dois). */
+.iconeBotao {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  cursor: pointer;
+}
+
+.icone {
+  display: block;
+  width: 24px;
+  height: 24px;
+}

@@ -1,0 +1,61 @@
+/*
+ * Barra de acao em massa. Extraida na etapa 0 a partir da versao do Pesquisa
+ * de Clima (a mais nova); o Gestao de Pessoas tinha uma copia com a mesma
+ * geometria sob nomes BEM.
+ *
+ * Mesma posicao e camada do BottomSearchBar: abaixo de qualquer modal, para
+ * escurecer junto com o resto da pagina em vez de competir com eles - e nunca
+ * aparece com a busca ao mesmo tempo, ja que quem monta so renderiza uma das
+ * duas por vez.
+ */
+.barra {
+  /*
+   * Peso da contagem. Os dois modulos divergem: o clima usa --peso-medio (500)
+   * e o Gestao de Pessoas usa --font-weight-medium (510, que com o Inter
+   * estatico cai em 600). Enquanto os dois "medium" nao forem unificados
+   * (docs/divida-tecnica.md), quem monta pode sobrescrever esta variavel.
+   */
+  --barra-selecao-peso: var(--peso-medio);
+
+  position: fixed;
+  bottom: 24px;
+  left: calc(50vw + var(--largura-sidebar) / 2);
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  /* 21px no Figma - nao e um dos tokens de espaco. */
+  gap: 21px;
+  box-sizing: border-box;
+  padding: var(--espaco-12) var(--espaco-24);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-fundo);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+}
+
+.contagem {
+  font-size: 14px;
+  font-weight: var(--barra-selecao-peso);
+  color: var(--cor-texto);
+  white-space: nowrap;
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-8);
+}
+
+.botaoIcone {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: transparent;
+  cursor: pointer;
+}

@@ -1,0 +1,124 @@
+/* Porte do BottomSearchBar do Gestão de Pessoas — mesma geometria e as
+   mesmas cores do Pipo (não são tokens do projeto, são a identidade do
+   personagem, e por isso ficam soltas aqui como lá). */
+
+.barra {
+  /*
+   * Cor do placeholder. Os dois modulos divergem: o clima usa
+   * --cor-texto-secundario (#6a7272, escurecido para WCAG AA) e o Gestao de
+   * Pessoas usa --color-text-secondary (#798282). Enquanto a paleta nao for
+   * propagada (docs/divida-tecnica.md), quem monta pode sobrescrever.
+   */
+  --busca-cor-placeholder: var(--cor-texto-secundario);
+  /*
+   * Cores da pilula do assistente. O default e o Pipo (Gestao de Pessoas e
+   * Pesquisa de Clima); o Fluxo de Caixa tem o Fin, com outra paleta
+   * (Figma 2279:100493). Quem monta sobrescreve por prop.
+   */
+  --busca-pilula-fundo: #fbedd0;
+  --busca-pilula-texto: #5d4309;
+
+  position: fixed;
+  bottom: 24px;
+  /* Centralizada na área à direita da sidebar: metade da largura dela desloca
+     o centro do cálculo de 50vw para o meio do espaço que sobra. */
+  left: calc(50vw + var(--largura-sidebar) / 2);
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  width: 468px;
+  box-sizing: border-box;
+  align-items: center;
+  gap: var(--espaco-8);
+  padding: var(--espaco-12) var(--espaco-16);
+  border-radius: var(--raio-pilula);
+  background: var(--cor-fundo);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+}
+
+.barraPipo {
+  background: #fdf6e8;
+}
+
+.molduraIcone {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.avatarPipo {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--raio-pilula);
+  object-fit: cover;
+}
+
+.campo {
+  flex: 1 0 0;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--cor-texto);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--peso-regular);
+}
+
+.campo::placeholder {
+  color: var(--busca-cor-placeholder);
+}
+
+.pilulaPipo {
+  display: flex;
+  flex: none;
+  height: 32px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--espaco-12);
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--busca-pilula-fundo);
+  color: var(--busca-pilula-texto);
+  font-family: inherit;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.fechar {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: var(--cor-superficie);
+  cursor: pointer;
+}
+
+.acaoPipo {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: var(--raio-pilula);
+  background: #f6dca2;
+  cursor: pointer;
+}
+
+.acaoPipoTransparente {
+  background: transparent;
+}

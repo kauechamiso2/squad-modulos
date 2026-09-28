@@ -1,0 +1,35 @@
+.opcao {
+  display: flex;
+  width: 100%;
+  height: var(--radio-altura, 48px);
+  align-items: center;
+  gap: 16px;
+  padding: var(--radio-padding, 0 16px);
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--radio-peso, var(--font-weight-regular));
+  letter-spacing: -0.4px;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.marca {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  box-sizing: border-box;
+  border: 1.5px solid var(--color-text-disabled, #b2b9b9);
+  border-radius: 360px;
+}
+
+/* Marcada: anel preto com o miolo preenchido, desenhado pela propria borda. */
+.marcada {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  box-shadow: inset 0 0 0 3.5px var(--color-bg);
+}

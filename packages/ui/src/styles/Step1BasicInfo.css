@@ -1,0 +1,72 @@
+.step1 {
+  box-sizing: border-box;
+  width: 532px;
+  max-width: 100%;
+  margin: 0 auto;
+  padding-top: 156px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.step1__name-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--color-text);
+  padding: 0 0 12px;
+}
+
+.step1__name-input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.step1__contract {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step1__contract-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.step1__contract-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  text-align: left;
+}
+
+.step1__contract-row-key {
+  flex-grow: 1;
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.step1__contract-row-value {
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.step1__contract-row-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
