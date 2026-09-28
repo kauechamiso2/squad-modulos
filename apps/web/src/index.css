@@ -1,0 +1,54 @@
+/*
+ * Tailwind SEM preflight.
+ *
+ * O preflight e o reset do Tailwind; ele zeraria bordas, margens e
+ * tipografia do modulo Gestao de Pessoas, que tem CSS proprio em BEM e
+ * precisa continuar pixel a pixel igual ao projeto original. Em vez de
+ * "@import 'tailwindcss'" (que traz theme + preflight + utilities),
+ * importamos so as camadas theme e utilities.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/*
+ * Os tokens vem DEPOIS do Tailwind e ficam fora de qualquer @layer.
+ * Isso importa: a camada theme do Tailwind tambem define
+ * --font-weight-medium (com valor 500). Estilos sem layer vencem os que
+ * estao em layer, entao o nosso 510 prevalece. Nao mova este import para
+ * dentro de um @layer nem para antes do Tailwind.
+ */
+@import '@squad/ui/tokens.css';
+
+/* Reset global, identico ao index.css do projeto original. */
+:root {
+  color-scheme: light;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
+}

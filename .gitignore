@@ -1,0 +1,51 @@
+# Dependencias
+node_modules/
+
+# Build
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Variaveis de ambiente (o .env.example, se existir, fica versionado)
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Testes e verificacao visual
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+# Os PNGs de comparacao de 0 px sao artefato de verificacao, nao fonte.
+shots/
+screenshots/
+*.diff.png
+
+# Temporarios
+/tmp/
+.cache/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

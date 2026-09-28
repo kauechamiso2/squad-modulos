@@ -1,0 +1,23 @@
+{
+  "name": "squad-modulos",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "npm run dev -w apps/web",
+    "build": "npm run build -w apps/web",
+    "preview": "npm run preview -w apps/web",
+    "lint": "oxlint",
+    "test": "node --test $(find packages -name '*.test.js' -not -path '*/node_modules/*')"
+  },
+  "devDependencies": {
+    "oxlint": "^1.79.0"
+  }
+}
