@@ -8,17 +8,14 @@ import './Step3Beneficiarios.css'
 function BeneficiariosModal({
   colaboradorIds,
   teamNames,
-  cargoNames,
   todaEmpresa,
   collaborators,
   times,
-  cargos,
   onSave,
   onClose,
 }) {
   const [localColaboradorIds, setLocalColaboradorIds] = useState(() => new Set(colaboradorIds))
   const [localTeamNames, setLocalTeamNames] = useState(() => new Set(teamNames))
-  const [localCargoNames, setLocalCargoNames] = useState(() => new Set(cargoNames))
   const [localTodaEmpresa, setLocalTodaEmpresa] = useState(todaEmpresa)
   const [query, setQuery] = useState('')
 
@@ -28,15 +25,13 @@ function BeneficiariosModal({
       list.push({ type: 'colaborador', key: collaborator.id, label: collaborator.name }),
     )
     times.forEach((team) => list.push({ type: 'time', key: team.name, label: `${team.name} (time)` }))
-    cargos.forEach((cargo) => list.push({ type: 'cargo', key: cargo.name, label: `${cargo.name} (cargo)` }))
     return list
-  }, [collaborators, times, cargos])
+  }, [collaborators, times])
 
   const isSelected = (entity) => {
     if (entity.type === 'company') return localTodaEmpresa
     if (entity.type === 'colaborador') return localColaboradorIds.has(entity.key)
-    if (entity.type === 'time') return localTeamNames.has(entity.key)
-    return localCargoNames.has(entity.key)
+    return localTeamNames.has(entity.key)
   }
 
   const toggle = (entity) => {
@@ -47,9 +42,7 @@ function BeneficiariosModal({
     const [setter, current] =
       entity.type === 'colaborador'
         ? [setLocalColaboradorIds, localColaboradorIds]
-        : entity.type === 'time'
-          ? [setLocalTeamNames, localTeamNames]
-          : [setLocalCargoNames, localCargoNames]
+        : [setLocalTeamNames, localTeamNames]
     const next = new Set(current)
     if (next.has(entity.key)) {
       next.delete(entity.key)
@@ -69,13 +62,12 @@ function BeneficiariosModal({
 
   return (
     <FieldModalShell
-      title="Colaboradores, times, cargos"
+      title="Colaboradores, times"
       onClose={onClose}
       onSave={() =>
         onSave({
           colaboradorIds: localColaboradorIds,
           teamNames: localTeamNames,
-          cargoNames: localCargoNames,
           todaEmpresa: localTodaEmpresa,
         })
       }
@@ -111,7 +103,7 @@ function BeneficiariosModal({
           <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
         </div>
         <p className="step3-beneficiarios__helper">
-          Busque por nome, time, cargo ou selecione toda a empresa
+          Busque por nome, time ou selecione toda a empresa
         </p>
       </div>
 

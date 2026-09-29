@@ -3,6 +3,7 @@ import calendarBlankIcon from '../../assets/icons/CalendarBlank.svg'
 import { Checkbox, FieldModalShell } from '@squad/ui'
 import { todayIso, formatDatePt } from '../../utils/formatters.js'
 import './DateFieldModal.css'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 
 function EndDateFieldModal({ value, onSave, onClose }) {
   const [noEndDate, setNoEndDate] = useState(value === null)
@@ -42,7 +43,7 @@ function EndDateFieldModal({ value, onSave, onClose }) {
         className="date-field__no-end-toggle"
         onClick={() => setNoEndDate((prev) => !prev)}
       >
-        <Checkbox checked={noEndDate} />
+        <Checkbox checked={noEndDate} iconeMarcado={checkSquareIcon} />
         <span className="date-field__no-end-label">
           Não especificar data de fim
         </span>

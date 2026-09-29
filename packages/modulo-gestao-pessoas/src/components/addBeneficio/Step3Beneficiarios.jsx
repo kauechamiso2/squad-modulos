@@ -9,20 +9,17 @@ import '@squad/ui/styles/Step2AdditionalInfo.css'
 function Step3Beneficiarios({
   colaboradorIds,
   teamNames,
-  cargoNames,
   todaEmpresa,
   onApplySelection,
   collaborators,
   times,
-  cargos,
   onBack,
   onExit,
   onContinue,
 }) {
   const [modalOpen, setModalOpen] = useState(false)
 
-  const totalSelected =
-    colaboradorIds.size + teamNames.size + cargoNames.size + (todaEmpresa ? 1 : 0)
+  const totalSelected = colaboradorIds.size + teamNames.size + (todaEmpresa ? 1 : 0)
 
   return (
     <WizardShell
@@ -67,11 +64,9 @@ function Step3Beneficiarios({
         <BeneficiariosModal
           colaboradorIds={colaboradorIds}
           teamNames={teamNames}
-          cargoNames={cargoNames}
           todaEmpresa={todaEmpresa}
           collaborators={collaborators}
           times={times}
-          cargos={cargos}
           onClose={() => setModalOpen(false)}
           onSave={(selection) => {
             onApplySelection(selection)

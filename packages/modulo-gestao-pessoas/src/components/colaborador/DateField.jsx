@@ -5,6 +5,7 @@ import { Checkbox } from '@squad/ui'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
 import './InlineEditField.css'
 import './ColaboradorDetail.css'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 
 function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
   const [open, setOpen] = useState(false)
@@ -88,7 +89,7 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
               className="colaborador-date-field__no-end-toggle"
               onClick={toggleNoEnd}
             >
-              <Checkbox checked={noEndDate} />
+              <Checkbox checked={noEndDate} iconeMarcado={checkSquareIcon} />
               <span className="colaborador-date-field__no-end-label">
                 Não especificar data de fim
               </span>

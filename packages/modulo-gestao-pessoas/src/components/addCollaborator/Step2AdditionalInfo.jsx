@@ -8,7 +8,7 @@ import DateFieldModal from './DateFieldModal.jsx'
 import EndDateFieldModal from './EndDateFieldModal.jsx'
 import PagamentoModal from './PagamentoModal.jsx'
 import SalarioModal from './SalarioModal.jsx'
-import { COLLECTIONS, addItem } from '../../utils/storage.js'
+import { COLLECTIONS, addItem, getCollection } from '../../utils/storage.js'
 import { formatDatePt, formatCurrencyBRL, formatPaymentValue } from '../../utils/formatters.js'
 import '@squad/ui/styles/buttons.css'
 import '@squad/ui/styles/Step2AdditionalInfo.css'
@@ -98,6 +98,11 @@ const FIELDS_CONTRATO = [
 ]
 
 function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue }) {
+  // Cargo nao tem colecao propria: as sugestoes sao os valores ja em uso.
+  const cargoOptions = Array.from(
+    new Set(getCollection(COLLECTIONS.COLABORADORES).flatMap((c) => c.cargos ?? [])),
+  )
+
   const isFixo = contractType === 'Fixo'
   const fields = isFixo ? FIELDS_FIXO : FIELDS_CONTRATO
 
@@ -211,7 +216,9 @@ function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue })
       {openModal === 'cargo' && (
         <MultiSelectFieldModal
           title="Cargo"
-          collectionName={COLLECTIONS.CARGOS}
+          /* Cargo deixou de ter colecao propria: as opcoes sao os valores ja
+             em uso entre os colaboradores. */
+          options={cargoOptions}
           createLabelPrefix="Criar cargo"
           value={values.cargos}
           onClose={closeModal}

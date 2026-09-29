@@ -34,7 +34,11 @@ import './ColaboradorDetail.css'
 function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
+  // Cargo nao tem colecao propria: as sugestoes sao os valores distintos ja
+  // em uso entre os colaboradores.
+  const cargoOptions = Array.from(
+    new Set(collaborators.flatMap((collaborator) => collaborator.cargos)),
+  )
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
@@ -197,7 +201,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         <span className="colaborador-detail__row-label">Cargo</span>
         <CargoField
           value={collaborator.cargos}
-          cargos={cargos}
+          cargoOptions={cargoOptions}
           disabled={desligado}
           onSave={(draft) => updateField('cargos', draft)}
         />
@@ -419,10 +423,11 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
       comRodape={false}
       onFechar={onClose}
       className={[
+        'gp-painel',
         'colaborador-detail',
         mode === 'full' ? 'colaborador-detail--full' : 'colaborador-detail--panel',
       ].join(' ')}
-      classNameVeu={mode === 'full' ? 'colaborador-detail-overlay--oculto' : ''}
+      classNameVeu={`gp-painel ${mode === 'full' ? 'colaborador-detail-overlay--oculto' : ''}`.trim()}
     >
       <div className="colaborador-detail__scroll">
         {mode === 'full' ? (

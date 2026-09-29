@@ -2,6 +2,7 @@ import { useState } from 'react'
 import magnifyingGlassIcon from '../../assets/icons/MagnifyingGlass.svg'
 import { Checkbox, FieldModalShell } from '@squad/ui'
 import '@squad/ui/styles/SelectListModal.css'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 
 function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
   const [query, setQuery] = useState('')
@@ -56,7 +57,7 @@ function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
           if (elsewhereValue) {
             return (
               <div className="select-list__item--disabled" key={person.id}>
-                <Checkbox checked={false} />
+                <Checkbox checked={false} iconeMarcado={checkSquareIcon} />
                 <span className="select-list__item-label">{person.name}</span>
                 <span className="select-list__item-hint">Já atribuído a {elsewhereValue}</span>
               </div>
@@ -71,7 +72,7 @@ function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
               className="select-list__item"
               onClick={() => toggle(person.id)}
             >
-              <Checkbox checked={checked} />
+              <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
               <span className="select-list__item-label">{person.name}</span>
             </button>
           )

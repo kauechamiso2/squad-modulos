@@ -436,3 +436,17 @@ com qualquer uma delas.
 
 Se algum dia "agendada" virar um estado de verdade no dado, esta regra sai do
 filtro e vira campo.
+
+## Colecao orfa `squad:gestao-pessoas:cargos`
+
+A aba Cargo saiu do produto (upstream `f0a5d55`), mas quem ja usou o modulo
+tem a colecao `squad:gestao-pessoas:cargos` gravada no navegador. O original
+nao apaga a chave: so limpa as referencias a cargo dentro dos beneficiarios
+(`cleanupCargoBeneficiarios`). Trouxemos a migration como esta.
+
+Consequencia: os cargos que o usuario ja tinha criado deixam de alimentar as
+sugestoes do campo Cargo do colaborador - o original semeia essas sugestoes de
+uma lista fixa, nao da colecao. Decidido em 29 Set 2026 nao semear a partir da
+colecao orfa, para nao divergir do original.
+
+A decidir: apagar a chave numa migration futura ou deixar como lixo inerte.

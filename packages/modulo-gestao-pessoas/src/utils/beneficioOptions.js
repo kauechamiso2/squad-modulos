@@ -1,4 +1,4 @@
-import { Stethoscope, Bus, ForkKnife, Barbell, Tooth, Shield, Gift } from '@phosphor-icons/react'
+import { Stethoscope, Van, ForkKnife, Barbell, Tooth, Shield, Gift } from '@phosphor-icons/react'
 
 export const BENEFICIO_TYPES = [
   'Plano de Saúde',
@@ -12,7 +12,7 @@ export const BENEFICIO_TYPES = [
 
 const TYPE_ICON_BY_NAME = {
   'Plano de Saúde': Stethoscope,
-  'Vale Transporte': Bus,
+  'Vale Transporte': Van,
   'Vale Alimentação': ForkKnife,
   'Bem-Estar': Barbell,
   'Plano Odontológico': Tooth,
@@ -22,6 +22,21 @@ const TYPE_ICON_BY_NAME = {
 
 export function getBeneficioTypeIcon(tipo) {
   return TYPE_ICON_BY_NAME[tipo] ?? Gift
+}
+
+// The singular noun each category's Fornecedor search placeholder reads
+// naturally with - "Buscar plano...", "Buscar seguradora...", etc.
+const SEARCH_NOUN_BY_TYPE = {
+  'Plano de Saúde': 'plano',
+  'Vale Transporte': 'vale',
+  'Vale Alimentação': 'vale',
+  'Bem-Estar': 'parceiro',
+  'Plano Odontológico': 'plano',
+  'Seguro de Vida': 'seguradora',
+}
+
+export function getBeneficioSearchNoun(tipo) {
+  return SEARCH_NOUN_BY_TYPE[tipo] ?? 'fornecedor'
 }
 
 // The value a benefit is matched against when filtering by "Tipo de

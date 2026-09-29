@@ -8,8 +8,6 @@ import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
-import CargosToolbar from '../components/CargosToolbar.jsx'
-import CargosTable from '../components/CargosTable.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
 import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
@@ -21,7 +19,6 @@ import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
-import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import {
@@ -40,7 +37,6 @@ import './Home.css'
 const TABS = [
   { id: 'colaboradores', label: 'Colaboradores' },
   { id: 'times', label: 'Times' },
-  { id: 'cargos', label: 'Cargos' },
   { id: 'beneficios', label: 'Benefícios' },
 ]
 
@@ -103,8 +99,6 @@ function Home({ backTo }) {
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
   const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
   const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
-  const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
-  const [novoCargoId, setNovoCargoId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
@@ -124,9 +118,7 @@ function Home({ backTo }) {
   // the quick-create flow in a collaborator's Time modal after this page
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
-  const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
 
   const filteredBeneficios = useMemo(() => {
     return beneficios.filter((benefit) => {
@@ -271,116 +263,6 @@ function Home({ backTo }) {
 
   const clearTimesFilters = () => setTimesFilters(createEmptyTimesFilters())
 
-  // Every Cargos row is derived from real collaborators - group them by
-  // (cargo name, contract type). A cargo still marked pending (the only kind
-  // the quick-create flow produces today) collapses all its contract types
-  // into a single aggregated row; once a cargo has pending: false, each
-  // contract type in use for that cargo becomes its own row.
-  const cargoRows = useMemo(() => {
-    const cargoRecordByName = new Map(cargos.map((cargo) => [cargo.name, cargo]))
-    const membersByCargoName = new Map()
-    collaborators.forEach((collaborator) => {
-      collaborator.cargos.forEach((cargoName) => {
-        if (!membersByCargoName.has(cargoName)) {
-          membersByCargoName.set(cargoName, [])
-        }
-        membersByCargoName.get(cargoName).push(collaborator)
-      })
-    })
-
-    const rows = []
-    membersByCargoName.forEach((members, cargoName) => {
-      const cargoRecord = cargoRecordByName.get(cargoName)
-      const isPending = cargoRecord ? cargoRecord.pending !== false : true
-
-      if (isPending) {
-        rows.push({
-          id: `${cargoName}::pending`,
-          cargoName,
-          isPendingCargo: true,
-          contractType: null,
-          count: members.length,
-          teamNames: [],
-          salaryMin: null,
-          salaryMax: null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-        return
-      }
-
-      const membersByContractType = new Map()
-      members.forEach((member) => {
-        const contractType = member.contractType || 'Fixo'
-        if (!membersByContractType.has(contractType)) {
-          membersByContractType.set(contractType, [])
-        }
-        membersByContractType.get(contractType).push(member)
-      })
-
-      membersByContractType.forEach((groupMembers, contractType) => {
-        const teamNameSet = new Set()
-        groupMembers.forEach((member) =>
-          member.times.forEach((name) => teamNameSet.add(name)),
-        )
-        const fixoSalaries =
-          contractType === 'Fixo'
-            ? groupMembers.filter((member) => member.salario != null).map((member) => member.salario)
-            : []
-        rows.push({
-          id: `${cargoName}::${contractType}`,
-          cargoName,
-          isPendingCargo: false,
-          contractType,
-          count: groupMembers.length,
-          teamNames: Array.from(teamNameSet),
-          salaryMin: fixoSalaries.length ? Math.min(...fixoSalaries) : null,
-          salaryMax: fixoSalaries.length ? Math.max(...fixoSalaries) : null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-      })
-    })
-
-    return rows
-  }, [collaborators, cargos])
-
-  const filteredCargoRows = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
-    return cargoRows.filter((row) => {
-      if (query && !row.cargoName.toLowerCase().includes(query)) {
-        return false
-      }
-      if (
-        columnFilters.atividade.size > 0 &&
-        !columnFilters.atividade.has(row.contractType)
-      ) {
-        return false
-      }
-      if (
-        columnFilters.time.size > 0 &&
-        !row.teamNames.some((name) => columnFilters.time.has(name))
-      ) {
-        return false
-      }
-      return true
-    })
-  }, [cargoRows, searchQuery, columnFilters])
-
-  const toggleCargoSelect = (id) => {
-    setCargoSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const clearCargoSelection = () => setCargoSelectedIds(new Set())
-
-  const selectAllCargos = (ids) => setCargoSelectedIds(new Set(ids))
-
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -435,19 +317,6 @@ function Home({ backTo }) {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
           setNovoTimeFlowOpen(false)
           setNovoTimeTeamId(null)
-        }}
-      />
-    )
-  }
-
-  if (novoCargoFlowOpen) {
-    return (
-      <NovoCargoFlow
-        cargoId={novoCargoId}
-        onExit={() => {
-          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoCargoFlowOpen(false)
-          setNovoCargoId(null)
         }}
       />
     )
@@ -524,31 +393,6 @@ function Home({ backTo }) {
                 }}
               />
             </div>
-          ) : activeTab === 'cargos' ? (
-            <div className="home__panel">
-              <CargosToolbar
-                total={cargoRows.length}
-                onFiltrosClick={() => setFiltrosPanelOpen(true)}
-                filtersSummary={filtersSummary}
-                onClearAllFilters={clearAllFilters}
-              />
-              <CargosTable
-                rows={filteredCargoRows}
-                selectedIds={cargoSelectedIds}
-                onToggleSelect={toggleCargoSelect}
-                onSelectAll={selectAllCargos}
-                onDeselectAll={clearCargoSelection}
-                columnFilters={columnFilters}
-                onToggleFilterOption={toggleFilterOption}
-                onClearFilter={clearFilter}
-                timeOptions={timeOptions}
-                atividadeOptions={ATIVIDADE_OPTIONS}
-                onCriarCargo={(recordId) => {
-                  setNovoCargoId(recordId)
-                  setNovoCargoFlowOpen(true)
-                }}
-              />
-            </div>
           ) : activeTab === 'beneficios' ? (
             <div className="home__panel">
               <BeneficiosToolbar
@@ -576,11 +420,6 @@ function Home({ backTo }) {
             setNovoModalOpen(false)
             setNovoTimeTeamId(null)
             setNovoTimeFlowOpen(true)
-          }}
-          onSelectCargo={() => {
-            setNovoModalOpen(false)
-            setNovoCargoId(null)
-            setNovoCargoFlowOpen(true)
           }}
           onSelectBeneficio={() => {
             setNovoModalOpen(false)

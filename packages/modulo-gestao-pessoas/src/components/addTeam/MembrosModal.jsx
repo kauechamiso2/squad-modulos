@@ -2,6 +2,7 @@ import { useState } from 'react'
 import magnifyingGlassIcon from '../../assets/icons/MagnifyingGlass.svg'
 import { Checkbox, FieldModalShell } from '@squad/ui'
 import '@squad/ui/styles/SelectListModal.css'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 
 function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSave, onClose }) {
   const [query, setQuery] = useState('')
@@ -53,7 +54,7 @@ function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSav
               className="select-list__item"
               onClick={() => toggle(collaborator.id)}
             >
-              <Checkbox checked={checked} />
+              <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
               <span className="select-list__item-label">{collaborator.name}</span>
             </button>
           )

@@ -4,16 +4,25 @@ import plusIcon from '../../assets/icons/Plus.svg'
 import { Checkbox, FieldModalShell } from '@squad/ui'
 import { getCollection, addItem } from '../../utils/storage.js'
 import '@squad/ui/styles/SelectListModal.css'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 
+/*
+ * `options` e uma alternativa a `collectionName`: uma lista de nomes pronta,
+ * sem colecao por tras. Cargo deixou de ter colecao propria, entao as opcoes
+ * dele sao os valores ja em uso entre os colaboradores - e nao ha o que criar.
+ */
 function MultiSelectFieldModal({
   title,
   collectionName,
+  options,
   createLabelPrefix,
   value,
   onSave,
   onClose,
 }) {
-  const [items] = useState(() => getCollection(collectionName))
+  const [items] = useState(() =>
+    options ? options.map((name) => ({ name })) : getCollection(collectionName),
+  )
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(() => new Set(value))
 
@@ -27,7 +36,7 @@ function MultiSelectFieldModal({
   const exactMatch = items.some(
     (item) => item.name.toLowerCase() === trimmedQuery.toLowerCase(),
   )
-  const showCreate = trimmedQuery.length > 0 && !exactMatch
+  const showCreate = !options && trimmedQuery.length > 0 && !exactMatch
 
   const toggle = (name) => {
     setSelected((prev) => {
@@ -74,7 +83,7 @@ function MultiSelectFieldModal({
               className="select-list__item"
               onClick={() => toggle(item.name)}
             >
-              <Checkbox checked={checked} />
+              <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
               <span className="select-list__item-label">{item.name}</span>
             </button>
           )

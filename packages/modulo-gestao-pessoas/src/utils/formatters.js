@@ -91,3 +91,23 @@ export function formatPaymentValue(value, tipoPagamento) {
   if (tipoPagamento === 'Anual') return `${base} / ano`
   return base
 }
+
+function slugifyNamePart(word) {
+  return word
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+}
+
+// "José da Silva Santos" -> "jose.santos@" - first and last word, lowercase,
+// accents and spaces stripped. Used to pre-fill the Email field in the Novo
+// Colaborador CLT flow.
+export function buildEmailPrefix(name) {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ''
+  const first = slugifyNamePart(parts[0])
+  if (parts.length === 1) return `${first}@`
+  const last = slugifyNamePart(parts[parts.length - 1])
+  return `${first}.${last}@`
+}
