@@ -64,6 +64,10 @@
   white-space: nowrap;
 }
 
+.step4__variant-atribuir:hover {
+  background: var(--color-overlay);
+}
+
 .step4__add-variant {
   align-self: flex-start;
   border: none;

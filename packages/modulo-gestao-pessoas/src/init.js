@@ -2,6 +2,7 @@ import {
   seedInitialData,
   cleanupLegacySeedTimes,
   cleanupMultiTeamColaboradores,
+  cleanupCargoBeneficiarios,
   migrateLegacyKeys,
 } from './utils/storage.js'
 
@@ -14,4 +15,5 @@ export function initGestaoPessoas() {
   seedInitialData()
   cleanupLegacySeedTimes()
   cleanupMultiTeamColaboradores()
+  cleanupCargoBeneficiarios()
 }

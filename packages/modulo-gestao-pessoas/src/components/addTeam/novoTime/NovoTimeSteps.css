@@ -1,0 +1,202 @@
+/* Step 2 (Cor e Ícone) and Step 4 (Informações adicionais) share this
+   72px bordered-row pattern. */
+.time-step__row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 72px;
+}
+
+.time-step__row--bordered {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.time-step__row-label-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.time-step__row-icon {
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.time-step__row-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* Step 2 - color circles + icon pill */
+.time-step__color-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-step__color-dot {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.time-step__icon-pill {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 12px;
+  border: none;
+  border-radius: 999px;
+  background: #f4f5f5;
+  color: var(--color-text);
+}
+
+/* Step 3 - inline title badge, search field, member grid */
+.time-step__title-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6.4px;
+  vertical-align: middle;
+}
+
+.time-step__search {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.time-step__search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.time-step__search-input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.time-step__search-dropdown {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 288px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 30;
+}
+
+.time-step__search-dropdown-item {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.time-step__search-dropdown-item:hover {
+  background: #f4f5f5;
+}
+
+.time-step__search-dropdown-empty {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.time-step__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.time-step__card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--color-bg);
+  text-align: left;
+}
+
+.time-step__card:hover {
+  background: var(--color-overlay);
+}
+
+.time-step__card--selected {
+  border-color: var(--color-text);
+}
+
+.time-step__card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.time-step__card-name {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.time-step__card-cargo {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Step 4 - value display (defaults "Adicionar"), same pattern as
+   colaborador-detail__value-button. */
+.time-step__row-value {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}

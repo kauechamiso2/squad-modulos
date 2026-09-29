@@ -450,3 +450,33 @@ uma lista fixa, nao da colecao. Decidido em 29 Set 2026 nao semear a partir da
 colecao orfa, para nao divergir do original.
 
 A decidir: apagar a chave numa migration futura ou deixar como lixo inerte.
+
+## Dois sistemas de toast
+
+O Gestao de Pessoas trouxe do original o seu proprio sistema de toast
+(`components/toast/`: `ToastContext`, `ToastStack`, `Toast.css`), com
+`showToast('success' | 'danger', mensagem)`, auto-dispensa em 5s e animacao de
+saida de 350ms. O Fluxo de Caixa tem o dele. Sao dois desenhos e duas APIs.
+
+Por ora o `ToastProvider` fica no `GestaoPessoasRoutes`, e nao no `apps/web`:
+assim cada modulo continua com o seu, sem um decidir pelo outro.
+
+A decidir com o Bruno: qual desenho vira o padrao, e promover um so para o
+`@squad/ui`.
+
+## `ConfirmModal` (GP) x `ModalConfirmar` (ui)
+
+O original criou um `ConfirmModal` proprio (icone do Phosphor, titulo,
+mensagem, rotulo do confirmar) e passou a montar o `DiscardConfirmModal` em
+cima dele. O `@squad/ui` ja tem um `ModalConfirmar`, vindo do Pesquisa de
+Clima, com outra API (titulo, texto, rotulo, modo `soAviso`, X) e outro
+desenho.
+
+Como o `DiscardConfirmModal` ficou sem nenhum consumidor fora do Gestao de
+Pessoas, ele saiu do `@squad/ui` e voltou para o modulo, junto com o
+`ConfirmModal`. Enquanto os dois nao forem unificados, o modulo tem os dois
+caminhos: `ConfirmModal` nos fluxos novos e o `ModalOverlay` +
+`DiscardConfirmModal.css` nos modais de deletar/desligar que o PR seguinte
+ainda vai converter.
+
+A decidir com o Bruno: qual API e qual desenho ficam, e promover um so.

@@ -1,16 +1,21 @@
 import { useMemo, useState } from 'react'
-import Step1TeamInfo from './Step1TeamInfo.jsx'
-import Step2TeamInfo from './Step2TeamInfo.jsx'
-import DiscardConfirmModal from '../addCollaborator/DiscardConfirmModal.jsx'
-import {
-  COLLECTIONS,
-  getCollection,
-  setCollection,
-  generateId,
-} from '../../utils/storage.js'
-import { pickDefaultColorId, guessTeamIconName } from '../../utils/teamOptions.js'
+import TimeNomeStep from './TimeNomeStep.jsx'
+import TimeCorIconeStep from './TimeCorIconeStep.jsx'
+import TimeMembrosStep from './TimeMembrosStep.jsx'
+import TimeInfoStep from './TimeInfoStep.jsx'
+import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
+import { COLLECTIONS, getCollection, setCollection, generateId } from '../../../utils/storage.js'
+import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOptions.js'
+import { useToast } from '../../toast/ToastContext.jsx'
 
-function NovoTimeFlow({ teamId, onExit }) {
+// The step-by-step full-screen flow for creating a team, triggered from the
+// "Time" card in the Criar Novo modal (brand-new team, starts at Tela 1 -
+// Nome), and also from a pending team card's "Criar time" (teamId given -
+// the name already exists from the quick-create panel, so Tela 1 is
+// skipped and the flow opens straight at Cor e Ícone, pre-filled with the
+// team's already-selected members).
+function NovoTimeStepFlow({ teamId, onExit }) {
+  const { showToast } = useToast()
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
 
@@ -27,26 +32,25 @@ function NovoTimeFlow({ teamId, onExit }) {
   }, [existingTeam, collaborators])
 
   const usedColors = useMemo(
-    () =>
-      times
-        .filter((team) => team.id !== teamId && team.color)
-        .map((team) => team.color),
+    () => times.filter((team) => team.id !== teamId && team.color).map((team) => team.color),
     [times, teamId],
   )
 
-  const [step, setStep] = useState(1)
+  const [step, setStep] = useState(existingTeam ? 'cor-icone' : 'nome')
   const [name, setName] = useState(existingTeam?.name ?? '')
   const [colorId, setColorId] = useState(
-    existingTeam?.color ?? pickDefaultColorId(usedColors),
+    () => existingTeam?.color ?? pickDefaultColorId(usedColors),
   )
   const [iconTouched, setIconTouched] = useState(Boolean(existingTeam?.icon))
   const [iconName, setIconName] = useState(
-    existingTeam?.icon ?? guessTeamIconName(existingTeam?.name ?? ''),
+    () => existingTeam?.icon ?? guessTeamIconName(existingTeam?.name ?? ''),
   )
+  const [memberOrder, setMemberOrder] = useState(initialMemberIds)
   const [leaderId, setLeaderId] = useState(existingTeam?.leaderId ?? null)
-  const [membroIds, setMembroIds] = useState(() => new Set(initialMemberIds))
   const [descricao, setDescricao] = useState(existingTeam?.descricao ?? '')
   const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false)
+
+  const openDiscardConfirm = () => setDiscardConfirmOpen(true)
 
   const handleNameChange = (value) => {
     setName(value)
@@ -61,7 +65,7 @@ function NovoTimeFlow({ teamId, onExit }) {
   }
 
   const handleSave = () => {
-    const finalMemberIds = Array.from(membroIds)
+    const finalMemberIds = memberOrder
     const previousName = existingTeam?.name ?? null
 
     const updatedTimes = existingTeam
@@ -111,9 +115,7 @@ function NovoTimeFlow({ teamId, onExit }) {
           previousName && previousName !== name
             ? teamNames.filter((teamName) => teamName !== previousName)
             : teamNames
-        teamNames = withoutOldName.includes(name)
-          ? withoutOldName
-          : [...withoutOldName, name]
+        teamNames = withoutOldName.includes(name) ? withoutOldName : [...withoutOldName, name]
       }
 
       if (teamNames === collaborator.times) return collaborator
@@ -121,36 +123,61 @@ function NovoTimeFlow({ teamId, onExit }) {
     })
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
 
+    showToast('success', 'Time criado com sucesso')
     onExit()
   }
 
   return (
     <>
-      {step === 1 && (
-        <Step1TeamInfo
+      {step === 'nome' && (
+        <TimeNomeStep
           name={name}
           onNameChange={handleNameChange}
+          onBack={onExit}
+          onClose={openDiscardConfirm}
+          onContinue={() => setStep('cor-icone')}
+        />
+      )}
+
+      {step === 'cor-icone' && (
+        <TimeCorIconeStep
+          name={name}
           colorId={colorId}
           onColorChange={setColorId}
           iconName={iconName}
           onIconChange={handleIconChange}
-          onExit={() => setDiscardConfirmOpen(true)}
-          onContinue={() => setStep(2)}
+          usedColors={usedColors}
+          onBack={existingTeam ? onExit : () => setStep('nome')}
+          onClose={openDiscardConfirm}
+          onContinue={() => setStep('membros')}
         />
       )}
 
-      {step === 2 && (
-        <Step2TeamInfo
+      {step === 'membros' && (
+        <TimeMembrosStep
+          name={name}
+          colorId={colorId}
+          iconName={iconName}
+          collaborators={collaborators}
+          memberOrder={memberOrder}
+          onMemberOrderChange={setMemberOrder}
+          onBack={() => setStep('cor-icone')}
+          onClose={openDiscardConfirm}
+          onContinue={() => setStep('info')}
+        />
+      )}
+
+      {step === 'info' && (
+        <TimeInfoStep
           leaderId={leaderId}
           onLeaderChange={setLeaderId}
-          membroIds={membroIds}
-          onMembrosChange={setMembroIds}
+          memberOrder={memberOrder}
+          collaborators={collaborators}
           descricao={descricao}
           onDescricaoChange={setDescricao}
-          collaborators={collaborators}
-          onBack={() => setStep(1)}
-          onExit={() => setDiscardConfirmOpen(true)}
-          onContinue={handleSave}
+          onBack={() => setStep('membros')}
+          onClose={openDiscardConfirm}
+          onCreate={handleSave}
         />
       )}
 
@@ -164,4 +191,4 @@ function NovoTimeFlow({ teamId, onExit }) {
   )
 }
 
-export default NovoTimeFlow
+export default NovoTimeStepFlow

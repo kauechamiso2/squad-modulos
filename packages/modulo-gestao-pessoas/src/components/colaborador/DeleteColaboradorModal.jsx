@@ -1,6 +1,6 @@
 import { ModalOverlay } from '@squad/ui'
 import '@squad/ui/styles/buttons.css'
-import '@squad/ui/styles/DiscardConfirmModal.css'
+import '../addCollaborator/DiscardConfirmModal.css'
 
 function DeleteColaboradorModal({ name, onCancel, onConfirm }) {
   return (

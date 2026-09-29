@@ -34,6 +34,10 @@
   color: var(--color-text);
 }
 
+.times-toolbar__filtros:hover {
+  background: var(--color-overlay);
+}
+
 .times-toolbar__filters-summary {
   display: flex;
   align-items: center;

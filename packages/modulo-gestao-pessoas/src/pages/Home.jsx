@@ -11,6 +11,7 @@ import TimesGrid from '../components/TimesGrid.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
 import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
+import { useToast } from '../components/toast/ToastContext.jsx'
 import AddEmTimeModal from '../components/AddEmTimeModal.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
@@ -18,14 +19,15 @@ import TimesFiltrosPanel from '../components/TimesFiltrosPanel.jsx'
 import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
-import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
-import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
+import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
+import NovoBeneficioStepFlow from '../components/addBeneficio/novoBeneficio/NovoBeneficioStepFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import {
   getCollection,
   setCollection,
   getCollaboratorActiveSince,
   removeItems,
+  duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear } from '../utils/formatters.js'
@@ -71,6 +73,7 @@ function createEmptyBeneficiosFilters() {
 }
 
 function Home({ backTo }) {
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const colaboradorMatch = useMatch(`${MODULE_BASE}/colaborador/:id`)
   const [searchParams] = useSearchParams()
@@ -97,8 +100,8 @@ function Home({ backTo }) {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
-  const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
-  const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
+  const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
+  const [novoTimeStepFlowTeamId, setNovoTimeStepFlowTeamId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
@@ -282,6 +285,14 @@ function Home({ backTo }) {
   const handleDelete = () => {
     const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
     setCollaborators(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
+    clearSelection()
+  }
+
+  const handleDuplicate = () => {
+    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+    setCollaborators(updated)
+    showToast('success', 'Colaborador duplicado com sucesso')
     clearSelection()
   }
 
@@ -309,14 +320,14 @@ function Home({ backTo }) {
     )
   }
 
-  if (novoTimeFlowOpen) {
+  if (novoTimeStepFlowOpen) {
     return (
-      <NovoTimeFlow
-        teamId={novoTimeTeamId}
+      <NovoTimeStepFlow
+        teamId={novoTimeStepFlowTeamId}
         onExit={() => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoTimeFlowOpen(false)
-          setNovoTimeTeamId(null)
+          setNovoTimeStepFlowOpen(false)
+          setNovoTimeStepFlowTeamId(null)
         }}
       />
     )
@@ -324,7 +335,7 @@ function Home({ backTo }) {
 
   if (novoBeneficioFlowOpen) {
     return (
-      <NovoBeneficioFlow
+      <NovoBeneficioStepFlow
         onExit={() => setNovoBeneficioFlowOpen(false)}
       />
     )
@@ -388,8 +399,8 @@ function Home({ backTo }) {
               <TimesGrid
                 teams={filteredTeams}
                 onCriarTime={(teamId) => {
-                  setNovoTimeTeamId(teamId)
-                  setNovoTimeFlowOpen(true)
+                  setNovoTimeStepFlowTeamId(teamId)
+                  setNovoTimeStepFlowOpen(true)
                 }}
               />
             </div>
@@ -418,8 +429,8 @@ function Home({ backTo }) {
           }}
           onSelectTime={() => {
             setNovoModalOpen(false)
-            setNovoTimeTeamId(null)
-            setNovoTimeFlowOpen(true)
+            setNovoTimeStepFlowTeamId(null)
+            setNovoTimeStepFlowOpen(true)
           }}
           onSelectBeneficio={() => {
             setNovoModalOpen(false)
@@ -478,6 +489,7 @@ function Home({ backTo }) {
         <BulkActionBar
           count={selectedIds.size}
           onAddEmTime={() => setAddEmTimeModalOpen(true)}
+          onDuplicate={handleDuplicate}
           onDelete={handleDelete}
           onClose={clearSelection}
         />

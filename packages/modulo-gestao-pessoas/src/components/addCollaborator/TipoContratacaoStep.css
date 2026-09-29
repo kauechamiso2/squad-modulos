@@ -1,0 +1,64 @@
+/* Vertically centers Tela 1's content within .clt-shell__body's actual
+   rendered height (100% of it, since this step renders no footer of its
+   own and .clt-shell__body already gets its real height - viewport minus
+   header - from the shell's own flex layout). A hardcoded calc(100vh -
+   144px) here assumed an 80px footer that never renders on this step,
+   leaving a real dead gap below the centered content instead of
+   splitting the space evenly. */
+.tipo-contratacao__center {
+  box-sizing: border-box;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tipo-contratacao__content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.tipo-contratacao__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.tipo-contratacao__card {
+  box-sizing: border-box;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+}
+
+.tipo-contratacao__card:hover {
+  background: var(--color-overlay);
+}
+
+.tipo-contratacao__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.tipo-contratacao__card-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: #fbedd0;
+}
+
+.tipo-contratacao__card-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}

@@ -1,6 +1,5 @@
 import closeIcon from '../../assets/icons/Close.svg'
 import colaboradorStickerIcon from '../../assets/illustrations/Colaborador.svg'
-import cargoStickerIcon from '../../assets/illustrations/Cargo.svg'
 import accentStickerIcon from '../../assets/illustrations/Adicionar.svg'
 import accentSmallStickerIcon from '../../assets/illustrations/Adiciona-2.svg'
 import avatarStickerIcon from '../../assets/illustrations/User.svg'
@@ -41,15 +40,6 @@ const OPTIONS = [
     label: 'Time',
     functional: true,
     stickers: [],
-  },
-  {
-    id: 'cargo',
-    label: 'Cargo',
-    functional: true,
-    stickers: [
-      { src: cargoStickerIcon, size: 63.697, left: 33, top: 51.5, rotate: -7.01 },
-      { src: accentStickerIcon, size: 46.49, left: 80.37, top: 28.5, rotate: 16.61 },
-    ],
   },
   {
     id: 'beneficio',
@@ -152,11 +142,10 @@ function OptionCard({ option, onClick }) {
   )
 }
 
-function NovoModal({ onClose, onSelectColaborador, onSelectTime, onSelectCargo, onSelectBeneficio }) {
+function NovoModal({ onClose, onSelectColaborador, onSelectTime, onSelectBeneficio }) {
   const handlersById = {
     colaborador: onSelectColaborador,
     time: onSelectTime,
-    cargo: onSelectCargo,
     beneficio: onSelectBeneficio,
   }
 

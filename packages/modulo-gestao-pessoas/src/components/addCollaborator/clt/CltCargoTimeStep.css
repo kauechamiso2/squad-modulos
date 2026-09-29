@@ -1,0 +1,145 @@
+.clt-cargo-time__name-highlight {
+  color: #e9a716;
+}
+
+.clt-cargo-time__field {
+  position: relative;
+}
+
+.clt-cargo-time__time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clt-cargo-time__time-label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+/* Fixed (not absolute) and anchored via useDropdownPosition so it escapes
+   .clt-shell__body's overflow-y:auto clipping and always paints above the
+   shell's fixed footer, instead of being clipped/hidden behind it. */
+.clt-cargo-time__dropdown {
+  box-sizing: border-box;
+  position: fixed;
+  max-height: 288px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 220;
+}
+
+.clt-cargo-time__dropdown-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.clt-cargo-time__dropdown-item:hover {
+  background: #f4f5f5;
+}
+
+.clt-cargo-time__dropdown-item-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.clt-cargo-time__dropdown-dot {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+}
+
+.clt-cargo-time__dropdown-empty {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.clt-cargo-time__dropdown-create {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-cargo-time__dropdown-create:hover {
+  background: #f4f5f5;
+}
+
+/* Fixed 2x2 grid spanning the same 532px width as the field above it -
+   every chip is the same size regardless of its label's length. */
+.clt-cargo-time__chips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.clt-cargo-time__chip {
+  box-sizing: border-box;
+  width: 100%;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--color-bg);
+  overflow: hidden;
+  text-align: left;
+}
+
+.clt-cargo-time__chip:hover {
+  background: var(--color-overlay);
+}
+
+.clt-cargo-time__chip-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  margin-left: 8px;
+}
+
+.clt-cargo-time__chip-label {
+  flex: 1;
+  min-width: 0;
+  margin-left: 12px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}

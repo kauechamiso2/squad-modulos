@@ -6,7 +6,7 @@
   background: transparent;
   font-family: inherit;
   font-size: 24px;
-  font-weight: 500;
+  font-weight: var(--font-weight-regular);
   color: var(--color-text);
   padding: 0 0 12px;
 }

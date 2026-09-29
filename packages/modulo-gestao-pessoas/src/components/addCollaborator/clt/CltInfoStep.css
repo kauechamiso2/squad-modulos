@@ -1,0 +1,91 @@
+.clt-info__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.clt-info__row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 72px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.clt-info__row-label {
+  flex: 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-info__icon-button {
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-secondary);
+}
+
+.clt-info__admissao {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.clt-info__pill {
+  box-sizing: border-box;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  background: var(--color-bg);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.clt-info__pill--selected {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-bg);
+}
+
+.clt-info__pill:not(.clt-info__pill--selected):hover {
+  background: var(--color-overlay);
+}
+
+.clt-info__confirmed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-info__confirmed-icon {
+  flex-shrink: 0;
+  color: #1a9c4a;
+}
+
+.clt-info__confirmed-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.clt-info__email-hint {
+  color: var(--color-text-secondary);
+}
+
+.clt-info__pagamento-pills {
+  display: flex;
+  gap: 8px;
+}
