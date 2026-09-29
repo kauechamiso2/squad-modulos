@@ -59,3 +59,6 @@
   background: transparent;
   cursor: pointer;
 }
+
+/* Hover dos botoes da barra de selecao: mesmo fundo dos demais botoes. */
+.botaoIcone:hover { background: var(--color-overlay); }

@@ -5,11 +5,18 @@ import '../styles/SelectListModal.css'
  * `tamanho` existe porque o dropdown de coluna do Fluxo de Caixa usa 20px
  * (Figma 2279:107233) e todo o resto do Gestao de Pessoas usa 24. O default e
  * 24, entao o GP nao muda.
+ *
+ * `iconeMarcado` troca o desenho do estado marcado por um SVG. O Gestao de
+ * Pessoas passou a usar o CheckSquare do Phosphor; o default continua sendo o
+ * quadrado preto desenhado aqui, que e o que o Fluxo de Caixa usa.
  */
-function Checkbox({ checked, tamanho = 24 }) {
+function Checkbox({ checked, tamanho = 24, iconeMarcado }) {
   const marca = Math.round(tamanho * (14 / 24))
   if (!checked) {
     return <img src={squareIcon} alt="" width={tamanho} height={tamanho} />
+  }
+  if (iconeMarcado) {
+    return <img src={iconeMarcado} alt="" width={tamanho} height={tamanho} />
   }
   return (
     <span
