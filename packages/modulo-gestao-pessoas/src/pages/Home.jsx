@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -22,6 +22,8 @@ import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFl
 import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
 import NovoBeneficioStepFlow from '../components/addBeneficio/novoBeneficio/NovoBeneficioStepFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
+import TimeDetail from '../components/time/TimeDetail.jsx'
+import BeneficioDetail from '../components/beneficio/BeneficioDetail.jsx'
 import {
   getCollection,
   setCollection,
@@ -51,9 +53,12 @@ const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 // useMatch() has already caught up to the real initial URL by the time
 // Home's first render runs.
 const initialHashPath = window.location.hash.replace(/^#/, '')
-const loadedDirectlyOnColaboradorRoute = new RegExp(`^${MODULE_BASE}/colaborador/[^/]+`).test(
-  initialHashPath,
-)
+const emRota = (nome) =>
+  new RegExp(`^${MODULE_BASE}/${nome}/[^/]+`).test(initialHashPath)
+
+const loadedDirectlyOnColaboradorRoute = emRota('colaborador')
+const loadedDirectlyOnTimeRoute = emRota('time')
+const loadedDirectlyOnBeneficioRoute = emRota('beneficio')
 
 function createEmptyColumnFilters() {
   return {
@@ -72,10 +77,21 @@ function createEmptyBeneficiosFilters() {
   return { tipo: new Set(), pessoas: { min: null, max: null } }
 }
 
+// Guarda o ultimo valor nao nulo. Serve para os paineis de detalhe, que
+// continuam no DOM durante a animacao de saida, depois de a rota ja ter
+// mudado.
+function useUltimo(valor) {
+  const guardado = useRef(valor)
+  if (valor) guardado.current = valor
+  return valor ?? guardado.current
+}
+
 function Home({ backTo }) {
   const { showToast } = useToast()
   const navigate = useNavigate()
   const colaboradorMatch = useMatch(`${MODULE_BASE}/colaborador/:id`)
+  const timeMatch = useMatch(`${MODULE_BASE}/time/:id`)
+  const beneficioMatch = useMatch(`${MODULE_BASE}/beneficio/:id`)
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
   // a pasted link) already landed on the colaborador route - that always
@@ -96,6 +112,60 @@ function Home({ backTo }) {
     navigate(`${MODULE_BASE}/colaborador/${colaboradorId}`)
   }
   const closeColaborador = () => navigate(MODULE_BASE)
+
+  // Mesma convencao da rota de colaborador, aplicada a /time/:id.
+  const forceFullScreenTimeRef = useRef(loadedDirectlyOnTimeRoute)
+  const timeId = timeMatch?.params?.id ?? null
+  const timeFullScreenRequested = searchParams.get('view') === 'full'
+  const timeOverlayOpen = Boolean(timeId)
+  const timeFullScreen =
+    timeOverlayOpen && (timeFullScreenRequested || forceFullScreenTimeRef.current)
+
+  const openTime = (id) => navigate(`${MODULE_BASE}/time/${id}`)
+  const expandTime = () => navigate(`${MODULE_BASE}/time/${timeId}?view=full`)
+  const collapseTime = () => {
+    forceFullScreenTimeRef.current = false
+    navigate(`${MODULE_BASE}/time/${timeId}`)
+  }
+  const closeTime = () => navigate(MODULE_BASE)
+
+  // Mesma convencao, aplicada a /beneficio/:id.
+  const forceFullScreenBeneficioRef = useRef(loadedDirectlyOnBeneficioRoute)
+  const beneficioId = beneficioMatch?.params?.id ?? null
+  const beneficioFullScreenRequested = searchParams.get('view') === 'full'
+  const beneficioOverlayOpen = Boolean(beneficioId)
+  const beneficioFullScreen =
+    beneficioOverlayOpen && (beneficioFullScreenRequested || forceFullScreenBeneficioRef.current)
+
+  const openBeneficio = (id) => navigate(`${MODULE_BASE}/beneficio/${id}`)
+  const expandBeneficio = () => navigate(`${MODULE_BASE}/beneficio/${beneficioId}?view=full`)
+  const collapseBeneficio = () => {
+    forceFullScreenBeneficioRef.current = false
+    navigate(`${MODULE_BASE}/beneficio/${beneficioId}`)
+  }
+  const closeBeneficio = () => navigate(MODULE_BASE)
+
+  /*
+   * O ultimo id de cada painel. Enquanto a saida anima a rota ja voltou para a
+   * lista, entao `colaboradorMatch` e companhia ja sao nulos - sem lembrar o
+   * ultimo, o painel esvaziaria no meio da transicao.
+   */
+  const ultimoColaboradorId = useUltimo(colaboradorId)
+  const ultimoTimeId = useUltimo(timeId)
+  const ultimoBeneficioId = useUltimo(beneficioId)
+
+  /*
+   * O modo tambem precisa ser lembrado, pelo mesmo motivo: sem isso o painel
+   * encolheria de tela cheia para painel no meio da saida.
+   *
+   * E em tela cheia nao ha para onde deslizar - o original fecha na hora, e e
+   * o que fazemos, deixando de montar. Nao e uma segunda animacao: e a
+   * ausencia dela.
+   */
+  const modo = (aberto, cheio) => (aberto ? (cheio ? 'full' : 'panel') : null)
+  const colaboradorModo = useUltimo(modo(colaboradorOverlayOpen, colaboradorFullScreen))
+  const timeModo = useUltimo(modo(timeOverlayOpen, timeFullScreen))
+  const beneficioModo = useUltimo(modo(beneficioOverlayOpen, beneficioFullScreen))
 
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -119,9 +189,22 @@ function Home({ backTo }) {
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
-  // already mounted.
+  // already mounted. Deleting a time elsewhere on this page always triggers
+  // a collaborators state update too (even a no-op cascade still produces a
+  // new array reference), which re-renders Home and so re-reads these
+  // fresh - so they don't need their own state for that to work.
   const times = getCollection(COLLECTIONS.TIMES)
-  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
+  // Benefícios nao tem o efeito colateral que Times tem no estado de
+  // colaboradores ao deletar, entao precisa de estado proprio para reagir ao
+  // menu do card.
+  const [beneficios, setBeneficios] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
+
+  // O painel de detalhe grava direto no storage, sem callback para ca -
+  // re-sincroniza no momento em que ele fecha.
+  useEffect(() => {
+    if (beneficioOverlayOpen) return
+    setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+  }, [beneficioOverlayOpen])
 
   const filteredBeneficios = useMemo(() => {
     return beneficios.filter((benefit) => {
@@ -336,7 +419,10 @@ function Home({ backTo }) {
   if (novoBeneficioFlowOpen) {
     return (
       <NovoBeneficioStepFlow
-        onExit={() => setNovoBeneficioFlowOpen(false)}
+        onExit={() => {
+          setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+          setNovoBeneficioFlowOpen(false)
+        }}
       />
     )
   }
@@ -402,6 +488,8 @@ function Home({ backTo }) {
                   setNovoTimeStepFlowTeamId(teamId)
                   setNovoTimeStepFlowOpen(true)
                 }}
+                onCardClick={openTime}
+                onDataChanged={setCollaborators}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -412,7 +500,12 @@ function Home({ backTo }) {
                 filtersSummary={beneficiosFiltersSummary}
                 onClearAllFilters={clearBeneficiosFilters}
               />
-              <BeneficiosGrid benefits={filteredBeneficios} collaborators={collaborators} />
+              <BeneficiosGrid
+                benefits={filteredBeneficios}
+                collaborators={collaborators}
+                onCardClick={openBeneficio}
+                onDataChanged={setBeneficios}
+              />
             </div>
           ) : (
             <div className="home__panel" />
@@ -463,18 +556,48 @@ function Home({ backTo }) {
         onSave={setBeneficiosFilters}
       />
 
-      {colaboradorOverlayOpen && (
-        <>
-          {/* O veu vem do PainelLateral dentro do ColaboradorDetail. */}
-          <ColaboradorDetail
-            id={colaboradorId}
-            mode={colaboradorFullScreen ? 'full' : 'panel'}
-            onClose={closeColaborador}
-            onExpand={expandColaborador}
-            onCollapse={collapseColaborador}
-            onDataChanged={setCollaborators}
-          />
-        </>
+      {/*
+        * Os tres paineis de detalhe ficam montados: o PainelLateral do
+        * @squad/ui so os tira do DOM quando a transicao de saida termina, e e
+        * ele quem desenha o veu. Desmontar aqui, como o original faz com um
+        * setTimeout proprio, seria uma segunda animacao fazendo o mesmo.
+        *
+        * Enquanto a saida roda a rota ja nao casa mais, entao o id vem do
+        * ultimo que esteve aberto.
+        */}
+      {ultimoColaboradorId && (colaboradorOverlayOpen || colaboradorModo === 'panel') && (
+        <ColaboradorDetail
+          id={colaboradorId ?? ultimoColaboradorId}
+          aberto={colaboradorOverlayOpen}
+          mode={colaboradorModo ?? 'panel'}
+          onClose={closeColaborador}
+          onExpand={expandColaborador}
+          onCollapse={collapseColaborador}
+          onDataChanged={setCollaborators}
+        />
+      )}
+
+      {ultimoTimeId && (timeOverlayOpen || timeModo === 'panel') && (
+        <TimeDetail
+          id={timeId ?? ultimoTimeId}
+          aberto={timeOverlayOpen}
+          mode={timeModo ?? 'panel'}
+          onClose={closeTime}
+          onExpand={expandTime}
+          onCollapse={collapseTime}
+          onDataChanged={setCollaborators}
+        />
+      )}
+
+      {ultimoBeneficioId && (beneficioOverlayOpen || beneficioModo === 'panel') && (
+        <BeneficioDetail
+          id={beneficioId ?? ultimoBeneficioId}
+          aberto={beneficioOverlayOpen}
+          mode={beneficioModo ?? 'panel'}
+          onClose={closeBeneficio}
+          onExpand={expandBeneficio}
+          onCollapse={collapseBeneficio}
+        />
       )}
 
       {addEmTimeModalOpen && (

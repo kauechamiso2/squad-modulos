@@ -111,3 +111,51 @@ passam (8 advertências herdadas, as mesmas de sempre).
 **A comparação pixel a pixel não se aplica mais**: o módulo agora está à frente
 da pasta local aposentada, de propósito. A partir daqui, mudança visual no
 módulo é avaliada pelo próprio Figma, não contra o projeto antigo.
+
+## 3. Sincronização reaberta e encerrada (`c8b28e3` → `6953ba6`)
+
+A sincronização foi reaberta uma vez para trazer o que o repositório de origem
+produziu depois de `c8b28e3`: a remoção da aba Cargo, três fluxos de criação
+reconstruídos em etapas, os painéis de detalhe de Time e Benefício, um sistema
+de toast e um `ConfirmModal` próprio. Tudo aplicado **por diff**, em quatro PRs
+empilhados, nenhum arquivo copiado por cima.
+
+| PR | O que trouxe |
+|---|---|
+| 1 | as mudanças de `packages/ui` que os outros três precisavam |
+| 2 | remoção da aba Cargo e as mudanças de `utils` |
+| 3 | toast, `ConfirmModal` e os três fluxos novos |
+| 4 | os três painéis de detalhe |
+
+Depois de `6953ba6` a sincronização está **encerrada de novo, e para valer**:
+`packages/modulo-gestao-pessoas` é a fonte da verdade e mudança visual é
+avaliada contra o Figma.
+
+### O que ficou diferente do original, de propósito
+
+- **Uma animação só para os painéis.** O original ganhou, em cada painel de
+  detalhe, um estado `closing` e um `setTimeout` de 280ms no `Home` para
+  segurar o painel até a transição de saída acabar. O `@squad/ui/PainelLateral`
+  já faz exatamente isso. O `closing` foi descartado e os três painéis passaram
+  a usar o `PainelLateral`, como o detalhe do colaborador já usava.
+- **Consequência:** os painéis ficam montados durante a saída, em vez de o
+  `Home` os desmontar. O estado local de cada um (modais abertos, valores
+  escondidos, nota em edição) e as coleções lidas do `localStorage` passaram a
+  ser zerados e relidos na subida de `aberto`, que é o momento equivalente ao
+  da montagem antiga.
+- **O véu entra com transição.** No original o véu aparece opaco de uma vez e
+  só a saída tem transição; o `PainelLateral` faz os dois lados.
+- **Componentes compartilhados.** `IconButton`, `ModalOverlay`, `Checkbox`,
+  `FieldModalShell` e os estilos `buttons`/`SelectListModal`/`LargeFieldInput`
+  vêm do `@squad/ui`; os arquivos novos do original tiveram só os imports
+  repontados.
+- **`DiscardConfirmModal` voltou para o módulo.** Upstream ele virou uma casca
+  sobre o `ConfirmModal`, que é componente do módulo, e não tinha nenhum
+  consumidor fora do Gestão de Pessoas.
+
+### Divergências visuais que ficaram registradas
+
+Três diferenças entre o Gestão de Pessoas e o Fluxo de Caixa foram resolvidas
+por variável, com o default do `@squad/ui` inalterado: hover da linha da
+tabela, opacidade do véu e desenho do checkbox marcado. Estão em
+[`divida-tecnica.md`](divida-tecnica.md) à espera de um padrão único.

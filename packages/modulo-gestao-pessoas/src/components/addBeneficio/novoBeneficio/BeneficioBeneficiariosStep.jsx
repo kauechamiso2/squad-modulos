@@ -8,6 +8,7 @@ import '../../addCollaborator/clt/CltShell.css'
 import '../../addTeam/novoTime/NovoTimeSteps.css'
 import './NovoBeneficioSteps.css'
 import { Checkbox } from '@squad/ui'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 
 const MAX_TEAM_SUGGESTIONS = 3
 
@@ -181,7 +182,7 @@ function BeneficioBeneficiariosStep({
               }
               onClick={toggleTodaEmpresa}
             >
-              <Checkbox checked={todaEmpresa} />
+              <Checkbox checked={todaEmpresa} iconeMarcado={checkSquareIcon} />
               <div className="beneficio-step__beneficiario-info">
                 <span className="beneficio-step__beneficiario-name">Toda a empresa</span>
                 <span className="beneficio-step__beneficiario-count">
@@ -206,7 +207,7 @@ function BeneficioBeneficiariosStep({
                   }
                   onClick={() => toggleTeam(team.name)}
                 >
-                  <Checkbox checked={checked} />
+                  <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
                   <span className="beneficio-step__beneficiario-badge" style={{ background: light }}>
                     <TeamIcon size={16} color={dark} />
                   </span>

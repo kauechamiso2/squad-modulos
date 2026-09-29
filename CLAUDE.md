@@ -92,6 +92,13 @@ default está errado, ou a mudança não devia estar no compartilhado.
 Tokens de movimento: `--movimento-entrada` (280ms ease-out) e
 `--movimento-saida` (200ms ease-in). Respeite `prefers-reduced-motion`.
 
+## Gestão de Pessoas: sincronização encerrada
+
+O módulo veio de `brunovasconcelos-maker/squad-gestao-pessoas`. A última
+importação trouxe o commit `6953ba6`; a partir dela `packages/modulo-gestao-pessoas`
+é a **fonte da verdade** e o repositório antigo não deve ser consultado nem
+clonado. Mudança visual passa a ser avaliada contra o Figma.
+
 ## Onde ler mais
 
 - [`README.md`](README.md) — o que é, como rodar, estrutura.

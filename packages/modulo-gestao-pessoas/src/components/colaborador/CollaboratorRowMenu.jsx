@@ -6,9 +6,11 @@ import { IconButton } from '@squad/ui'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './CollaboratorRowMenu.css'
 
 function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
+  const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [desligarModalOpen, setDesligarModalOpen] = useState(false)
@@ -46,6 +48,7 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
     )
     setCollection(COLLECTIONS.COLABORADORES, updated)
     onDataChanged?.(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
     setDeleteModalOpen(false)
   }
 

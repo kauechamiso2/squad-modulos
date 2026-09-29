@@ -1,13 +1,12 @@
 import arrowUpRightIcon from '../assets/icons/ArrowUpRight.svg'
 import desktopIcon from '../assets/icons/Desktop.svg'
 import vanIcon from '../assets/icons/Van.svg'
-import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import aliceImage from '../assets/images/Frame 2147223814.png'
 import cajuImage from '../assets/images/Frame 2147223814-1.png'
 import gympassImage from '../assets/images/Frame 2147223814-2.png'
 import { getBeneficioTypeIcon } from '../utils/beneficioOptions.js'
 import { getBenefitMemberCount } from '../utils/beneficiarios.js'
-import { IconButton } from '@squad/ui'
+import BeneficioCardMenu from './beneficio/BeneficioCardMenu.jsx'
 import './BeneficiosGrid.css'
 
 const IMAGE_BY_KEY = {
@@ -21,7 +20,7 @@ const ICON_BY_KEY = {
   van: vanIcon,
 }
 
-function BeneficiosGrid({ benefits, collaborators }) {
+function BeneficiosGrid({ benefits, collaborators, onCardClick, onDataChanged }) {
   return (
     <div className="beneficios-grid">
       {benefits.map((benefit) => {
@@ -30,7 +29,12 @@ function BeneficiosGrid({ benefits, collaborators }) {
         const CategoryIcon = isCreatedBenefit ? getBeneficioTypeIcon(benefit.tipo) : null
 
         return (
-          <div className="beneficio-card" key={benefit.id}>
+          <div
+            className="beneficio-card"
+            key={benefit.id}
+            onClick={() => onCardClick?.(benefit.id)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="beneficio-card__top-row">
               {isCreatedBenefit ? (
                 <div className="beneficio-card__icon-container beneficio-card__icon-container--badge">
@@ -62,11 +66,10 @@ function BeneficiosGrid({ benefits, collaborators }) {
                 <span className="beneficio-card__name">{benefit.name}</span>
                 <span className="beneficio-card__count">{memberCount} pessoas</span>
               </div>
-              <IconButton
-                icon={dotsThreeIcon}
-                alt="Mais opções"
-                iconSize={24}
-                className="beneficio-card__menu-button"
+              <BeneficioCardMenu
+                benefit={benefit}
+                onView={onCardClick}
+                onDataChanged={onDataChanged}
               />
             </div>
           </div>

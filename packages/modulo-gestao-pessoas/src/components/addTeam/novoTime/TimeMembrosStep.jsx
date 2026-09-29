@@ -7,6 +7,7 @@ import '@squad/ui/styles/buttons.css'
 import '../../addCollaborator/clt/CltShell.css'
 import './NovoTimeSteps.css'
 import { Checkbox } from '@squad/ui'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 
 const VISIBLE_SLOTS = 6
 
@@ -165,7 +166,7 @@ function TimeMembrosStep({
                   }
                   onClick={() => toggle(collaborator.id)}
                 >
-                  <Checkbox checked={checked} />
+                  <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
                   <div className="time-step__card-info">
                     <span className="time-step__card-name">{collaborator.name}</span>
                     <span className="time-step__card-cargo">{collaborator.cargos.join(', ')}</span>

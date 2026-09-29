@@ -1,19 +1,19 @@
 /*
  * A casca deste painel - veu, caixa de 540, deslize de 280ms - vem do
- * @squad/ui/PainelLateral desde que o Fluxo de Caixa passou a usar a mesma no
- * resumo de transacao. Aqui ficam as medidas deste painel e o modo tela cheia.
+ * @squad/ui/PainelLateral, a mesma do detalhe do colaborador. Aqui ficam as
+ * medidas deste painel e o modo tela cheia.
  *
- * O modo tela cheia continua sendo classe extra no MESMO elemento do modo
- * painel: os dois animam largura, posicao e padding um para o outro, e separar
- * em dois componentes quebraria esse morph.
+ * O modo tela cheia e classe extra no MESMO elemento do modo painel: os dois
+ * animam largura, posicao e padding um para o outro, e separar em dois
+ * componentes quebraria esse morph.
  */
-.colaborador-detail {
+.beneficio-detail {
   --painel-largura: 540px;
   --painel-margem-direita: 24px;
   --painel-altura: calc(100vh - 40px);
   --painel-padding-baixo: 24px;
   --painel-espaco-rodape: 0;
-  /* O afastamento da barra de rolagem e do proprio .colaborador-detail__scroll,
+  /* O afastamento da barra de rolagem e do proprio .beneficio-detail__scroll,
      que rola dentro do painel. O 8px que o .gp-painel da aos paineis de
      filtro somaria com ele e estreitaria o conteudo. */
   --painel-rolagem-padding-direita: 0;
@@ -30,20 +30,12 @@
 }
 
 /* Em tela cheia nao ha veu. */
-.colaborador-detail-overlay--oculto { display: none; }
-
-
-
-
-
-
-
-
+.beneficio-detail-overlay--oculto { display: none; }
 
 /* Em tela cheia tudo vem pelas variaveis do PainelLateral: elas e as regras
    dele tem a mesma especificidade, e disputar na ordem do arquivo seria
-   fragil - foi assim que a altura ficou presa no max-height do modo painel. */
-.colaborador-detail.colaborador-detail--full {
+   fragil. */
+.beneficio-detail.beneficio-detail--full {
   --painel-largura: 100vw;
   --painel-altura: 100vh;
   --painel-altura-maxima: 100vh;
@@ -59,26 +51,24 @@
   transform: none;
 }
 
-
-
 /* O cabecalho base (h40, gap 8, titulo 16/500) vem do PainelLateral; em tela
    cheia ele cresce e ganha margem lateral, pelas variaveis dele. */
-.colaborador-detail.colaborador-detail--full {
+.beneficio-detail.beneficio-detail--full {
   --painel-cabecalho-altura: 64px;
   --painel-cabecalho-padding: 0 40px;
 }
 
+.beneficio-detail__header-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
 
-
-.colaborador-detail__power-button,
-.colaborador-detail__expand-button {
+.beneficio-detail__expand-button {
   width: 40px;
   height: 40px;
   color: var(--color-text-secondary);
-}
-
-.colaborador-detail__power-button--active {
-  color: #ff2633;
 }
 
 /*
@@ -87,7 +77,7 @@
  * mesmo arranjo do original - e so assim o conteudo aperta os itens de altura
  * fixa (a barra do Pipo) do mesmo jeito.
  */
-.colaborador-detail__scroll {
+.beneficio-detail__scroll {
   height: 100%;
   min-height: 0;
   overflow-y: auto;
@@ -96,7 +86,7 @@
   gap: 40px;
 }
 
-.colaborador-detail--full .colaborador-detail__scroll {
+.beneficio-detail--full .beneficio-detail__scroll {
   overflow: visible;
 }
 
@@ -104,36 +94,36 @@
    for wheel/trackpad scrolling, coincides with the cursor already being
    over the panel). The 8px right padding keeps the thumb from sitting
    flush against the text; the thumb itself paints inside that gutter. */
-.colaborador-detail__scroll,
-.colaborador-detail--full .colaborador-detail__column {
+.beneficio-detail__scroll,
+.beneficio-detail--full .beneficio-detail__column {
   padding-right: 8px;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
 
-.colaborador-detail__scroll:hover,
-.colaborador-detail--full .colaborador-detail__column:hover {
+.beneficio-detail__scroll:hover,
+.beneficio-detail--full .beneficio-detail__column:hover {
   scrollbar-color: rgba(0, 0, 0, 0.24) transparent;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar {
+.beneficio-detail__scroll::-webkit-scrollbar,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar {
   width: 8px;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar-track,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar-track {
+.beneficio-detail__scroll::-webkit-scrollbar-track,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar-thumb,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar-thumb {
+.beneficio-detail__scroll::-webkit-scrollbar-thumb,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar-thumb {
   background-color: transparent;
   border-radius: 999px;
 }
 
-.colaborador-detail__scroll:hover::-webkit-scrollbar-thumb,
-.colaborador-detail--full .colaborador-detail__column:hover::-webkit-scrollbar-thumb {
+.beneficio-detail__scroll:hover::-webkit-scrollbar-thumb,
+.beneficio-detail--full .beneficio-detail__column:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.24);
 }
 
@@ -150,18 +140,18 @@
  * que recorta, e `overflow: hidden` corta na caixa de padding. Aqui sobra
  * so o afastamento do conteudo.
  */
-.colaborador-detail.colaborador-detail--panel {
+.beneficio-detail.beneficio-detail--panel {
   --painel-rolagem-margem-direita: -21px;
 }
 
-.colaborador-detail--panel .colaborador-detail__scroll {
+.beneficio-detail--panel .beneficio-detail__scroll {
   padding-right: 13px;
 }
 
 /* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
    independently of each other and of the header, so each is capped to the
    viewport height below the fixed 64px header with its own overflow-y. */
-.colaborador-detail--full .colaborador-detail__columns {
+.beneficio-detail--full .beneficio-detail__columns {
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -170,86 +160,86 @@
   height: calc(100vh - 64px);
 }
 
-.colaborador-detail__column {
+.beneficio-detail__column {
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
-.colaborador-detail--full .colaborador-detail__column {
+.beneficio-detail--full .beneficio-detail__column {
   height: calc(100vh - 64px);
   overflow-y: auto;
-  /* Pulls the column in from its own grid-track edge so the scrollbar
-     gutter sits 4px from it, leaving the padding-right below as clear
-     space between the gutter and the content. */
   margin-right: 4px;
 }
 
-.colaborador-detail--full .colaborador-detail__column--main {
+.beneficio-detail--full .beneficio-detail__column--main {
   grid-column: 3 / 7;
-  /* Matches the Figma spec: keeps this column's content inset 40px from
-     the notes column beside it (4px margin + 8px gutter + 28px content
-     gap = the original 40px), on top of the 20px grid gutter. */
   padding-right: 28px;
 }
 
-.colaborador-detail--full .colaborador-detail__column--notes {
+.beneficio-detail--full .beneficio-detail__column--notes {
   grid-column: 7 / 9;
 }
 
 /* Profile header */
 
-.colaborador-detail__profile {
+.beneficio-detail__profile {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.colaborador-detail__avatar {
+.beneficio-detail__badge {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border-radius: 999px;
-  background: var(--color-overlay);
-}
-
-.colaborador-detail__name {
-  font-size: 20px;
-  font-weight: var(--font-weight-medium);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e5f4ff;
   color: var(--color-text);
 }
 
-.colaborador-detail__pipo-bar {
-  box-sizing: border-box;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  background: #fbedd0;
-  border-radius: 4px;
-  padding: 12px 2px 12px 12px;
-  font-size: 12px;
-  font-weight: var(--font-weight-regular);
-  color: #5d4309;
+.beneficio-detail__badge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.colaborador-detail__pipo-bar strong {
+.beneficio-detail__title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.beneficio-detail__name {
+  font-size: 20px;
   font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.beneficio-detail__type {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  color: #798282;
+  white-space: nowrap;
 }
 
 /* Info list */
 
-.colaborador-detail__info-list {
+.beneficio-detail__info-list {
   display: flex;
   flex-direction: column;
 }
 
-.colaborador-detail__row {
+.beneficio-detail__row {
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -258,12 +248,12 @@
   padding: 16px 0;
 }
 
-.colaborador-detail__row-icon {
+.beneficio-detail__row-icon {
   flex-shrink: 0;
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__row-label {
+.beneficio-detail__row-label {
   flex-shrink: 0;
   width: 140px;
   font-size: 14px;
@@ -271,116 +261,38 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__value-button {
-  border: none;
-  background: none;
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin: -4px -8px;
+.beneficio-detail__row-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
-  text-align: left;
 }
 
-.colaborador-detail__value-button:not(:disabled):hover {
-  background: var(--color-overlay);
-}
-
-.colaborador-detail__value-button:disabled {
-  cursor: not-allowed;
+.beneficio-detail__copy-feedback {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-field {
-  position: relative;
-}
-
-.colaborador-field--fill {
-  flex: 1;
-  min-width: 0;
-}
-
-.colaborador-field__inline-search-input {
-  width: 200px;
-  border: none;
-  outline: none;
-  background: var(--color-overlay);
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin: -4px 0 -4px -8px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text);
-  text-align: left;
-}
-
-.colaborador-field__dropdown {
-  position: fixed;
-  z-index: 220;
-  box-sizing: border-box;
-  width: 280px;
-  max-height: 288px;
-  overflow-y: auto;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 4px 16px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
-  text-align: left;
-}
-
-.colaborador-field__pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 999px;
-  background: var(--color-overlay);
-  padding: 0 12px;
-}
-
-.colaborador-field__pill:disabled {
-  cursor: not-allowed;
-}
-
-.colaborador-field__pill-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
+.beneficio-detail__copy-button {
   flex-shrink: 0;
-}
-
-.colaborador-field__pill-label {
-  font-size: 14px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.colaborador-field__reporta-display {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.colaborador-field__avatar {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border-radius: 999px;
-  background: var(--color-overlay);
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
 }
 
 /* Notes */
 
-.colaborador-detail__notes {
+.beneficio-detail__notes {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -389,7 +301,7 @@
   border-top: 1px solid var(--color-border);
 }
 
-.colaborador-detail__nota {
+.beneficio-detail__nota {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -398,19 +310,19 @@
   padding-left: 16px;
 }
 
-.colaborador-detail__nota-date {
+.beneficio-detail__nota-date {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__nota-text {
+.beneficio-detail__nota-text {
   font-size: 16px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
 }
 
-.colaborador-detail__add-nota {
+.beneficio-detail__add-nota {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -422,7 +334,7 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__add-nota-input {
+.beneficio-detail__add-nota-input {
   width: 100%;
   box-sizing: border-box;
   border: none;
@@ -438,24 +350,30 @@
 
 /* Metricas */
 
-.colaborador-detail__metrics {
+.beneficio-detail__metrics {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-.colaborador-detail__stats-row {
+.beneficio-detail__section-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__section-label--flex {
+  flex: 1;
+}
+
+.beneficio-detail__stats-row {
   display: flex;
   gap: 16px;
 }
 
-.colaborador-detail__stat-card {
+.beneficio-detail__stat-card {
   box-sizing: border-box;
   flex: 1;
-  /* Without this, a flex item's default min-width:auto lets long content
-     (e.g. a big Custo total number) force the card wider than its equal
-     flex share instead of respecting it - the value's own font-size
-     shrinks to fit instead (see useFitStatFontSize). */
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -465,23 +383,23 @@
   padding: 16px;
 }
 
-.colaborador-detail__stat-header {
+.beneficio-detail__stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.colaborador-detail__stat-label {
+.beneficio-detail__stat-label {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__stat-label--medium {
+.beneficio-detail__stat-label--medium {
   font-weight: var(--font-weight-medium);
 }
 
-.colaborador-detail__stat-toggle {
+.beneficio-detail__stat-toggle {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -492,7 +410,7 @@
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__stat-value {
+.beneficio-detail__stat-value {
   min-width: 0;
   overflow: hidden;
   white-space: nowrap;
@@ -501,37 +419,75 @@
   color: var(--color-text);
 }
 
-/* Mask toggle (Salario row) */
-
-.colaborador-detail__mask-toggle {
-  flex-shrink: 0;
-  /* Pushes the icon to the row's far right edge regardless of the
-     Salário value's length, instead of sitting flush against it. */
-  margin-left: auto;
+.beneficio-detail__value-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+}
+
+.beneficio-detail__value-amount {
+  flex: 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: #798282;
+}
+
+.beneficio-detail__value-count {
+  font-size: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.beneficio-detail__team-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-overlay);
+}
+
+.beneficio-detail__team-legend {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: #798282;
+}
+
+/* Times / Membros individuais (shared row styling) */
+
+.beneficio-detail__times,
+.beneficio-detail__membros {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.beneficio-detail__section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.beneficio-detail__add-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   border: none;
   background: none;
   padding: 0;
-  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
 }
 
-/* Beneficios */
-
-.colaborador-detail__beneficios {
+.beneficio-detail__source-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.colaborador-detail__section-label {
-  font-size: 16px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-}
-
-.colaborador-detail__beneficio-row {
+.beneficio-detail__source-row {
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -542,39 +498,45 @@
   border-radius: 8px;
 }
 
-.colaborador-detail__beneficio-row:hover {
+.beneficio-detail__source-row:hover {
   background: var(--color-overlay);
 }
 
-.colaborador-detail__beneficio-icon {
+.beneficio-detail__source-badge {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 32px;
   height: 32px;
-  border-radius: 6px;
-  background: var(--color-overlay);
-  color: var(--color-text);
+  border-radius: 8px;
 }
 
-.colaborador-detail__beneficio-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: baseline;
-  gap: 6px;
-  overflow: hidden;
-}
-
-.colaborador-detail__beneficio-tipo {
-  flex-shrink: 0;
+.beneficio-detail__source-badge--avatar {
+  border-radius: 999px;
   font-size: 14px;
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+}
+
+.beneficio-detail__source-badge--empresa {
+  border-radius: 999px;
+  background: var(--color-overlay);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__beneficio-name {
+.beneficio-detail__source-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.beneficio-detail__source-name {
+  min-width: 0;
+  flex: 1;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -583,35 +545,23 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__beneficio-value {
+.beneficio-detail__source-meta {
   flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
   font-size: 14px;
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
 }
 
-/* Date field dropdown */
-
-.colaborador-date-field__dropdown {
-  width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-}
-
-.colaborador-date-field__no-end-toggle {
+.beneficio-detail__source-remove {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   border: none;
   background: none;
   padding: 0;
-  text-align: left;
-}
-
-.colaborador-date-field__no-end-label {
-  font-size: 13px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text);
+  color: var(--color-text-secondary);
 }

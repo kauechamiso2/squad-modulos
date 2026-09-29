@@ -69,5 +69,13 @@
 .gp-painel {
   --painel-veu-cor: rgba(227, 230, 230, 0.6);
   --painel-altura: calc(100vh - 40px);
+}
+
+/*
+ * So os paineis de filtro afastam a barra de rolagem por aqui. Os de detalhe
+ * rolam num elemento proprio, que ja tem o seu afastamento - somar os dois
+ * estreitaria o conteudo em 8px.
+ */
+.gp-painel--rolagem-afastada {
   --painel-rolagem-padding-direita: 8px;
 }

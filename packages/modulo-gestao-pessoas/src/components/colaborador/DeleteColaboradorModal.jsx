@@ -1,23 +1,16 @@
-import { ModalOverlay } from '@squad/ui'
-import '@squad/ui/styles/buttons.css'
-import '../addCollaborator/DiscardConfirmModal.css'
+import { Trash } from '@phosphor-icons/react'
+import ConfirmModal from '../ConfirmModal.jsx'
 
 function DeleteColaboradorModal({ name, onCancel, onConfirm }) {
   return (
-    <ModalOverlay width={360} className="discard-confirm-modal">
-      <h2 className="discard-confirm-modal__title">Tem certeza?</h2>
-      <p className="discard-confirm-modal__message">
-        Tem certeza que deseja excluir {name}? Essa ação não pode ser desfeita.
-      </p>
-      <div className="discard-confirm-modal__footer">
-        <button type="button" className="text-button" onClick={onCancel}>
-          Cancelar
-        </button>
-        <button type="button" className="pill-button" onClick={onConfirm}>
-          Excluir
-        </button>
-      </div>
-    </ModalOverlay>
+    <ConfirmModal
+      icon={Trash}
+      title={`Excluir ${name}?`}
+      message={`Tem certeza que quer excluir o colaborador ${name}? Essa ação não pode ser desfeita. Se preferir, você pode desligá-lo e mantê-lo na sua lista de colaboradores.`}
+      confirmLabel="Excluir"
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   )
 }
 

@@ -11,6 +11,7 @@ import '../../addCollaborator/clt/CltShell.css'
 import '../../addTeam/novoTime/NovoTimeSteps.css'
 import './NovoBeneficioSteps.css'
 import { Checkbox } from '@squad/ui'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 
 const MAX_VISIBLE = 4
 
@@ -108,7 +109,7 @@ function BeneficioFornecedorStep({
                     }
                     onClick={() => selectProvider(name)}
                   >
-                    <Checkbox checked={checked} />
+                    <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
                     <span className="beneficio-step__provider-badge">
                       <IconComponent size={16} />
                     </span>
@@ -124,7 +125,7 @@ function BeneficioFornecedorStep({
                 className="beneficio-step__provider-card"
                 onClick={() => selectProvider(trimmed)}
               >
-                <Checkbox checked={false} />
+                <Checkbox checked={false} iconeMarcado={checkSquareIcon} />
                 <span className="beneficio-step__provider-badge">
                   <IconComponent size={16} />
                 </span>

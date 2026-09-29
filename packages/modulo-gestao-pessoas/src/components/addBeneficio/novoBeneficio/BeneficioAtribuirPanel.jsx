@@ -6,6 +6,7 @@ import '@squad/ui/styles/SelectListModal.css'
 import '../../addCollaborator/clt/SidePanel.css'
 import './NovoBeneficioSteps.css'
 import { Checkbox, IconButton } from '@squad/ui'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 
 // The same 428px side-panel shell already used for Novo Cargo/Novo Time
 // quick-create. A plain checklist, no search - anyone already assigned to
@@ -69,7 +70,7 @@ function BeneficioAtribuirPanel({ people, value, assignedElsewhere, onClose, onS
                   {disabledElsewhere ? (
                     <CheckCircle size={20} weight="fill" color="#039300" />
                   ) : (
-                    <Checkbox checked={selected.has(person.id)} />
+                    <Checkbox checked={selected.has(person.id)} iconeMarcado={checkSquareIcon} />
                   )}
                   <span className="beneficio-step__atribuir-name">{person.name}</span>
                 </button>

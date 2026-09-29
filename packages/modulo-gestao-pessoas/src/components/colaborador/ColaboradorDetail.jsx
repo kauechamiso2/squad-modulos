@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners } from '@phosphor-icons/react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners, Eye, EyeSlash } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
 import briefcaseIcon from '../../assets/icons/Briefcase.svg'
@@ -16,7 +16,7 @@ import ReportaParaField from './ReportaParaField.jsx'
 import DateField from './DateField.jsx'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
-import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
 import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import {
@@ -29,9 +29,68 @@ import {
   formatAmountFromDigits,
   centsToAmount,
 } from '../../utils/formatters.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './ColaboradorDetail.css'
 
-function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
+function computeTenureMonths(collaborator) {
+  const iso = getCollaboratorActiveSince(collaborator)
+  if (!iso) return null
+  const [year, month, day] = iso.split('-').map(Number)
+  const start = new Date(year, month - 1, day)
+  const now = new Date()
+  const totalMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  return Math.max(totalMonths, 0)
+}
+
+function formatTenure(months) {
+  if (months == null) return '—'
+  const years = Math.floor(months / 12)
+  const remMonths = months % 12
+  return `${years}a ${remMonths}m`
+}
+
+// Custo total has no currency prefix - just the number.
+function formatNumberBRL(value) {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const STAT_VALUE_MAX_FONT = 40
+const STAT_VALUE_MIN_FONT = 20
+const STAT_VALUE_FONT_STEP = 2
+
+// The stat cards have a fixed width (see .colaborador-detail__stat-card) and
+// must never grow to fit their value - instead, shrink the value's own
+// font-size until it fits the card's fixed width. Re-measures whenever the
+// text changes or the card itself is resized (e.g. switching between panel
+// and full-screen).
+function useFitStatFontSize(text) {
+  const ref = useRef(null)
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const fit = () => {
+      let size = STAT_VALUE_MAX_FONT
+      el.style.fontSize = `${size}px`
+      while (size > STAT_VALUE_MIN_FONT && el.scrollWidth > el.clientWidth) {
+        size -= STAT_VALUE_FONT_STEP
+        el.style.fontSize = `${size}px`
+      }
+    }
+
+    fit()
+
+    const observer = new ResizeObserver(fit)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [text])
+
+  return ref
+}
+
+function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged }) {
+  const { showToast } = useToast()
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
   // Cargo nao tem colecao propria: as sugestoes sao os valores distintos ja
@@ -47,21 +106,25 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
   const [notaText, setNotaText] = useState('')
   const notaInputRef = useRef(null)
   const notaSavingRef = useRef(false)
+  const [custoVisible, setCustoVisible] = useState(false)
+  const [salarioVisible, setSalarioVisible] = useState(false)
 
-  // Opening straight into full-screen (a direct/shared link) has no natural
-  // "closed" state to slide in from, so it starts already entered. Opening
-  // as a panel starts un-entered and flips true on the next frame, playing
-  // the slide-in-from-the-right transition once. It then stays true across
-  // later panel <-> full toggles, which animate via their own layout
-  // transition instead (see ColaboradorDetail.css).
-  const [entered, setEntered] = useState(() => mode === 'full')
-
+  /*
+   * O painel fica montado enquanto a saida anima (o PainelLateral so o tira
+   * do DOM no fim da transicao), entao nem o estado local nem os dados lidos
+   * do storage se reiniciam sozinhos a cada abertura como acontecia quando o
+   * Home desmontava. Releia e zere aqui, na subida de `aberto`.
+   */
   useEffect(() => {
-    if (entered) return
-    const frame = requestAnimationFrame(() => setEntered(true))
-    return () => cancelAnimationFrame(frame)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (!aberto) return
+    setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+    setDeleteModalOpen(false)
+    setDesligarModalOpen(false)
+    setAddingNota(false)
+    setNotaText('')
+    setCustoVisible(false)
+    setSalarioVisible(false)
+  }, [aberto])
 
   const collaborator = collaborators.find((item) => item.id === id) ?? null
 
@@ -76,16 +139,71 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
     persist(collaborators.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
   }
 
+  const isFreelancerOrConsultor =
+    collaborator?.contractType === 'Freelancer' || collaborator?.contractType === 'Consultor'
+
+  const beneficiosDoColaborador = beneficios
+    .filter((benefit) => Boolean(benefit.tipo))
+    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(id))
+    .map((benefit) => {
+      const variantWithValue = benefit.valores?.find(
+        (variant) => variant.aplicaATodos || variant.colaboradorIds?.includes(id),
+      )
+      return {
+        benefit,
+        filterTipo: getBenefitFilterTipo(benefit),
+        Icon: getBeneficioTypeIcon(benefit.tipo),
+        assignedValue: variantWithValue ? formatCurrencyBRL(variantWithValue.valor) : '—',
+        assignedValueRaw: variantWithValue?.valor ?? 0,
+      }
+    })
+
+  // The rebuilt Freelancer flow saves the contract value as valorContrato;
+  // Consultor still goes through the older flow, which saves valorPagamento
+  // - read whichever is actually set, preferring the newer name.
+  const salarioValue = collaborator
+    ? isFreelancerOrConsultor
+      ? (collaborator.valorContrato ?? collaborator.valorPagamento)
+      : collaborator.salario
+    : null
+  const salarioFieldName = isFreelancerOrConsultor
+    ? collaborator?.valorContrato != null
+      ? 'valorContrato'
+      : 'valorPagamento'
+    : 'salario'
+  const salarioDisplay =
+    salarioValue == null
+      ? 'Adicionar'
+      : isFreelancerOrConsultor
+        ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
+        : formatCurrencyBRL(salarioValue)
+
+  // "Custo para empresa" is the intended cost base when set - salário
+  // bruto stays purely informational in that case. Falls back to
+  // salário/valor de pagamento for records that predate the field (or
+  // simply never set it).
+  const custoBase = collaborator?.custoParaEmpresa ?? salarioValue ?? 0
+  const custoTotal =
+    custoBase + beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
+  const tenureMonths = collaborator ? computeTenureMonths(collaborator) : null
+
+  // These two must be called unconditionally, before the early return below,
+  // so the same number of hooks runs on every render regardless of whether
+  // collaborator was found.
+  const custoDisplayText = custoVisible ? formatNumberBRL(custoTotal) : '••••••'
+  const tenureDisplayText = formatTenure(tenureMonths)
+  const custoValueRef = useFitStatFontSize(custoDisplayText)
+  const tenureValueRef = useFitStatFontSize(tenureDisplayText)
+
   if (!collaborator) return null
 
   const desligado = Boolean(collaborator.desligado)
-  const isFreelancerOrConsultor =
-    collaborator.contractType === 'Freelancer' || collaborator.contractType === 'Consultor'
 
   const handleDelete = () => {
     const updated = collaborators.filter((item) => item.id !== id)
     setCollection(COLLECTIONS.COLABORADORES, updated)
     onDataChanged?.(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
     onClose()
   }
 
@@ -132,29 +250,6 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
     }
     cancelAddNota()
   }
-
-  const beneficiosDoColaborador = beneficios
-    .filter((benefit) => Boolean(benefit.tipo))
-    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(id))
-    .map((benefit) => {
-      const variantWithValue = benefit.valores?.find(
-        (variant) => variant.aplicaATodos || variant.colaboradorIds?.includes(id),
-      )
-      return {
-        benefit,
-        filterTipo: getBenefitFilterTipo(benefit),
-        Icon: getBeneficioTypeIcon(benefit.tipo),
-        assignedValue: variantWithValue ? formatCurrencyBRL(variantWithValue.valor) : '—',
-      }
-    })
-
-  const salarioValue = isFreelancerOrConsultor ? collaborator.valorPagamento : collaborator.salario
-  const salarioDisplay =
-    salarioValue == null
-      ? 'Adicionar'
-      : isFreelancerOrConsultor
-        ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
-        : formatCurrencyBRL(salarioValue)
 
   const profileSection = (
     <div className="colaborador-detail__profile">
@@ -296,17 +391,20 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         <span className="colaborador-detail__row-label">Salário</span>
         <InlineEditField
           value={amountToDigits(salarioValue)}
-          displayValue={salarioDisplay}
+          displayValue={salarioVisible ? salarioDisplay : '••••••'}
           disabled={desligado}
           formatForInput={(digits) => (digits ? formatAmountFromDigits(digits) : '')}
           parseInput={(text) => text.replace(/\D/g, '')}
-          onSave={(digits) =>
-            updateField(
-              isFreelancerOrConsultor ? 'valorPagamento' : 'salario',
-              centsToAmount(digits),
-            )
-          }
+          onSave={(digits) => updateField(salarioFieldName, centsToAmount(digits))}
         />
+        <button
+          type="button"
+          className="colaborador-detail__mask-toggle"
+          onClick={() => setSalarioVisible((value) => !value)}
+          aria-label={salarioVisible ? 'Ocultar salário' : 'Mostrar salário'}
+        >
+          {salarioVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
+        </button>
       </div>
     </div>
   )
@@ -346,6 +444,38 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
           Adicionar nota
         </button>
       )}
+    </div>
+  )
+
+  const metricsSection = (
+    <div className="colaborador-detail__metrics">
+      <p className="colaborador-detail__section-label">Métricas</p>
+      <div className="colaborador-detail__stats-row">
+        <div className="colaborador-detail__stat-card">
+          <div className="colaborador-detail__stat-header">
+            <span className="colaborador-detail__stat-label colaborador-detail__stat-label--medium">
+              Custo total
+            </span>
+            <button
+              type="button"
+              className="colaborador-detail__stat-toggle"
+              onClick={() => setCustoVisible((value) => !value)}
+              aria-label={custoVisible ? 'Ocultar custo total' : 'Mostrar custo total'}
+            >
+              {custoVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
+            </button>
+          </div>
+          <span ref={custoValueRef} className="colaborador-detail__stat-value">
+            {custoDisplayText}
+          </span>
+        </div>
+        <div className="colaborador-detail__stat-card">
+          <span className="colaborador-detail__stat-label">Tempo de casa</span>
+          <span ref={tenureValueRef} className="colaborador-detail__stat-value">
+            {tenureDisplayText}
+          </span>
+        </div>
+      </div>
     </div>
   )
 
@@ -415,7 +545,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
 
   return (
     <PainelLateral
-      aberto={entered}
+      aberto={aberto}
       titulo="Colaborador"
       /* O foco inicial vem para o X, nunca para a lixeira. */
       acaoEsquerda={<IconButton icon={closeIcon} alt="Fechar" data-foco-inicial onClick={onClose} />}
@@ -436,6 +566,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
               {profileSection}
               {pipoBar}
               {infoList}
+              {metricsSection}
               {beneficiosSection}
             </div>
             <div className="colaborador-detail__column colaborador-detail__column--notes">
@@ -448,6 +579,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
             {pipoBar}
             {infoList}
             {notesSection}
+            {metricsSection}
             {beneficiosSection}
           </>
         )}

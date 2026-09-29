@@ -480,3 +480,24 @@ caminhos: `ConfirmModal` nos fluxos novos e o `ModalOverlay` +
 ainda vai converter.
 
 A decidir com o Bruno: qual API e qual desenho ficam, e promover um so.
+
+## Variaveis do @squad/ui e ordem dos arquivos CSS
+
+Os paineis do Gestao de Pessoas recebem duas classes que definem as mesmas
+custom properties do `PainelLateral`: a `.gp-painel` (do `pages/Home.css`, com
+o que vale para todos os paineis do modulo) e a do proprio painel (por exemplo
+`.colaborador-detail--full`). As duas tem a mesma especificidade, entao quem
+ganha e a que aparece depois no CSS empacotado - e isso depende da ordem dos
+imports, nao de nada visivel no arquivo.
+
+Ja mordeu duas vezes: o painel de detalhe herdou o afastamento de 8px da barra
+de rolagem dos paineis de filtro e ficou 8px mais estreito, e o modo tela cheia
+ficou preso na altura `calc(100vh - 40px)` em vez de `100vh`.
+
+Contornado dobrando a classe onde precisa vencer
+(`.colaborador-detail.colaborador-detail--full`) e tirando do `.gp-painel` o
+que so servia aos paineis de filtro.
+
+A decidir: dar um escopo de verdade ao modulo (um wrapper com uma classe so,
+como o Fluxo de Caixa tem) e declarar as variaveis nele, para a disputa deixar
+de existir.

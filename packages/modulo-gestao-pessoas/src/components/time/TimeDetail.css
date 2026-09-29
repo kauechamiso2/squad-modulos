@@ -1,19 +1,19 @@
 /*
  * A casca deste painel - veu, caixa de 540, deslize de 280ms - vem do
- * @squad/ui/PainelLateral desde que o Fluxo de Caixa passou a usar a mesma no
- * resumo de transacao. Aqui ficam as medidas deste painel e o modo tela cheia.
+ * @squad/ui/PainelLateral, a mesma do detalhe do colaborador. Aqui ficam as
+ * medidas deste painel e o modo tela cheia.
  *
- * O modo tela cheia continua sendo classe extra no MESMO elemento do modo
- * painel: os dois animam largura, posicao e padding um para o outro, e separar
- * em dois componentes quebraria esse morph.
+ * O modo tela cheia e classe extra no MESMO elemento do modo painel: os dois
+ * animam largura, posicao e padding um para o outro, e separar em dois
+ * componentes quebraria esse morph.
  */
-.colaborador-detail {
+.time-detail {
   --painel-largura: 540px;
   --painel-margem-direita: 24px;
   --painel-altura: calc(100vh - 40px);
   --painel-padding-baixo: 24px;
   --painel-espaco-rodape: 0;
-  /* O afastamento da barra de rolagem e do proprio .colaborador-detail__scroll,
+  /* O afastamento da barra de rolagem e do proprio .time-detail__scroll,
      que rola dentro do painel. O 8px que o .gp-painel da aos paineis de
      filtro somaria com ele e estreitaria o conteudo. */
   --painel-rolagem-padding-direita: 0;
@@ -30,20 +30,12 @@
 }
 
 /* Em tela cheia nao ha veu. */
-.colaborador-detail-overlay--oculto { display: none; }
-
-
-
-
-
-
-
-
+.time-detail-overlay--oculto { display: none; }
 
 /* Em tela cheia tudo vem pelas variaveis do PainelLateral: elas e as regras
    dele tem a mesma especificidade, e disputar na ordem do arquivo seria
-   fragil - foi assim que a altura ficou presa no max-height do modo painel. */
-.colaborador-detail.colaborador-detail--full {
+   fragil. */
+.time-detail.time-detail--full {
   --painel-largura: 100vw;
   --painel-altura: 100vh;
   --painel-altura-maxima: 100vh;
@@ -59,26 +51,24 @@
   transform: none;
 }
 
-
-
 /* O cabecalho base (h40, gap 8, titulo 16/500) vem do PainelLateral; em tela
    cheia ele cresce e ganha margem lateral, pelas variaveis dele. */
-.colaborador-detail.colaborador-detail--full {
+.time-detail.time-detail--full {
   --painel-cabecalho-altura: 64px;
   --painel-cabecalho-padding: 0 40px;
 }
 
+.time-detail__header-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
 
-
-.colaborador-detail__power-button,
-.colaborador-detail__expand-button {
+.time-detail__expand-button {
   width: 40px;
   height: 40px;
   color: var(--color-text-secondary);
-}
-
-.colaborador-detail__power-button--active {
-  color: #ff2633;
 }
 
 /*
@@ -87,7 +77,7 @@
  * mesmo arranjo do original - e so assim o conteudo aperta os itens de altura
  * fixa (a barra do Pipo) do mesmo jeito.
  */
-.colaborador-detail__scroll {
+.time-detail__scroll {
   height: 100%;
   min-height: 0;
   overflow-y: auto;
@@ -96,7 +86,7 @@
   gap: 40px;
 }
 
-.colaborador-detail--full .colaborador-detail__scroll {
+.time-detail--full .time-detail__scroll {
   overflow: visible;
 }
 
@@ -104,36 +94,36 @@
    for wheel/trackpad scrolling, coincides with the cursor already being
    over the panel). The 8px right padding keeps the thumb from sitting
    flush against the text; the thumb itself paints inside that gutter. */
-.colaborador-detail__scroll,
-.colaborador-detail--full .colaborador-detail__column {
+.time-detail__scroll,
+.time-detail--full .time-detail__column {
   padding-right: 8px;
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
 
-.colaborador-detail__scroll:hover,
-.colaborador-detail--full .colaborador-detail__column:hover {
+.time-detail__scroll:hover,
+.time-detail--full .time-detail__column:hover {
   scrollbar-color: rgba(0, 0, 0, 0.24) transparent;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar {
+.time-detail__scroll::-webkit-scrollbar,
+.time-detail--full .time-detail__column::-webkit-scrollbar {
   width: 8px;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar-track,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar-track {
+.time-detail__scroll::-webkit-scrollbar-track,
+.time-detail--full .time-detail__column::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.colaborador-detail__scroll::-webkit-scrollbar-thumb,
-.colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar-thumb {
+.time-detail__scroll::-webkit-scrollbar-thumb,
+.time-detail--full .time-detail__column::-webkit-scrollbar-thumb {
   background-color: transparent;
   border-radius: 999px;
 }
 
-.colaborador-detail__scroll:hover::-webkit-scrollbar-thumb,
-.colaborador-detail--full .colaborador-detail__column:hover::-webkit-scrollbar-thumb {
+.time-detail__scroll:hover::-webkit-scrollbar-thumb,
+.time-detail--full .time-detail__column:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.24);
 }
 
@@ -150,18 +140,15 @@
  * que recorta, e `overflow: hidden` corta na caixa de padding. Aqui sobra
  * so o afastamento do conteudo.
  */
-.colaborador-detail.colaborador-detail--panel {
+.time-detail.time-detail--panel {
   --painel-rolagem-margem-direita: -21px;
 }
 
-.colaborador-detail--panel .colaborador-detail__scroll {
+.time-detail--panel .time-detail__scroll {
   padding-right: 13px;
 }
 
-/* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
-   independently of each other and of the header, so each is capped to the
-   viewport height below the fixed 64px header with its own overflow-y. */
-.colaborador-detail--full .colaborador-detail__columns {
+.time-detail--full .time-detail__columns {
   box-sizing: border-box;
   display: grid;
   grid-template-columns: repeat(10, 1fr);
@@ -170,14 +157,14 @@
   height: calc(100vh - 64px);
 }
 
-.colaborador-detail__column {
+.time-detail__column {
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 40px;
 }
 
-.colaborador-detail--full .colaborador-detail__column {
+.time-detail--full .time-detail__column {
   height: calc(100vh - 64px);
   overflow-y: auto;
   /* Pulls the column in from its own grid-track edge so the scrollbar
@@ -186,7 +173,7 @@
   margin-right: 4px;
 }
 
-.colaborador-detail--full .colaborador-detail__column--main {
+.time-detail--full .time-detail__column--main {
   grid-column: 3 / 7;
   /* Matches the Figma spec: keeps this column's content inset 40px from
      the notes column beside it (4px margin + 8px gutter + 28px content
@@ -194,62 +181,42 @@
   padding-right: 28px;
 }
 
-.colaborador-detail--full .colaborador-detail__column--notes {
+.time-detail--full .time-detail__column--notes {
   grid-column: 7 / 9;
 }
 
 /* Profile header */
 
-.colaborador-detail__profile {
+.time-detail__profile {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
-.colaborador-detail__avatar {
+.time-detail__badge {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border-radius: 999px;
-  background: var(--color-overlay);
+  border-radius: 8px;
 }
 
-.colaborador-detail__name {
+.time-detail__name {
   font-size: 20px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
 
-.colaborador-detail__pipo-bar {
-  box-sizing: border-box;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 4px;
-  background: #fbedd0;
-  border-radius: 4px;
-  padding: 12px 2px 12px 12px;
-  font-size: 12px;
-  font-weight: var(--font-weight-regular);
-  color: #5d4309;
-}
-
-.colaborador-detail__pipo-bar strong {
-  font-weight: var(--font-weight-medium);
-}
-
 /* Info list */
 
-.colaborador-detail__info-list {
+.time-detail__info-list {
   display: flex;
   flex-direction: column;
 }
 
-.colaborador-detail__row {
+.time-detail__row {
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -258,12 +225,18 @@
   padding: 16px 0;
 }
 
-.colaborador-detail__row-icon {
+.time-detail__row--descricao {
+  height: auto;
+  min-height: 62px;
+  align-items: flex-start;
+}
+
+.time-detail__row-icon {
   flex-shrink: 0;
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__row-label {
+.time-detail__row-label {
   flex-shrink: 0;
   width: 140px;
   font-size: 14px;
@@ -271,7 +244,7 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__value-button {
+.time-detail__value-button {
   border: none;
   background: none;
   border-radius: 4px;
@@ -283,91 +256,17 @@
   text-align: left;
 }
 
-.colaborador-detail__value-button:not(:disabled):hover {
+.time-detail__value-button:hover {
   background: var(--color-overlay);
 }
 
-.colaborador-detail__value-button:disabled {
-  cursor: not-allowed;
-  color: var(--color-text-secondary);
-}
-
-.colaborador-field {
-  position: relative;
-}
-
-.colaborador-field--fill {
-  flex: 1;
-  min-width: 0;
-}
-
-.colaborador-field__inline-search-input {
-  width: 200px;
-  border: none;
-  outline: none;
-  background: var(--color-overlay);
-  border-radius: 4px;
-  padding: 4px 8px;
-  margin: -4px 0 -4px -8px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text);
-  text-align: left;
-}
-
-.colaborador-field__dropdown {
-  position: fixed;
-  z-index: 220;
-  box-sizing: border-box;
-  width: 280px;
-  max-height: 288px;
-  overflow-y: auto;
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  padding: 4px 16px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
-  text-align: left;
-}
-
-.colaborador-field__pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 32px;
-  box-sizing: border-box;
-  border: none;
-  border-radius: 999px;
-  background: var(--color-overlay);
-  padding: 0 12px;
-}
-
-.colaborador-field__pill:disabled {
-  cursor: not-allowed;
-}
-
-.colaborador-field__pill-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 999px;
-  flex-shrink: 0;
-}
-
-.colaborador-field__pill-label {
-  font-size: 14px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.colaborador-field__reporta-display {
+.time-detail__leader-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
-.colaborador-field__avatar {
+.time-detail__avatar-sm {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -375,12 +274,55 @@
   width: 24px;
   height: 24px;
   border-radius: 999px;
-  background: var(--color-overlay);
+  background: #f4f5f5;
+}
+
+.time-detail__icon-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 999px;
+  background: #f4f5f5;
+  padding: 8px 12px;
+  color: var(--color-text);
+}
+
+.time-detail__descricao-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.time-detail__descricao-text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.time-detail__descricao-text--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.time-detail__ver-mais {
+  display: block;
+  border: none;
+  background: none;
+  padding: 4px 0 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: #798282;
 }
 
 /* Notes */
 
-.colaborador-detail__notes {
+.time-detail__notes {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -389,7 +331,7 @@
   border-top: 1px solid var(--color-border);
 }
 
-.colaborador-detail__nota {
+.time-detail__nota {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -398,19 +340,19 @@
   padding-left: 16px;
 }
 
-.colaborador-detail__nota-date {
+.time-detail__nota-date {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__nota-text {
+.time-detail__nota-text {
   font-size: 16px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
 }
 
-.colaborador-detail__add-nota {
+.time-detail__add-nota {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -422,7 +364,7 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__add-nota-input {
+.time-detail__add-nota-input {
   width: 100%;
   box-sizing: border-box;
   border: none;
@@ -438,25 +380,30 @@
 
 /* Metricas */
 
-.colaborador-detail__metrics {
+.time-detail__metrics {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
-.colaborador-detail__stats-row {
+.time-detail__section-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.time-detail__section-label--flex {
+  flex: 1;
+}
+
+.time-detail__stats-row {
   display: flex;
   gap: 16px;
 }
 
-.colaborador-detail__stat-card {
+.time-detail__stat-card {
   box-sizing: border-box;
   flex: 1;
-  /* Without this, a flex item's default min-width:auto lets long content
-     (e.g. a big Custo total number) force the card wider than its equal
-     flex share instead of respecting it - the value's own font-size
-     shrinks to fit instead (see useFitStatFontSize). */
-  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -465,23 +412,23 @@
   padding: 16px;
 }
 
-.colaborador-detail__stat-header {
+.time-detail__stat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.colaborador-detail__stat-label {
+.time-detail__stat-label {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__stat-label--medium {
+.time-detail__stat-label--medium {
   font-weight: var(--font-weight-medium);
 }
 
-.colaborador-detail__stat-toggle {
+.time-detail__stat-toggle {
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -492,22 +439,142 @@
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__stat-value {
-  min-width: 0;
-  overflow: hidden;
-  white-space: nowrap;
+.time-detail__stat-value {
   font-size: 40px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
 
-/* Mask toggle (Salario row) */
+.time-detail__cargo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-.colaborador-detail__mask-toggle {
+.time-detail__cargo-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.time-detail__cargo-count {
+  font-size: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.time-detail__contract-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.time-detail__contract-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-overlay);
+}
+
+.time-detail__contract-legend {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: #798282;
+}
+
+/* Membros */
+
+.time-detail__membros {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.time-detail__section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.time-detail__member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.time-detail__add-membro-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.time-detail__member-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.time-detail__member-row:hover {
+  background: var(--color-overlay);
+}
+
+.time-detail__member-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  /* Pushes the icon to the row's far right edge regardless of the
-     Salário value's length, instead of sitting flush against it. */
-  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+}
+
+.time-detail__member-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.time-detail__member-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.time-detail__member-cargo {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.time-detail__member-remove {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -519,19 +586,19 @@
 
 /* Beneficios */
 
-.colaborador-detail__beneficios {
+.time-detail__beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.time-detail__beneficio-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.colaborador-detail__section-label {
-  font-size: 16px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-}
-
-.colaborador-detail__beneficio-row {
+.time-detail__beneficio-row {
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -542,11 +609,11 @@
   border-radius: 8px;
 }
 
-.colaborador-detail__beneficio-row:hover {
+.time-detail__beneficio-row:hover {
   background: var(--color-overlay);
 }
 
-.colaborador-detail__beneficio-icon {
+.time-detail__beneficio-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -558,7 +625,7 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__beneficio-info {
+.time-detail__beneficio-info {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -567,14 +634,14 @@
   overflow: hidden;
 }
 
-.colaborador-detail__beneficio-tipo {
+.time-detail__beneficio-tipo {
   flex-shrink: 0;
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__beneficio-name {
+.time-detail__beneficio-name {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -583,35 +650,9 @@
   color: var(--color-text);
 }
 
-.colaborador-detail__beneficio-value {
+.time-detail__beneficio-value {
   flex-shrink: 0;
   font-size: 14px;
   font-weight: var(--font-weight-semibold);
-  color: var(--color-text);
-}
-
-/* Date field dropdown */
-
-.colaborador-date-field__dropdown {
-  width: 260px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 12px;
-}
-
-.colaborador-date-field__no-end-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border: none;
-  background: none;
-  padding: 0;
-  text-align: left;
-}
-
-.colaborador-date-field__no-end-label {
-  font-size: 13px;
-  font-weight: var(--font-weight-regular);
   color: var(--color-text);
 }

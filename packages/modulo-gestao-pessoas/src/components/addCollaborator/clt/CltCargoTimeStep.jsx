@@ -9,6 +9,7 @@ import '@squad/ui/styles/buttons.css'
 import './CltShell.css'
 import './CltCargoTimeStep.css'
 import { Checkbox } from '@squad/ui'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 
 // onOpenCreate is optional - when omitted (the Cargo field), there's no
 // "Add ..." row at all, since a cargo is plain free text with no separate
@@ -209,7 +210,7 @@ function CltCargoTimeStep({ name, initialCargo, initialTeam, onBack, onClose, on
                     className="clt-cargo-time__chip"
                     onClick={() => selectTeamChip(team)}
                   >
-                    <Checkbox checked={checked} />
+                    <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
                     <span className="clt-cargo-time__chip-badge" style={{ background: light }}>
                       <TeamIcon size={16} color={dark} />
                     </span>

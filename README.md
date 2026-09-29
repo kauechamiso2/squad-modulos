@@ -39,7 +39,7 @@ O módulo veio do repositório `brunovasconcelos-maker/squad-gestao-pessoas`, qu
 era um projeto Vite separado.
 
 > **A sincronização com esse repositório está encerrada.** A última importação
-> trouxe o commit `c8b28e3` e `packages/modulo-gestao-pessoas` passou a ser a
+> trouxe o commit `6953ba6` e `packages/modulo-gestao-pessoas` passou a ser a
 > **fonte da verdade**. O repositório antigo não deve mais ser consultado,
 > clonado ou usado como referência, e a pasta local `~/Documents/gestao-de-pessoa`
 > está aposentada.
