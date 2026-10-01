@@ -20,6 +20,7 @@ import '@squad/ui/styles/buttons.css'
 import '../../colaborador/ColaboradorDetail.css'
 import './CltShell.css'
 import './CltInfoStep.css'
+import { tipoDoContractType } from '../../../utils/colaboradorStatus.js'
 
 function nextMondayIso() {
   const now = new Date()
@@ -491,6 +492,12 @@ function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose,
     const record = {
       name,
       contractType,
+      // Ponte ate o Topico 5: grava o tipo novo e o checklist de admissao
+      // todo aberto, para o colaborador entrar como Pendente.
+      tipo: tipoDoContractType(contractType),
+      admissao: { feitos: [] },
+      rescisao: null,
+      ausencia: null,
       cargos: cargoName ? [cargoName] : [],
       times: teamName ? [teamName] : [],
       reportaPara: reportaParaNome,

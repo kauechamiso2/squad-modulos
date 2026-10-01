@@ -12,6 +12,7 @@ import { COLLECTIONS, addItem, getCollection } from '../../utils/storage.js'
 import { formatDatePt, formatCurrencyBRL, formatPaymentValue } from '../../utils/formatters.js'
 import '@squad/ui/styles/buttons.css'
 import '@squad/ui/styles/Step2AdditionalInfo.css'
+import { tipoDoContractType } from '../../utils/colaboradorStatus.js'
 
 const FIELDS_FIXO = [
   {
@@ -126,6 +127,12 @@ function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue })
     const record = {
       name,
       contractType,
+      // Ponte ate o Topico 5: grava o tipo novo e o checklist de admissao
+      // todo aberto, para o colaborador entrar como Pendente.
+      tipo: tipoDoContractType(contractType),
+      admissao: { feitos: [] },
+      rescisao: null,
+      ausencia: null,
       email: values.email,
       cargos: values.cargos,
       times: values.times,

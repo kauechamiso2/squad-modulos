@@ -79,7 +79,8 @@ function createEmptyDraft() {
   return {
     time: new Set(),
     cargo: new Set(),
-    atividade: new Set(),
+    tipo: new Set(),
+    status: new Set(),
     periodo: { start: null, end: null },
   }
 }
@@ -88,7 +89,8 @@ function cloneFilters(filters) {
   return {
     time: new Set(filters.time),
     cargo: new Set(filters.cargo),
-    atividade: new Set(filters.atividade),
+    tipo: new Set(filters.tipo),
+    status: new Set(filters.status),
     periodo: { ...filters.periodo },
   }
 }
@@ -100,7 +102,8 @@ function FiltrosPanel({
   onSave,
   timeOptions,
   cargoOptions,
-  atividadeOptions,
+  tipoOptions,
+  statusOptions,
 }) {
   const [draft, setDraft] = useState(createEmptyDraft)
   const [visibleCargoCount, setVisibleCargoCount] = useState(5)
@@ -216,14 +219,29 @@ function FiltrosPanel({
             </div>
           </section>
 
-          <section className="filtros-panel__section filtros-panel__section--last">
-            <span className="filtros-panel__label">Atividade:</span>
+          <section className="filtros-panel__section">
+            <span className="filtros-panel__label">Tipo:</span>
             <div className="filtros-panel__pills">
-              {atividadeOptions.map((name) => (
+              {tipoOptions.map((name) => (
                 <FilterPill
                   key={name}
-                  selected={draft.atividade.has(name)}
-                  onClick={() => toggleDraftOption('atividade', name)}
+                  selected={draft.tipo.has(name)}
+                  onClick={() => toggleDraftOption('tipo', name)}
+                >
+                  {name}
+                </FilterPill>
+              ))}
+            </div>
+          </section>
+
+          <section className="filtros-panel__section filtros-panel__section--last">
+            <span className="filtros-panel__label">Status:</span>
+            <div className="filtros-panel__pills">
+              {statusOptions.map((name) => (
+                <FilterPill
+                  key={name}
+                  selected={draft.status.has(name)}
+                  onClick={() => toggleDraftOption('status', name)}
                 >
                   {name}
                 </FilterPill>

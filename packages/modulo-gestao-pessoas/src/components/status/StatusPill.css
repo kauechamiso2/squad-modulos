@@ -1,0 +1,93 @@
+/* Pill de status - Figma 10331:3109, instancias "Status". */
+.status-pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  padding: 4px 12px;
+  border-radius: 90px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.status-pill--pendente,
+.status-pill--rescisao_pendente {
+  color: var(--gp-status-pendente-texto);
+  background: var(--gp-status-pendente-fundo);
+}
+
+.status-pill--em_atividade {
+  color: var(--gp-status-ativo-texto);
+  background: var(--gp-status-ativo-fundo);
+}
+
+.status-pill--desligado {
+  color: var(--gp-status-desligado-texto);
+  background: var(--gp-status-desligado-fundo);
+}
+
+.status-pill--fim_de_contrato {
+  color: var(--gp-status-fim-texto);
+  background: var(--gp-status-fim-fundo);
+}
+
+/*
+ * Ancora do popover. O pill ganha borda de 1px na propria cor (10331:3777) -
+ * por box-shadow inset, para nao mudar o tamanho do pill.
+ */
+.status-pill__ancora {
+  position: relative;
+  display: inline-flex;
+  outline: none;
+}
+
+.status-pill__ancora--aberto > .status-pill {
+  box-shadow: inset 0 0 0 1px currentColor;
+}
+
+/*
+ * Popover: alinhado a direita do pill, 5px abaixo (10331:3724). O espaco de
+ * 5px e padding da propria caixa transparente, para o mouse atravessar do
+ * pill ao popover sem fecha-lo.
+ */
+.checklist-popover {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 30;
+  padding-top: 5px;
+  cursor: default;
+}
+
+.checklist-popover__caixa {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+  border-radius: 8px;
+  box-shadow: var(--gp-popover-sombra);
+}
+
+.checklist-popover__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+}
+
+.checklist-popover__item img {
+  flex-shrink: 0;
+}
+
+.checklist-popover__rotulo {
+  font-size: 12px;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}

@@ -21,6 +21,16 @@ export function todayIso() {
   return `${yyyy}-${mm}-${dd}`
 }
 
+// Soma (ou subtrai) dias de uma data ISO, no fuso local.
+export function addDaysIso(isoDate, days) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  const date = new Date(year, month - 1, day + days)
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export function formatDatePt(isoDate) {
   const [year, month, day] = isoDate.split('-').map(Number)
   return `${day} ${MONTHS_PT[month - 1]} ${year}`

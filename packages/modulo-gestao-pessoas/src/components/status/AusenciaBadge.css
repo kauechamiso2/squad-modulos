@@ -1,0 +1,69 @@
+/* Badge de ausencia - Figma 10331:3226: 32px, redondo, fundo azul claro. */
+.ausencia-badge {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 34px;
+  background: var(--gp-ausencia-fundo);
+  outline: none;
+  cursor: default;
+}
+
+/*
+ * Tooltip - Figma 10331:4344. Centrado sobre o badge, com a base da seta 2px
+ * acima dele (10331:4148). A seta e o "Polygon 1" do Figma girado 60 graus
+ * dentro de uma caixa de 12.155px, que fica numa de 16.604px sobreposta 8px
+ * a caixa do texto - a mesma montagem do Figma.
+ */
+.ausencia-badge__tooltip {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.ausencia-badge__tooltip-caixa {
+  margin-bottom: -8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--gp-tooltip-fundo);
+  color: var(--gp-tooltip-texto);
+  font-size: 14px;
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.ausencia-badge__tooltip-seta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16.604px;
+  height: 16.604px;
+}
+
+.ausencia-badge__tooltip-seta-giro {
+  position: relative;
+  width: 12.155px;
+  height: 12.155px;
+  transform: rotate(60deg);
+}
+
+.ausencia-badge__tooltip-seta-giro img {
+  position: absolute;
+  top: 0;
+  right: 6.7%;
+  bottom: 25%;
+  left: 6.7%;
+  display: block;
+}

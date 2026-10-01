@@ -33,6 +33,7 @@ import {
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear } from '../utils/formatters.js'
+import { STATUS_OPCOES, TIPOS, getStatus, isPendente } from '../utils/colaboradorStatus.js'
 import { getBenefitMemberCount } from '../utils/beneficiarios.js'
 import { getBenefitFilterTipo } from '../utils/beneficioOptions.js'
 import { MODULE_BASE } from '../routes.js'
@@ -44,7 +45,6 @@ const TABS = [
   { id: 'beneficios', label: 'Benefícios' },
 ]
 
-const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 
 // Read once when this module first evaluates - i.e. exactly once per real
 // page load (a hard navigation/refresh reloads the whole bundle, so this
@@ -64,7 +64,8 @@ function createEmptyColumnFilters() {
   return {
     time: new Set(),
     cargo: new Set(),
-    atividade: new Set(),
+    tipo: new Set(),
+    status: new Set(),
     periodo: { start: null, end: null },
   }
 }
@@ -266,7 +267,7 @@ function Home({ backTo }) {
 
   const filteredCollaborators = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return collaborators.filter((collaborator) => {
+    const filtered = collaborators.filter((collaborator) => {
       if (query && !collaborator.name.toLowerCase().includes(query)) {
         return false
       }
@@ -282,9 +283,13 @@ function Home({ backTo }) {
       ) {
         return false
       }
+      if (columnFilters.tipo.size > 0 && !columnFilters.tipo.has(collaborator.tipo)) {
+        return false
+      }
+      // O filtro guarda o rotulo sem contador: "Pendente" casa 3/3, 2/3 e 1/1.
       if (
-        columnFilters.atividade.size > 0 &&
-        !columnFilters.atividade.has(collaborator.contractType)
+        columnFilters.status.size > 0 &&
+        !columnFilters.status.has(getStatus(collaborator).rotulo)
       ) {
         return false
       }
@@ -297,13 +302,19 @@ function Home({ backTo }) {
       }
       return true
     })
+    // Sem ordenacao ativa, Pendente e Rescisao pendente vem primeiro. O sort
+    // e estavel, entao o resto mantem a ordem de cadastro. A ordenacao por
+    // Nome da tabela parte desta lista e passa por cima.
+    const prioridade = (collaborator) => (isPendente(getStatus(collaborator)) ? 0 : 1)
+    return filtered.sort((a, b) => prioridade(a) - prioridade(b))
   }, [collaborators, searchQuery, columnFilters])
 
   const filtersSummary = useMemo(() => {
     const parts = [
       ...columnFilters.time,
       ...columnFilters.cargo,
-      ...columnFilters.atividade,
+      ...columnFilters.tipo,
+      ...columnFilters.status,
     ]
     if (columnFilters.periodo.start) {
       parts.push(formatDateDMonthYear(columnFilters.periodo.start))
@@ -460,7 +471,8 @@ function Home({ backTo }) {
                   onClearFilter={clearFilter}
                   timeOptions={timeOptions}
                   cargoOptions={cargoOptions}
-                  atividadeOptions={ATIVIDADE_OPTIONS}
+                  tipoOptions={TIPOS}
+                  statusOptions={STATUS_OPCOES}
                   onRowClick={openColaborador}
                   onDataChanged={setCollaborators}
                 />
@@ -539,7 +551,8 @@ function Home({ backTo }) {
         onSave={setColumnFilters}
         timeOptions={timeOptions}
         cargoOptions={cargoOptions}
-        atividadeOptions={ATIVIDADE_OPTIONS}
+        tipoOptions={TIPOS}
+        statusOptions={STATUS_OPCOES}
       />
 
       <TimesFiltrosPanel

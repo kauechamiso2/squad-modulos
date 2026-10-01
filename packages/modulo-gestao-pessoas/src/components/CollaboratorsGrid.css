@@ -8,10 +8,9 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: flex-start;
   gap: 20px;
-  height: 220px;
   padding: 24px 16px;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
@@ -29,15 +28,21 @@
 
 .collaborator-card__top-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  width: 100%;
+  height: 40px;
+}
+
+.collaborator-card__acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .collaborator-card__checkbox {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   width: 40px;
   height: 40px;
   border: none;
@@ -45,21 +50,30 @@
   padding: 0;
 }
 
-.collaborator-card__avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 999px;
-  background: var(--color-overlay);
-}
-
 .collaborator-card__info {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.collaborator-card__base {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.collaborator-card__name,
+.collaborator-card__meta {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
 }
 
 .collaborator-card__name {
@@ -72,4 +86,10 @@
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
+}
+
+/* Desligado e Fim de contrato: mesmo tom claro da linha da tabela (10331:3265). */
+.collaborator-card--esmaecido .collaborator-card__name,
+.collaborator-card--esmaecido .collaborator-card__meta {
+  color: var(--gp-texto-esmaecido);
 }

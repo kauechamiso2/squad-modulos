@@ -1,3 +1,6 @@
+import { todayIso } from './formatters.js'
+import { buildSeedColaboradores } from './seedColaboradores.js'
+
 // Todas as chaves deste modulo vivem sob um prefixo proprio. No monorepo
 // varios modulos dividem a mesma origem, entao chaves cruas como "times" ou
 // "cargos" colidiriam com as de outro modulo. Ver migrateLegacyKeys() abaixo
@@ -94,6 +97,41 @@ export function duplicateItems(name, ids) {
   const updated = [...items, ...duplicates]
   writeCollection(name, updated)
   return updated
+}
+
+// Versao do formato dos colaboradores. A 2 trouxe tipo (CLT/PJ), checklists,
+// rescisao e ausencia. Dado do modelo anterior e apagado, nao convertido
+// (decisao do contexto, Topico 1), e no lugar entra o seed.
+//
+// So mexe em chaves deste modulo: o localStorage e dividido com os outros
+// modulos do apps/web. Benefícios e times ficam como estao. Nao roda quando a
+// versao gravada e mais nova que a deste codigo, para nunca apagar dado mais
+// novo.
+export const DATA_VERSION = 2
+const DATA_VERSION_KEY = storageKey('versao-dados')
+
+export function resetColaboradoresIfOutdated() {
+  const stored = Number(localStorage.getItem(DATA_VERSION_KEY) ?? 0)
+  if (stored >= DATA_VERSION) return
+
+  const colaboradores = buildSeedColaboradores(todayIso())
+  writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
+  ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
+  localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
+}
+
+// Os times citados pelo seed entram como times pendentes - o mesmo registro
+// que o app cria quando alguem digita um time novo - e so se ainda nao
+// existir um time com o mesmo nome.
+function ensurePendingTimes(names) {
+  const times = readCollection(COLLECTIONS.TIMES) ?? []
+  const existing = new Set(times.map((time) => time.name))
+  const missing = [...new Set(names)].filter((name) => !existing.has(name))
+  if (missing.length === 0) return
+  writeCollection(COLLECTIONS.TIMES, [
+    ...times,
+    ...missing.map((name) => ({ id: generateId(), name, pending: true })),
+  ])
 }
 
 function ensureSeeded(name, seedFactory) {
