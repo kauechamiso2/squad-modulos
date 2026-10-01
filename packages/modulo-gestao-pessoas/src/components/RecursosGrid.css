@@ -50,16 +50,7 @@
 
 .recurso-card__logo {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
   object-fit: cover;
-}
-
-.recurso-card__logo--centro {
-  inset: 9px;
-  width: 38px;
-  height: 38px;
 }
 
 .recurso-card__info {

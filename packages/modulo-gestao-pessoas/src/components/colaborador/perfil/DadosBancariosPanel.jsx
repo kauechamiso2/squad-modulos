@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { PainelLateral } from '@squad/ui'
 import closeIcon from '../../../assets/icons/Close.svg'
 import SeletorSegmentado from '../../campos/SeletorSegmentado.jsx'
+import Campo from '../../campos/CampoPainel.jsx'
 import { dadosBancariosCompletos } from '../../../utils/cadastro.js'
 import '../../campos/Botoes.css'
 import './Perfil.css'
@@ -13,21 +14,6 @@ const TIPOS_CONTA = [
 ]
 
 const VAZIO = { banco: '', agencia: '', tipoConta: 'corrente', numeroConta: '', titular: '', chavePix: '' }
-
-function Campo({ rotulo, placeholder, valor, onChange, inputMode }) {
-  return (
-    <label className="dados-bancarios__campo">
-      <span className="dados-bancarios__rotulo">{rotulo}</span>
-      <input
-        className="dados-bancarios__entrada"
-        placeholder={placeholder}
-        value={valor}
-        inputMode={inputMode}
-        onChange={(event) => onChange(event.target.value)}
-      />
-    </label>
-  )
-}
 
 /*
  * Segundo painel da pagina do colaborador - Figma 10338:10177. Salvar exige

@@ -3,20 +3,9 @@ import arrowUpRightIcon from '../assets/icons/ArrowUpRight.svg'
 import userIcon from '../assets/icons/User.svg'
 import desktopIcon from '../assets/icons/Desktop.svg'
 import vanIcon from '../assets/icons/Van.svg'
-import aliceLogo from '../assets/images/alice.png'
-import cajuLogo from '../assets/images/caju.png'
-import slackLogo from '../assets/images/slack.png'
 import { OUTRO, tituloDoRecurso, valorDoRecurso } from '../utils/recursos.js'
+import { LOGOS } from '../utils/logos.js'
 import './RecursosGrid.css'
-
-// Logos que o Figma tem, pelo nome do fornecedor ou servico. `inteiro`: o
-// logo ocupa o badge todo (Alice, Caju); senao fica com 38px no centro do
-// badge cinza (Slack) - Figma 10334:5577, 10334:5605 e 10334:5618.
-const LOGOS = {
-  Alice: { src: aliceLogo, inteiro: true },
-  Caju: { src: cajuLogo, inteiro: true },
-  Slack: { src: slackLogo, inteiro: false },
-}
 
 // Sem logo: badge azul claro com o icone. Van e Desktop sao os SVGs do Figma
 // (10334:5632 e 10334:5591); os outros icones de categoria nao aparecem em
@@ -57,7 +46,8 @@ function MarcaDoRecurso({ recurso }) {
     return (
       <span className="recurso-card__marca recurso-card__marca--logo">
         <img
-          className={logo.inteiro ? 'recurso-card__logo' : 'recurso-card__logo recurso-card__logo--centro'}
+          className="recurso-card__logo"
+          style={{ top: logo.inset, left: logo.inset, width: 56 - 2 * logo.inset, height: 56 - 2 * logo.inset }}
           src={logo.src}
           alt=""
         />

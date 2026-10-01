@@ -36,6 +36,16 @@ export const CATEGORIAS_BENEFICIO = [
   'Seguro de vida',
 ]
 
+// Sugestoes de fornecedor por categoria (contexto, secao 7).
+export const FORNECEDORES = {
+  'Plano de saúde': ['Alice', 'Amil', 'SulAmérica', 'Bradesco Saúde', 'Hapvida NotreDame Intermédica', 'Unimed', 'Porto Seguro Saúde'],
+  'Vale transporte': ['Bilhete Único', 'Uber', '99', 'VEM'],
+  'Vale alimentação': ['Caju', 'VR', 'Ticket', 'Alelo', 'Swile', 'Pluxee'],
+  'Bem-estar': ['Wellhub', 'TotalPass', 'SmartFit'],
+  'Plano odontológico': ['Odontoprev', 'Amil Dental', 'SulAmérica Odonto', 'Bradesco Dental', 'Uniodonto'],
+  'Seguro de vida': ['Porto Seguro Vida', 'Bradesco Vida e Previdência', 'MetLife', 'Prudential', 'SulAmérica Vida'],
+}
+
 export const SERVICOS_LICENCA = [
   'Google Workspace',
   'Claude',
