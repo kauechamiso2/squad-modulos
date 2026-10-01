@@ -27,7 +27,8 @@ import { documentosDoColaborador, recursosDoColaborador } from '../../../utils/c
 import { getBeneficiaryValue } from '../../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon } from '../../../utils/beneficioOptions.js'
 import { TIPOS_RECURSO, tituloDoRecurso } from '../../../utils/recursos.js'
-import { cpfValido, emailValido, mascaraCpf } from '../../../utils/mascaras.js'
+import { cnpjValido, cpfValido, emailValido, mascaraCnpj, mascaraCpf } from '../../../utils/mascaras.js'
+import { SUFIXO_PAGAMENTO, custoBaseDoColaborador } from '../../../utils/custos.js'
 import { useFitStatFontSize } from '../../../utils/useFitStatFontSize.js'
 import {
   amountToDigits,
@@ -95,11 +96,12 @@ function Linha({ icone, rotulo, vazio, acessorio, rotuloEstreito = false, childr
 
 const iconeSvg = (src) => <img src={src} width={20} height={20} alt="" />
 
-function CampoValor({ valor, oculto, travado, onSalvar }) {
+function CampoValor({ valor, oculto, travado, onSalvar, semMoeda = false }) {
+  const texto = semMoeda ? formatAmountFromDigits(amountToDigits(valor)) : formatCurrencyBRL(valor ?? 0)
   return (
     <InlineEditField
       value={amountToDigits(valor)}
-      displayValue={valor == null ? 'Adicionar' : oculto ? OCULTO : formatCurrencyBRL(valor)}
+      displayValue={valor == null ? 'Adicionar' : oculto ? OCULTO : texto}
       disabled={travado}
       formatForInput={(digitos) => (digitos ? formatAmountFromDigits(digitos) : '')}
       parseInput={(texto) => texto.replace(/\D/g, '')}
@@ -121,7 +123,14 @@ function Olho({ visivel, onAlternar, rotulo }) {
   )
 }
 
+// CLT mostra o CPF; PJ, o CNPJ.
+const DOCUMENTOS = {
+  CLT: { campo: 'cpf', mascara: mascaraCpf, limite: 11, validar: cpfValido, sufixo: 'CPF' },
+  PJ: { campo: 'cnpj', mascara: mascaraCnpj, limite: 14, validar: cnpjValido, sufixo: 'CNPJ' },
+}
+
 function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCriarTime }) {
+  const documento = DOCUMENTOS[colaborador.tipo]
   const [salarioVisivel, setSalarioVisivel] = useState(false)
   const [custoVisivel, setCustoVisivel] = useState(false)
   const cargosEmUso = [...new Set(colaboradores.flatMap((item) => item.cargos ?? []))]
@@ -135,18 +144,18 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
       <Linha icone={iconeSvg(phoneCallIcon)} rotulo="Contato" vazio={!colaborador.contato}>
         <CampoContato valor={colaborador.contato} disabled={travado} onSalvar={(valor) => onAtualizar('contato', valor)} />
       </Linha>
-      <Linha icone={iconeSvg(identificationCardIcon)} rotulo="Documento" vazio={!colaborador.cpf}>
+      <Linha icone={iconeSvg(identificationCardIcon)} rotulo="Documento" vazio={!colaborador[documento.campo]}>
         <span className="perfil-linha__documento">
           <CampoMascarado
-            valor={colaborador.cpf}
-            onSalvar={(valor) => onAtualizar('cpf', valor)}
-            mascara={mascaraCpf}
-            limite={11}
-            validar={cpfValido}
+            valor={colaborador[documento.campo]}
+            onSalvar={(valor) => onAtualizar(documento.campo, valor)}
+            mascara={documento.mascara}
+            limite={documento.limite}
+            validar={documento.validar}
             vazio="Adicionar"
             disabled={travado}
           />
-          {colaborador.cpf && <span className="perfil-linha__sufixo">CPF</span>}
+          {colaborador[documento.campo] && <span className="perfil-linha__sufixo">{documento.sufixo}</span>}
         </span>
       </Linha>
       <Linha icone={<Briefcase size={20} color="var(--color-text-secondary)" />} rotulo="Cargo" vazio={!colaborador.cargos.length}>
@@ -192,34 +201,62 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           onSave={(valor) => onAtualizar('dataAdmissao', valor)}
         />
       </Linha>
-      <Linha
-        icone={iconeSvg(piggyBankIcon)}
-        rotulo="Salário bruto"
-        rotuloEstreito
-        vazio={colaborador.salario == null}
-        acessorio={<Olho visivel={salarioVisivel} rotulo="salário bruto" onAlternar={() => setSalarioVisivel((v) => !v)} />}
-      >
-        <CampoValor
-          valor={colaborador.salario}
-          oculto={!salarioVisivel}
-          travado={travado}
-          onSalvar={(valor) => onAtualizar('salario', valor)}
-        />
-      </Linha>
-      <Linha
-        icone={iconeSvg(piggyBankIcon)}
-        rotulo="Custo para empresa"
-        rotuloEstreito
-        vazio={colaborador.custoParaEmpresa == null}
-        acessorio={<Olho visivel={custoVisivel} rotulo="custo para empresa" onAlternar={() => setCustoVisivel((v) => !v)} />}
-      >
-        <CampoValor
-          valor={colaborador.custoParaEmpresa}
-          oculto={!custoVisivel}
-          travado={travado}
-          onSalvar={(valor) => onAtualizar('custoParaEmpresa', valor)}
-        />
-      </Linha>
+      {colaborador.tipo === 'PJ' ? (
+        <Linha
+          icone={iconeSvg(piggyBankIcon)}
+          rotulo="Salário"
+          rotuloEstreito
+          vazio={colaborador.valorContrato == null}
+          acessorio={<Olho visivel={salarioVisivel} rotulo="salário" onAlternar={() => setSalarioVisivel((v) => !v)} />}
+        >
+          {/* PJ: o valor do contrato com o sufixo do pagamento (Figma 10338:12202). */}
+          <span className="perfil-linha__documento perfil-linha__documento--perto">
+            <CampoValor
+              valor={colaborador.valorContrato}
+              oculto={!salarioVisivel}
+              travado={travado}
+              semMoeda
+              onSalvar={(valor) => onAtualizar('valorContrato', valor)}
+            />
+            {colaborador.valorContrato != null && SUFIXO_PAGAMENTO[colaborador.pagamento] && (
+              <span className="perfil-linha__sufixo perfil-linha__sufixo--regular">
+                {SUFIXO_PAGAMENTO[colaborador.pagamento]}
+              </span>
+            )}
+          </span>
+        </Linha>
+      ) : (
+        <>
+          <Linha
+            icone={iconeSvg(piggyBankIcon)}
+            rotulo="Salário bruto"
+            rotuloEstreito
+            vazio={colaborador.salario == null}
+            acessorio={<Olho visivel={salarioVisivel} rotulo="salário bruto" onAlternar={() => setSalarioVisivel((v) => !v)} />}
+          >
+            <CampoValor
+              valor={colaborador.salario}
+              oculto={!salarioVisivel}
+              travado={travado}
+              onSalvar={(valor) => onAtualizar('salario', valor)}
+            />
+          </Linha>
+          <Linha
+            icone={iconeSvg(piggyBankIcon)}
+            rotulo="Custo para empresa"
+            rotuloEstreito
+            vazio={colaborador.custoParaEmpresa == null}
+            acessorio={<Olho visivel={custoVisivel} rotulo="custo para empresa" onAlternar={() => setCustoVisivel((v) => !v)} />}
+          >
+            <CampoValor
+              valor={colaborador.custoParaEmpresa}
+              oculto={!custoVisivel}
+              travado={travado}
+              onSalvar={(valor) => onAtualizar('custoParaEmpresa', valor)}
+            />
+          </Linha>
+        </>
+      )}
     </div>
   )
 }
@@ -236,12 +273,13 @@ function formatNumero(valor) {
   return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-// Custo total: custo para empresa mais os recursos, cada recurso uma vez.
+// Custo total: custo para empresa (CLT) ou valor do contrato (PJ) mais os
+// recursos, cada recurso uma vez.
 function Metricas({ colaborador, recursosDaPessoa, hoje }) {
   const [visivel, setVisivel] = useState(false)
   const timeDaPessoa = colaborador.times[0] ?? null
   const custo =
-    (colaborador.custoParaEmpresa ?? 0) +
+    custoBaseDoColaborador(colaborador) +
     recursosDaPessoa.reduce((soma, recurso) => soma + getBeneficiaryValue(recurso, colaborador.id, timeDaPessoa), 0)
   const textoCusto = visivel ? formatNumero(custo) : OCULTO
   const textoTempo = formatTempoDeCasa(colaborador.dataAdmissao, hoje)
@@ -401,11 +439,12 @@ function Documentos({ colaborador }) {
 }
 
 /*
- * Pagina do colaborador CLT - Figma 10338:9174 (Pendente), 10338:9414 (com
- * documentos) e 10338:9671 (Em atividade). A casca (painel, tela cheia,
- * cabecalho, notas e barra do Pipo) continua no ColaboradorDetail.
+ * Pagina do colaborador. CLT: Figma 10338:9174 (Pendente), 10338:9414 (com
+ * documentos) e 10338:9671 (Em atividade). PJ: 10338:11975 (Pendente 1/1) e
+ * 10338:12202 (Em atividade). A casca (painel, tela cheia, cabecalho, notas e
+ * barra do Pipo) fica no ColaboradorDetail.
  */
-function PerfilClt({ colaborador, colaboradores, times, recursos, travado, mode, pipoBar, notas, onAtualizar, onCriarTime }) {
+function PerfilColaborador({ colaborador, colaboradores, times, recursos, travado, mode, pipoBar, notas, onAtualizar, onCriarTime }) {
   const hoje = todayIso()
   const recursosDaPessoa = recursosDoColaborador(colaborador, recursos, colaboradores, hoje)
 
@@ -444,12 +483,12 @@ function PerfilClt({ colaborador, colaboradores, times, recursos, travado, mode,
   if (mode === 'full') {
     return (
       <div className="colaborador-detail__columns">
-        <div className="colaborador-detail__column colaborador-detail__column--main perfil-clt">{principal}</div>
+        <div className="colaborador-detail__column colaborador-detail__column--main perfil-colaborador">{principal}</div>
         <div className="colaborador-detail__column colaborador-detail__column--notes">{notas}</div>
       </div>
     )
   }
-  return <div className="perfil-clt">{principal}</div>
+  return <div className="perfil-colaborador">{principal}</div>
 }
 
-export default PerfilClt
+export default PerfilColaborador

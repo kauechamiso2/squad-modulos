@@ -8,10 +8,8 @@ import { generateId } from './storage.js'
 //
 // Toda data e relativa ao dia em que o seed roda, nunca fixa.
 //
-// CLT tem os campos da pagina nova (CPF, contato, salario, custo, documentos
-// e, em alguns, o "Completar cadastro" inteiro). Os PJ ainda gravam os campos
-// antigos `contractType` e `desligado`, que a pagina PJ de antes le ate a
-// parte 4.
+// CLT e PJ tem os campos da pagina (documento, contato, valores, documentos
+// e, em alguns, o "Completar cadastro" inteiro).
 
 const TODOS_ADMISSAO_CLT = ['contrato_assinado', 'documentos_enviados', 'exame_medico']
 const TODOS_ADMISSAO_PJ = ['contrato_assinado']
@@ -27,9 +25,7 @@ function clt({ dias, ...dados }) {
 function pj({ dias, ...dados }) {
   return {
     tipo: 'PJ',
-    contractType: 'PJ',
-    dataInicioContrato: addDaysIso(dados.hoje, dias),
-    dataFimContrato: null,
+    dataAdmissao: addDaysIso(dados.hoje, dias),
     ...dados,
   }
 }
@@ -76,6 +72,47 @@ function camposClt(nome, hoje) {
     dadosBancarios,
     // O documento enviado no checklist de admissao (Figma 10338:9576).
     documentoEnviado: 'CNH.png',
+    envioContrato: { tipo: 'telefone', valor: telefone },
+    contratoGerado: true,
+  }
+}
+
+// Dados da pagina PJ por pessoa. Gabriel Luz tem o "Completar cadastro"
+// inteiro; Camila Rocha e temporaria (com data de fim).
+const PJ = {
+  'Camila Rocha': {
+    cnpj: '12345678000190', razaoSocial: 'Camila Rocha Tecnologia', telefone: '11928889900',
+    pagamento: 'Mensal', valor: 9000, fim: 180,
+  },
+  'Gabriel Luz': {
+    cnpj: '23456789000101', razaoSocial: 'Luz Design', telefone: '11919990011',
+    pagamento: 'Mensal', valor: 12000, fim: null,
+    reportaPara: 'Bruno Vasconcelos',
+    dadosBancarios: { banco: 'Inter', agencia: '0001', tipoConta: 'corrente', numeroConta: '7654321', titular: 'Luz Design', chavePix: '' },
+  },
+  'Renata Prado': {
+    cnpj: '34567890000112', razaoSocial: 'Prado Conteúdo', telefone: '11901112233',
+    pagamento: 'Anual', valor: 96000, fim: null,
+  },
+  'André Moura': {
+    cnpj: '45678901000123', razaoSocial: 'Moura Sistemas', telefone: '11992223344',
+    pagamento: 'Valor fixo', valor: 30000, fim: -12,
+  },
+}
+
+function camposPj(nome, hoje) {
+  const dados = PJ[nome]
+  if (!dados) throw new Error(`Seed: faltam os dados PJ de "${nome}"`)
+  const { cnpj, razaoSocial, telefone, pagamento, valor, fim, reportaPara = null, dadosBancarios = null } = dados
+  return {
+    cnpj,
+    razaoSocial,
+    contato: { tipo: 'telefone', valor: telefone },
+    pagamento,
+    valorContrato: valor,
+    dataFimContrato: fim == null ? null : addDaysIso(hoje, fim),
+    reportaPara,
+    dadosBancarios,
     envioContrato: { tipo: 'telefone', valor: telefone },
     contratoGerado: true,
   }
@@ -144,7 +181,6 @@ export function buildSeedColaboradores(hoje) {
     pj({
       hoje, dias: -300, name: 'André Moura', cargo: 'Desenvolvedor Backend', time: null,
       admissao: { feitos: TODOS_ADMISSAO_PJ },
-      desligado: true,
       rescisao: {
         tipo: null,
         data: addDaysIso(hoje, -12),
@@ -163,7 +199,7 @@ export function buildSeedColaboradores(hoje) {
     rescisao: null,
     ausencia: null,
     dadosBancarios: null,
-    ...(registro.tipo === 'CLT' ? camposClt(registro.name, hoje) : {}),
+    ...(registro.tipo === 'CLT' ? camposClt(registro.name, hoje) : camposPj(registro.name, hoje)),
     ...registro,
   }))
 }

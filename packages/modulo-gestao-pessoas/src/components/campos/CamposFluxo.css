@@ -130,3 +130,36 @@
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
+
+/* Pagamento: 12px entre as pilulas (Figma 10338:11646). */
+.linha-fluxo__pilulas--largas {
+  gap: 12px;
+}
+
+/* Sufixo do valor do contrato ("/mes") - 8px, cinza (10338:11662). */
+.linha-fluxo__com-sufixo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.linha-fluxo__sufixo {
+  color: var(--color-text-secondary);
+}
+
+.campo-data-fim__sem-data {
+  width: 100%;
+  border: none;
+  border-top: 1px solid var(--color-border);
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0 8px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}

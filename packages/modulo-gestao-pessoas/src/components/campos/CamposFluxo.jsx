@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import calendarPlusIcon from '../../assets/icons/CalendarPlus.svg'
+import squareIcon from '../../assets/icons/Square.svg'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import InlineEditField from '../colaborador/InlineEditField.jsx'
 import Calendar from '../colaborador/Calendar.jsx'
 import SeletorSegmentado from './SeletorSegmentado.jsx'
@@ -140,7 +142,7 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
 }
 
 // Botao de calendario com o Calendar ancorado embaixo.
-export function BotaoCalendario({ valor, onEscolher, rotulo, minDate, children }) {
+export function BotaoCalendario({ valor, onEscolher, rotulo, minDate, rodape, children }) {
   const [aberto, setAberto] = useState(false)
   const ancoraRef = useRef(null)
   const rect = useDropdownPosition(aberto, ancoraRef)
@@ -181,6 +183,7 @@ export function BotaoCalendario({ valor, onEscolher, rotulo, minDate, children }
               setAberto(false)
             }}
           />
+          {rodape?.(() => setAberto(false))}
         </div>
       )}
     </div>
@@ -207,6 +210,74 @@ export function CampoDataAdmissao({ valor, onSalvar }) {
         Próxima segunda
       </button>
       <BotaoCalendario valor={valor} onEscolher={onSalvar} rotulo="Escolher data de admissão" />
+    </div>
+  )
+}
+
+// Data de fim do contrato (PJ): a pilula "Nao especificar", que comeca sem
+// selecao, e o botao de calendario. Escolher uma data troca a pilula pela
+// data; reabrir o calendario deixa trocar a data ou marcar "Nao especificar
+// data de fim". Dias antes da admissao ficam desabilitados.
+export function CampoDataFim({ valor, semData, minDate, onSalvar }) {
+  const rodape = (fechar) => (
+    <button
+      type="button"
+      role="checkbox"
+      aria-checked={!valor && semData}
+      className="campo-data-fim__sem-data"
+      onClick={() => {
+        onSalvar({ data: null, semData: true })
+        fechar()
+      }}
+    >
+      <img src={!valor && semData ? checkSquareIcon : squareIcon} width={20} height={20} alt="" />
+      Não especificar data de fim
+    </button>
+  )
+  const escolher = (data) => onSalvar({ data, semData: false })
+
+  if (valor) {
+    return (
+      <BotaoCalendario valor={valor} minDate={minDate} onEscolher={escolher} rodape={rodape} rotulo="Escolher data de fim">
+        {(alternar) => (
+          <button type="button" className="linha-fluxo__botao" onClick={alternar}>
+            {formatarDataBr(valor)}
+          </button>
+        )}
+      </BotaoCalendario>
+    )
+  }
+  return (
+    <div className="linha-fluxo__pilulas">
+      <button
+        type="button"
+        className={semData ? 'linha-fluxo__pilula linha-fluxo__pilula--selecionada' : 'linha-fluxo__pilula'}
+        aria-pressed={semData}
+        onClick={() => onSalvar({ data: null, semData: !semData })}
+      >
+        Não especificar
+      </button>
+      <BotaoCalendario valor={valor} minDate={minDate} onEscolher={escolher} rotulo="Escolher data de fim" />
+    </div>
+  )
+}
+
+// Pagamento (PJ): Mensal (padrao, em preto), Anual e Valor fixo.
+export function CampoPagamento({ valor, opcoes, onSalvar }) {
+  return (
+    <div className="linha-fluxo__pilulas linha-fluxo__pilulas--largas" role="radiogroup" aria-label="Pagamento">
+      {opcoes.map((opcao) => (
+        <button
+          type="button"
+          role="radio"
+          aria-checked={valor === opcao}
+          key={opcao}
+          className={valor === opcao ? 'linha-fluxo__pilula linha-fluxo__pilula--selecionada' : 'linha-fluxo__pilula'}
+          onClick={() => onSalvar(opcao)}
+        >
+          {opcao}
+        </button>
+      ))}
     </div>
   )
 }

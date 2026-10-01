@@ -8,7 +8,7 @@ const VAZIO = '—'
 
 /*
  * Painel "Informações para contrato" - Figma 10338:10720. Abre por cima do
- * fluxo. `linhas`: [{ rotulo, valor, sufixo }] na ordem do Figma; vazio
+ * fluxo. `linhas`: [{ rotulo, valor, sufixo, sufixoPerto }] na ordem do Figma; vazio
  * mostra "—". O X volta para Informações sem perder nada.
  */
 function InformacoesContratoPanel({
@@ -45,7 +45,7 @@ function InformacoesContratoPanel({
         {linhas.map((linha) => (
           <div className="contrato-painel__linha" key={linha.rotulo}>
             <span className="contrato-painel__rotulo">{linha.rotulo}</span>
-            <span className="contrato-painel__valor">
+            <span className={linha.sufixoPerto ? 'contrato-painel__valor contrato-painel__valor--perto' : 'contrato-painel__valor'}>
               {linha.valor ?? VAZIO}
               {linha.valor && linha.sufixo && <span className="contrato-painel__sufixo">{linha.sufixo}</span>}
             </span>

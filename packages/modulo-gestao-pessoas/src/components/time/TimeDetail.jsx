@@ -25,6 +25,7 @@ import MembrosModal from '../addTeam/MembrosModal.jsx'
 import DeleteTimeModal from './DeleteTimeModal.jsx'
 import RemoveMemberModal from './RemoveMemberModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
+import { custoBaseDoColaborador } from '../../utils/custos.js'
 import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import { formatDateDMonthYear, formatCurrencyBRL } from '../../utils/formatters.js'
@@ -83,10 +84,10 @@ function formatNumberBRL(value) {
 // Same "Custo total" formula as the Colaborador page: the member's own
 // salário/valorPagamento plus every benefit value individually assigned to
 // them (not aggregated across the team, which is what beneficiosDoTime does).
+// Ponte ate a pagina do time ter Figma: o custo base vem do modelo novo
+// (custo para empresa no CLT, valor do contrato no PJ).
 function computeMemberCusto(member, collaborators, beneficios) {
-  const isFreelancerOrConsultor =
-    member.contractType === 'Freelancer' || member.contractType === 'Consultor'
-  const salarioValue = (isFreelancerOrConsultor ? member.valorPagamento : member.salario) ?? 0
+  const salarioValue = custoBaseDoColaborador(member)
   const beneficiosValue = beneficios
     .filter((benefit) => Boolean(benefit.tipo))
     .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(member.id))
@@ -184,16 +185,15 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
   }, [members])
 
   const contractPercentages = useMemo(() => {
-    const counts = { Fixo: 0, Freelancer: 0, Consultor: 0 }
+    // Ponte: a barra conta CLT e PJ pelo `tipo` (contexto, secao 8).
+    const counts = { CLT: 0, PJ: 0 }
     members.forEach((member) => {
-      const type = member.contractType || 'Fixo'
-      if (counts[type] != null) counts[type] += 1
+      counts[member.tipo] += 1
     })
     const total = members.length
     return {
-      Fixo: total ? Math.round((counts.Fixo / total) * 100) : 0,
-      Freelancer: total ? Math.round((counts.Freelancer / total) * 100) : 0,
-      Consultor: total ? Math.round((counts.Consultor / total) * 100) : 0,
+      CLT: total ? Math.round((counts.CLT / total) * 100) : 0,
+      PJ: total ? Math.round((counts.PJ / total) * 100) : 0,
     }
   }, [members])
 
@@ -466,13 +466,11 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
       <div className="time-detail__stat-card">
         <span className="time-detail__contract-label">Tipo de contratação</span>
         <div className="time-detail__contract-bar">
-          <span style={{ flex: contractPercentages.Fixo || 0.0001, background: '#039300' }} />
-          <span style={{ flex: contractPercentages.Freelancer || 0.0001, background: '#2a79d7' }} />
-          <span style={{ flex: contractPercentages.Consultor || 0.0001, background: '#fbb21a' }} />
+          <span style={{ flex: contractPercentages.CLT || 0.0001, background: '#039300' }} />
+          <span style={{ flex: contractPercentages.PJ || 0.0001, background: '#2a79d7' }} />
         </div>
         <p className="time-detail__contract-legend">
-          Fixo: {contractPercentages.Fixo}% | Freelancer: {contractPercentages.Freelancer}% | Consultor:{' '}
-          {contractPercentages.Consultor}%
+          CLT: {contractPercentages.CLT}% | PJ: {contractPercentages.PJ}%
         </p>
       </div>
     </div>

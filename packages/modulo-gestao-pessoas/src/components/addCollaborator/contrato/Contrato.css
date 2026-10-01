@@ -42,6 +42,10 @@
   justify-content: flex-end;
 }
 
+.contrato-painel__valor--perto {
+  gap: 8px;
+}
+
 .contrato-painel__sufixo {
   color: var(--color-text-secondary);
 }

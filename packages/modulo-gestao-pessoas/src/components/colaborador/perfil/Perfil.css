@@ -1,5 +1,5 @@
-/* Pagina do colaborador CLT - Figma 10338:9414. */
-.perfil-clt {
+/* Pagina do colaborador - Figma 10338:9414 (CLT) e 10338:12202 (PJ). */
+.perfil-colaborador {
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -165,6 +165,15 @@
 .perfil-linha__sufixo {
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
+}
+
+/* Valor do PJ e o sufixo "/mes": 8px e o sufixo Regular (10338:12202). */
+.perfil-linha__documento--perto {
+  gap: 8px;
+}
+
+.perfil-linha__sufixo--regular {
+  font-weight: var(--font-weight-regular);
 }
 
 /* Secoes - 10338:9523: titulo 16 Medium e 20px ate o conteudo. */

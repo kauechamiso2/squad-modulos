@@ -58,3 +58,8 @@ test('perfil trava em rescisao e desligado', () => {
   assert.equal(perfilTravado(pessoa('Lucas Andrade')), true)
   assert.equal(perfilTravado(pessoa('Pedro Martins')), true)
 })
+
+test('PJ do seed: cadastro completo do Gabriel e contrato PJ', () => {
+  assert.equal(alerta('Gabriel Luz'), false)
+  assert.deepEqual(documentosDoColaborador(pessoa('Gabriel Luz')).map((doc) => doc.nome), ['Contrato_PJ'])
+})
