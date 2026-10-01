@@ -8,9 +8,10 @@ import { generateId } from './storage.js'
 //
 // Toda data e relativa ao dia em que o seed roda, nunca fixa.
 //
-// `contractType` e `desligado` sao campos antigos que a home nao le mais. Ficam
-// so para a pagina do colaborador, que ainda nao foi refeita (Topico 9),
-// mostrar o tipo e travar os campos de quem ja saiu.
+// CLT tem os campos da pagina nova (CPF, contato, salario, custo, documentos
+// e, em alguns, o "Completar cadastro" inteiro). Os PJ ainda gravam os campos
+// antigos `contractType` e `desligado`, que a pagina PJ de antes le ate a
+// parte 4.
 
 const TODOS_ADMISSAO_CLT = ['contrato_assinado', 'documentos_enviados', 'exame_medico']
 const TODOS_ADMISSAO_PJ = ['contrato_assinado']
@@ -18,7 +19,6 @@ const TODOS_ADMISSAO_PJ = ['contrato_assinado']
 function clt({ dias, ...dados }) {
   return {
     tipo: 'CLT',
-    contractType: 'Fixo',
     dataAdmissao: addDaysIso(dados.hoje, dias),
     ...dados,
   }
@@ -31,6 +31,53 @@ function pj({ dias, ...dados }) {
     dataInicioContrato: addDaysIso(dados.hoje, dias),
     dataFimContrato: null,
     ...dados,
+  }
+}
+
+// Dados da pagina CLT por pessoa. Bruno Vasconcelos, Gustavo Lima e Beatriz
+// Souza tem o "Completar cadastro" inteiro; Victoria Cardoso fica sem dados
+// bancarios e Bruna Teixeira sem time e sem reporta para, para o alerta da
+// home aparecer neles.
+const CLT = {
+  'Marina Ferraz': { cpf: '12434556780', telefone: '11989165456', nascimento: -10960, salario: 9000, custo: 11500 },
+  'Rafael Nunes': { cpf: '38291047561', telefone: '11976543210', nascimento: -9500, salario: 4000, custo: 5600 },
+  'Bruno Vasconcelos': {
+    cpf: '52718364902', telefone: '11991234567', nascimento: -12000, salario: 10000, custo: 12000,
+    reportaPara: 'Beatriz Souza',
+    dadosBancarios: { banco: 'Nubank', agencia: '0001', tipoConta: 'corrente', numeroConta: '1234567', titular: 'Bruno Vasconcelos', chavePix: '' },
+  },
+  'Victoria Cardoso': { cpf: '60193847265', telefone: '11982223344', nascimento: -11300, salario: 14000, custo: 17800, reportaPara: 'Beatriz Souza' },
+  'Gustavo Lima': {
+    cpf: '71829364015', telefone: '11973334455', nascimento: -10200, salario: 7500, custo: 9400,
+    reportaPara: 'Bruno Vasconcelos',
+    dadosBancarios: { banco: '', agencia: '', tipoConta: 'corrente', numeroConta: '', titular: '', chavePix: 'gustavo.lima@email.com' },
+  },
+  'Beatriz Souza': {
+    cpf: '84920175346', telefone: '11964445566', nascimento: -13800, salario: 16000, custo: 20100,
+    reportaPara: 'Victoria Cardoso',
+    dadosBancarios: { banco: 'Itaú', agencia: '0412', tipoConta: 'corrente', numeroConta: '98765', titular: 'Beatriz Souza', chavePix: '' },
+  },
+  'Bruna Teixeira': { cpf: '93017462851', telefone: '11955556677', nascimento: -9100, salario: 6000, custo: 7600 },
+  'Lucas Andrade': { cpf: '20475839164', telefone: '11946667788', nascimento: -10500, salario: 8000, custo: 10100 },
+  'Pedro Martins': { cpf: '31586940273', telefone: '11937778899', nascimento: -14200, salario: 6500, custo: 8200 },
+}
+
+function camposClt(nome, hoje) {
+  const dados = CLT[nome]
+  if (!dados) throw new Error(`Seed: faltam os dados CLT de "${nome}"`)
+  const { cpf, telefone, nascimento, salario, custo, reportaPara = null, dadosBancarios = null } = dados
+  return {
+    cpf,
+    contato: { tipo: 'telefone', valor: telefone },
+    dataNascimento: addDaysIso(hoje, nascimento),
+    salario,
+    custoParaEmpresa: custo,
+    reportaPara,
+    dadosBancarios,
+    // O documento enviado no checklist de admissao (Figma 10338:9576).
+    documentoEnviado: 'CNH.png',
+    envioContrato: { tipo: 'telefone', valor: telefone },
+    contratoGerado: true,
   }
 }
 
@@ -88,7 +135,6 @@ export function buildSeedColaboradores(hoje) {
     clt({
       hoje, dias: -1100, name: 'Pedro Martins', cargo: 'Designer Gráfico', time: 'Design',
       admissao: { feitos: TODOS_ADMISSAO_CLT },
-      desligado: true,
       rescisao: {
         tipo: 'sem_justa_causa',
         data: addDaysIso(hoje, -20),
@@ -116,6 +162,8 @@ export function buildSeedColaboradores(hoje) {
     notas: [],
     rescisao: null,
     ausencia: null,
+    dadosBancarios: null,
+    ...(registro.tipo === 'CLT' ? camposClt(registro.name, hoje) : {}),
     ...registro,
   }))
 }

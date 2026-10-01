@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useFitStatFontSize } from '../../utils/useFitStatFontSize.js'
 import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners, Eye, EyeSlash } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
@@ -16,7 +17,9 @@ import ReportaParaField from './ReportaParaField.jsx'
 import DateField from './DateField.jsx'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
-import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
+import PerfilClt from './perfil/PerfilClt.jsx'
+import { perfilTravado } from '../../utils/cadastro.js'
+import { COLLECTIONS, addItem, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
 import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import {
@@ -52,41 +55,6 @@ function formatTenure(months) {
 // Custo total has no currency prefix - just the number.
 function formatNumberBRL(value) {
   return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
-
-const STAT_VALUE_MAX_FONT = 40
-const STAT_VALUE_MIN_FONT = 20
-const STAT_VALUE_FONT_STEP = 2
-
-// The stat cards have a fixed width (see .colaborador-detail__stat-card) and
-// must never grow to fit their value - instead, shrink the value's own
-// font-size until it fits the card's fixed width. Re-measures whenever the
-// text changes or the card itself is resized (e.g. switching between panel
-// and full-screen).
-function useFitStatFontSize(text) {
-  const ref = useRef(null)
-
-  useLayoutEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const fit = () => {
-      let size = STAT_VALUE_MAX_FONT
-      el.style.fontSize = `${size}px`
-      while (size > STAT_VALUE_MIN_FONT && el.scrollWidth > el.clientWidth) {
-        size -= STAT_VALUE_FONT_STEP
-        el.style.fontSize = `${size}px`
-      }
-    }
-
-    fit()
-
-    const observer = new ResizeObserver(fit)
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [text])
-
-  return ref
 }
 
 function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged }) {
@@ -198,6 +166,9 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
   if (!collaborator) return null
 
   const desligado = Boolean(collaborator.desligado)
+  // A pagina CLT segue o Figma (perfil/PerfilClt). A PJ continua a de antes
+  // ate a parte 4.
+  const ehClt = collaborator.tipo === 'CLT'
 
   const handleDelete = () => {
     const updated = collaborators.filter((item) => item.id !== id)
@@ -208,6 +179,9 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
   }
 
   const handlePowerClick = () => {
+    // CLT: Reativar nao existe mais. O Desligar ainda e a ponte de antes do
+    // fluxo de desligamento - marca `desligado` e trava os campos.
+    if (ehClt && desligado) return
     if (desligado) {
       updateField('desligado', false)
       return
@@ -517,7 +491,8 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
             : 'icon-button colaborador-detail__power-button'
         }
         onClick={handlePowerClick}
-        aria-label={desligado ? 'Reativar' : 'Desligar'}
+        disabled={ehClt && desligado}
+        aria-label={desligado && !ehClt ? 'Reativar' : 'Desligar'}
       >
         <Power size={24} weight={desligado ? 'fill' : 'regular'} />
       </button>
@@ -560,7 +535,20 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
       classNameVeu={`gp-painel ${mode === 'full' ? 'colaborador-detail-overlay--oculto' : ''}`.trim()}
     >
       <div className="colaborador-detail__scroll">
-        {mode === 'full' ? (
+        {ehClt ? (
+          <PerfilClt
+            colaborador={collaborator}
+            colaboradores={collaborators}
+            times={times}
+            recursos={beneficios}
+            travado={perfilTravado(collaborator)}
+            mode={mode}
+            pipoBar={pipoBar}
+            notas={notesSection}
+            onAtualizar={updateField}
+            onCriarTime={(nome) => addItem(COLLECTIONS.TIMES, { name: nome, pending: true })}
+          />
+        ) : mode === 'full' ? (
           <div className="colaborador-detail__columns">
             <div className="colaborador-detail__column colaborador-detail__column--main">
               {profileSection}

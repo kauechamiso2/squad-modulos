@@ -1,5 +1,4 @@
-/* Badge de ausencia - Figma 10331:3226: 32px, redondo, fundo azul claro. */
-.ausencia-badge {
+.alerta-cadastro {
   position: relative;
   display: inline-flex;
   flex-shrink: 0;
@@ -7,8 +6,14 @@
   justify-content: center;
   width: 32px;
   height: 32px;
+  padding: 0;
+  border: none;
   border-radius: 34px;
-  background: var(--gp-ausencia-fundo);
+  background: none;
+  cursor: pointer;
+}
+
+.alerta-cadastro:focus-visible {
   outline: none;
-  cursor: default;
+  background: var(--color-overlay);
 }

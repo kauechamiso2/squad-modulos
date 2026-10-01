@@ -1,0 +1,483 @@
+/* Pagina do colaborador CLT - Figma 10338:9414. */
+.perfil-clt {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Status do processo - 10338:9432. */
+.perfil-status {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-overlay);
+}
+
+.perfil-status__topo,
+.perfil-status__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.perfil-status__topo > :first-child {
+  flex: 1;
+}
+
+.perfil-status__contador {
+  color: var(--color-text-secondary);
+}
+
+.perfil-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Perfil - 10338:9449. */
+.perfil-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perfil-cabecalho__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  flex-shrink: 0;
+}
+
+.perfil-cabecalho__nome {
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.perfil-cabecalho__tipo {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+/* Campos - 10338:9462: 62px, icone 20, valor numa coluna de 290px. */
+.perfil-campos {
+  display: flex;
+  flex-direction: column;
+}
+
+.perfil-linha {
+  --campo-inline-peso: var(--font-weight-regular);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 16px 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.perfil-linha__icone {
+  display: flex;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.perfil-linha__rotulo {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.perfil-linha__valor {
+  display: flex;
+  align-items: center;
+  width: 290px;
+  min-width: 0;
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.perfil-linha--vazia .perfil-linha__valor,
+.perfil-linha:has(.perfil-linha__olho) .perfil-linha__valor {
+  width: 254px;
+}
+
+.perfil-linha--vazia {
+  --campo-inline-peso: var(--font-weight-medium);
+}
+
+.perfil-linha--vazia .perfil-linha__valor button {
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-linha__valor .colaborador-detail__value-button,
+.perfil-linha__valor .linha-fluxo__botao {
+  font-weight: inherit;
+}
+
+.perfil-linha:not(.perfil-linha--vazia) .perfil-linha__valor .linha-fluxo__botao {
+  font-weight: var(--font-weight-regular);
+}
+
+.perfil-linha__mais,
+.perfil-linha__olho {
+  flex-shrink: 0;
+}
+
+.perfil-linha__olho {
+  display: flex;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.perfil-linha__olho:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.perfil-linha__documento {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perfil-linha__sufixo {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+/* Secoes - 10338:9523: titulo 16 Medium e 20px ate o conteudo. */
+.perfil-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.perfil-secao__titulo {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.perfil-metricas {
+  display: flex;
+  gap: 12px;
+}
+
+.perfil-metrica {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.perfil-metrica__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.perfil-metrica__rotulo {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.perfil-metrica__valor {
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 40px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* Secao vazia - 10338:9537. */
+.perfil-vazio {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  padding: 16px 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-vazio__texto {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.perfil-vazio__botao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.perfil-vazio__botao--inerte {
+  cursor: default;
+}
+
+.perfil-vazio__botao:not(.perfil-vazio__botao--inerte):focus-visible {
+  outline: none;
+  border-radius: 4px;
+  background: var(--color-overlay);
+}
+
+/* Dados bancarios salvos (sem Figma): linhas de rotulo e valor. */
+.perfil-bancarios {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.perfil-bancarios:hover:not(:disabled),
+.perfil-bancarios:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.perfil-bancarios:disabled {
+  cursor: not-allowed;
+}
+
+.perfil-bancarios__linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.perfil-bancarios__rotulo {
+  width: 158px;
+  flex-shrink: 0;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.perfil-bancarios__valor {
+  color: var(--color-text);
+}
+
+/* Documentos - 10338:9558. */
+.perfil-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-documento {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-documento__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 5.914px;
+  background: var(--gp-ausencia-fundo);
+}
+
+.perfil-documento__nome {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.perfil-documento__download {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--color-text);
+}
+
+/* Times em pilulas. */
+.perfil-times__leitura {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.perfil-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.perfil-time__ponto {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 360px;
+}
+
+.perfil-time__remover {
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.perfil-times__edicao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--color-overlay);
+}
+
+.perfil-times__edicao .perfil-time {
+  background: var(--color-bg);
+}
+
+.perfil-times__busca {
+  flex: 1;
+  min-width: 80px;
+  padding: 4px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+/* Painel de dados bancarios - Figma 10338:10177. */
+.dados-bancarios {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dados-bancarios__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dados-bancarios__conta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.dados-bancarios__conta .dados-bancarios__campo {
+  width: 100%;
+}
+
+.dados-bancarios__pix {
+  margin-top: 24px;
+}
+
+.dados-bancarios__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dados-bancarios__rotulo {
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.dados-bancarios__entrada {
+  box-sizing: border-box;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  outline: none;
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.dados-bancarios__entrada::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.dados-bancarios__entrada:focus-visible {
+  border-color: var(--color-text);
+}

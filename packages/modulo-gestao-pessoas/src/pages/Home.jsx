@@ -34,6 +34,7 @@ import {
 } from '../utils/storage.js'
 import { formatDateDMonthYear, todayIso } from '../utils/formatters.js'
 import { STATUS_OPCOES, TIPOS, getStatus, isEncerrado, isPendente } from '../utils/colaboradorStatus.js'
+import { mostraAlertaDeCadastro } from '../utils/cadastro.js'
 import { fornecedorDoRecurso, pessoasDoRecurso, tituloDoRecurso, TIPOS_RECURSO } from '../utils/recursos.js'
 import { MODULE_BASE } from '../routes.js'
 import './Home.css'
@@ -275,6 +276,16 @@ function Home({ backTo }) {
     setColumnFilters((prev) => ({ ...prev, [column]: new Set() }))
   }
 
+  // Quem esta Em atividade com o "Completar cadastro" incompleto.
+  const alertasDeCadastro = useMemo(() => {
+    const hoje = todayIso()
+    return new Set(
+      collaborators
+        .filter((collaborator) => mostraAlertaDeCadastro(collaborator, beneficios, collaborators, hoje))
+        .map((collaborator) => collaborator.id),
+    )
+  }, [collaborators, beneficios])
+
   const filteredCollaborators = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
     const filtered = collaborators.filter((collaborator) => {
@@ -486,6 +497,7 @@ function Home({ backTo }) {
                   statusOptions={STATUS_OPCOES}
                   onRowClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  alertas={alertasDeCadastro}
                 />
               ) : (
                 <CollaboratorsGrid
@@ -494,6 +506,7 @@ function Home({ backTo }) {
                   onToggleSelect={toggleSelect}
                   onCardClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  alertas={alertasDeCadastro}
                 />
               )}
             </div>

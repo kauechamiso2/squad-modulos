@@ -37,10 +37,11 @@ function textoVazio(texto) {
 
 // Campo com mascara: grava so os digitos. `vazio` e o texto quando nao ha
 // valor ("Adicionar" ou "DD/MM/AAAA").
-export function CampoMascarado({ valor, onSalvar, mascara, limite, validar, vazio, vazioCinza = false }) {
+export function CampoMascarado({ valor, onSalvar, mascara, limite, validar, vazio, vazioCinza = false, disabled = false }) {
   return (
     <InlineEditField
       value={valor ?? ''}
+      disabled={disabled}
       displayValue={valor ? mascara(valor) : vazioCinza ? textoVazio(vazio) : vazio}
       formatForInput={(digitos) => mascara(digitos)}
       parseInput={(texto) => soDigitos(texto, limite)}
@@ -66,7 +67,7 @@ export function CampoMoeda({ valor, onSalvar }) {
 
 // Contato: Telefone ou Email com o mesmo seletor da folha "Enviar para".
 // Grava { tipo, valor }; telefone so com digitos.
-export function CampoContato({ valor, onSalvar, vazio = 'Adicionar' }) {
+export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = false }) {
   const [editando, setEditando] = useState(false)
   const [rascunho, setRascunho] = useState(valor ?? { tipo: 'telefone', valor: '' })
   const caixaRef = useRef(null)
@@ -90,7 +91,7 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar' }) {
 
   if (!editando) {
     return (
-      <button type="button" className="linha-fluxo__botao" onClick={abrir}>
+      <button type="button" className="linha-fluxo__botao" disabled={disabled} onClick={abrir}>
         {formatarContato(valor) ?? vazio}
       </button>
     )

@@ -1,6 +1,5 @@
 import {
   cleanupLegacySeedTimes,
-  cleanupMultiTeamColaboradores,
   cleanupCargoBeneficiarios,
   migrateLegacyKeys,
   resetDataIfOutdated,
@@ -14,6 +13,5 @@ export function initGestaoPessoas() {
   migrateLegacyKeys()
   resetDataIfOutdated()
   cleanupLegacySeedTimes()
-  cleanupMultiTeamColaboradores()
   cleanupCargoBeneficiarios()
 }

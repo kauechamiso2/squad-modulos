@@ -2,7 +2,7 @@ import { useState } from 'react'
 import islandIcon from '../../assets/icons/Island.svg'
 import babyIcon from '../../assets/icons/Baby.svg'
 import stethoscopeIcon from '../../assets/icons/Stethoscope.svg'
-import polygonIcon from '../../assets/icons/Polygon 1.svg'
+import TooltipPreto from './TooltipPreto.jsx'
 import { textoAusencia } from '../../utils/colaboradorStatus.js'
 import './AusenciaBadge.css'
 
@@ -38,16 +38,7 @@ function AusenciaBadge({ ausencia }) {
       onClick={(event) => event.stopPropagation()}
     >
       <img src={icone.src} width={icone.tamanho} height={icone.tamanho} alt="" />
-      {aberto && (
-        <span className="ausencia-badge__tooltip" role="tooltip">
-          <span className="ausencia-badge__tooltip-caixa">{texto}</span>
-          <span className="ausencia-badge__tooltip-seta">
-            <span className="ausencia-badge__tooltip-seta-giro">
-              <img src={polygonIcon} alt="" />
-            </span>
-          </span>
-        </span>
-      )}
+      {aberto && <TooltipPreto texto={texto} />}
     </span>
   )
 }

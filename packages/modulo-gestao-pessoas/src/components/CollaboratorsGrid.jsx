@@ -2,6 +2,7 @@ import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
 import StatusPill from './status/StatusPill.jsx'
 import AusenciaBadge from './status/AusenciaBadge.jsx'
+import AlertaCadastro from './status/AlertaCadastro.jsx'
 import CollaboratorRowMenu from './colaborador/CollaboratorRowMenu.jsx'
 import { getAusenciaAtiva, getStatus, isEncerrado } from '../utils/colaboradorStatus.js'
 import { todayIso } from '../utils/formatters.js'
@@ -25,6 +26,7 @@ function CollaboratorsGrid({
   onToggleSelect,
   onCardClick,
   onDataChanged,
+  alertas,
 }) {
   const hoje = todayIso()
 
@@ -61,6 +63,9 @@ function CollaboratorsGrid({
               </button>
               <div className="collaborator-card__acoes">
                 {ausencia && <AusenciaBadge ausencia={ausencia} />}
+                {alertas.has(collaborator.id) && (
+                  <AlertaCadastro onAbrir={() => onCardClick(collaborator.id)} />
+                )}
                 <CollaboratorRowMenu
                   collaborator={collaborator}
                   onView={onCardClick}
