@@ -34,6 +34,36 @@
   color: var(--color-text-secondary);
 }
 
+.perfil-status__rotulo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "Marcar como feito" - Figma 10355:4156: 14px Medium preto, a direita. */
+.perfil-status__marcar {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.perfil-status__marcar:hover,
+.perfil-status__marcar:focus-visible {
+  outline: none;
+  background: var(--color-border);
+}
+
 .perfil-bloco {
   display: flex;
   flex-direction: column;
@@ -275,52 +305,6 @@
   background: var(--color-overlay);
 }
 
-/* Dados bancarios salvos (sem Figma): linhas de rotulo e valor. */
-.perfil-bancarios {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 4px 8px;
-  margin: -4px -8px;
-  border: none;
-  border-radius: 4px;
-  background: none;
-  font-family: inherit;
-  text-align: left;
-  cursor: pointer;
-}
-
-.perfil-bancarios:hover:not(:disabled),
-.perfil-bancarios:focus-visible {
-  outline: none;
-  background: var(--color-overlay);
-}
-
-.perfil-bancarios:disabled {
-  cursor: not-allowed;
-}
-
-.perfil-bancarios__linha {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 40px;
-  font-size: 14px;
-  line-height: 1.2;
-}
-
-.perfil-bancarios__rotulo {
-  width: 158px;
-  flex-shrink: 0;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text-secondary);
-}
-
-.perfil-bancarios__valor {
-  color: var(--color-text);
-}
-
-/* Documentos - 10338:9558. */
 .perfil-documentos {
   display: flex;
   flex-direction: column;
@@ -394,6 +378,21 @@
   border-radius: 360px;
 }
 
+/* Pilula em leitura - Figma 10355:3657: 32px, 12px dos lados, ponto de 12,
+   Medium e a seta. */
+.perfil-times__leitura .perfil-time {
+  box-sizing: border-box;
+  height: 32px;
+  gap: 8px;
+  padding: 0 12px;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-times__leitura .perfil-time__ponto {
+  width: 12px;
+  height: 12px;
+}
+
 .perfil-time__remover {
   display: flex;
   padding: 0;
@@ -454,4 +453,145 @@
 
 .dados-bancarios__pix {
   margin-top: 24px;
+}
+
+/* Campos travados - Figma 10355:4132: o valor continua preto (o disabled do
+   @squad/ui e do value-button pinta de cinza) e nada indica clique. */
+.perfil-bloco--travado button:disabled {
+  color: var(--color-text);
+  cursor: default;
+}
+
+.perfil-linha__vazio {
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+/* Recursos - Figma 10355:3706: linhas de 56px com borda, 12px entre elas. */
+.perfil-recursos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-recurso {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.perfil-recurso:hover,
+.perfil-recurso:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.perfil-recurso__nomes {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.perfil-recurso__tipo {
+  color: var(--color-text-secondary);
+}
+
+.perfil-recurso__nome {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text);
+}
+
+.perfil-recurso__valor {
+  flex-shrink: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* Jornada e dados bancarios salvos - Figma 10355:3752 e 10355:3780: borda,
+   raio 8, 16px por 20px, linhas de 48px, valor numa coluna de 290px. */
+.perfil-cartao {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+}
+
+.perfil-cartao__linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.perfil-cartao__rotulo {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-cartao__valor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 290px;
+  flex-shrink: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-regular);
+  white-space: nowrap;
+}
+
+.perfil-cartao__sufixo {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.perfil-cartao-botao {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.perfil-cartao-botao:hover:not(:disabled) .perfil-cartao,
+.perfil-cartao-botao:focus-visible .perfil-cartao {
+  background: var(--color-overlay);
+}
+
+.perfil-cartao-botao:focus-visible {
+  outline: none;
+}
+
+.perfil-cartao-botao:disabled {
+  cursor: default;
 }

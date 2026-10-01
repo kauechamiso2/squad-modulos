@@ -40,3 +40,14 @@ test('datas', () => {
   assert.equal(dataDigitadaParaIso('31021993'), null)
   assert.equal(formatarDataBr('2026-09-29'), '29/09/2026')
 })
+
+test('tipo da chave PIX', async () => {
+  const { tipoChavePix } = await import('./mascaras.js')
+  assert.equal(tipoChavePix('52718364902'), 'CPF')
+  assert.equal(tipoChavePix('527.183.649-02'), 'CPF')
+  assert.equal(tipoChavePix('12.345.678/0001-90'), 'CNPJ')
+  assert.equal(tipoChavePix('gustavo.lima@email.com'), 'Email')
+  assert.equal(tipoChavePix('+5511989165456'), 'Telefone')
+  assert.equal(tipoChavePix('123e4567-e89b-12d3-a456-426614174000'), 'Aleatória')
+  assert.equal(tipoChavePix('abc'), null)
+})

@@ -14,7 +14,7 @@
 }
 
 .status-pill--pendente,
-.status-pill--rescisao_pendente {
+.status-pill--em_desligamento {
   color: var(--gp-status-pendente-texto);
   background: var(--gp-status-pendente-fundo);
 }

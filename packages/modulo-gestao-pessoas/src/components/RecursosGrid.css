@@ -48,6 +48,13 @@
   background: var(--gp-ausencia-fundo);
 }
 
+/* Na pagina do colaborador - Figma 10355:3710: 32px, raio 5.914. */
+.recurso-card__marca--pequena {
+  width: 32px;
+  height: 32px;
+  border-radius: 5.914px;
+}
+
 .recurso-card__logo {
   position: absolute;
   object-fit: cover;

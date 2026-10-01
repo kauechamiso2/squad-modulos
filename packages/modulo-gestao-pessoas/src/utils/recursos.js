@@ -82,7 +82,7 @@ export function fornecedorDoRecurso(recurso) {
 }
 
 // Uma pessoa conta enquanto nao estiver encerrada com a data de saida ja
-// alcancada. Rescisao pendente continua contando.
+// alcancada. Em desligamento continua contando.
 function contaNoRecurso(colaborador, hoje) {
   if (!isEncerrado(getStatus(colaborador))) return true
   const saida = colaborador.rescisao?.data

@@ -75,22 +75,30 @@ export function LiderPanel({ aberto, valor, membros, candidatos, onFechar, onSal
   )
 }
 
-// "Adicionar descricao" - Figma 10342:13099.
-export function DescricaoPanel({ aberto, valor, onFechar, onSalvar }) {
+// "Adicionar descricao" - Figma 10342:13099. O desligamento usa o mesmo
+// painel para o motivo ("Adicionar motivo").
+export function DescricaoPanel({
+  aberto,
+  valor,
+  onFechar,
+  onSalvar,
+  titulo = 'Adicionar descrição',
+  placeholder = 'Descrição do time...',
+}) {
   const [texto, setTexto] = useState(valor)
   return (
     <PainelLateral
       className="gp-painel"
       classNameVeu="gp-painel"
       aberto={aberto}
-      titulo="Adicionar descrição"
+      titulo={titulo}
       iconeFechar={closeIcon}
       onFechar={onFechar}
       rodape={<Rodape onCancelar={onFechar} onSalvar={() => onSalvar(texto.trim())} />}
     >
       <textarea
         className="time-painel__descricao"
-        placeholder="Descrição do time..."
+        placeholder={placeholder}
         autoFocus
         value={texto}
         onChange={(event) => setTexto(event.target.value)}

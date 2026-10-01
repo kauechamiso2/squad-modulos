@@ -53,10 +53,11 @@ test('documentos dos itens concluidos', () => {
   )
 })
 
-test('perfil trava em rescisao e desligado', () => {
+test('perfil trava em desligamento, desligado e fim de contrato', () => {
   assert.equal(perfilTravado(pessoa('Bruno Vasconcelos')), false)
   assert.equal(perfilTravado(pessoa('Lucas Andrade')), true)
   assert.equal(perfilTravado(pessoa('Pedro Martins')), true)
+  assert.equal(perfilTravado(pessoa('André Moura')), true)
 })
 
 test('PJ do seed: cadastro completo do Gabriel e contrato PJ', () => {

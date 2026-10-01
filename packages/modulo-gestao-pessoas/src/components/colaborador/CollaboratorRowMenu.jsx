@@ -2,16 +2,20 @@ import { useEffect, useRef, useState } from 'react'
 import { Eye } from '@phosphor-icons/react'
 import dotsThreeIcon from '../../assets/icons/DotsThree.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
+import powerIcon from '../../assets/icons/Power.svg'
 import { IconButton } from '@squad/ui'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
+import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
+import { podeDesligar } from '../../utils/colaboradorStatus.js'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
 import { useToast } from '../toast/ToastContext.jsx'
 import './CollaboratorRowMenu.css'
 
-function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
+function CollaboratorRowMenu({ collaborator, onView, onDataChanged, onDesligar }) {
   const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [desligarModalOpen, setDesligarModalOpen] = useState(false)
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -70,9 +74,33 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
             <img src={trashIcon} width={20} height={20} alt="" />
             Excluir
           </button>
-          {/* Desligar volta com o fluxo de desligamento (Topico 12). Reativar
-              nao existe mais: Desligado e Fim de contrato sao finais. */}
+          {/* Desligar abre "Desligar {Nome}?" e, confirmado, o fluxo. So
+              antes do desligamento; Reativar nao existe. */}
+          {podeDesligar(collaborator) && (
+            <button
+              type="button"
+              className="collaborator-row-menu__item"
+              onClick={() => {
+                setOpen(false)
+                setDesligarModalOpen(true)
+              }}
+            >
+              <img src={powerIcon} width={20} height={20} alt="" />
+              Desligar
+            </button>
+          )}
         </div>
+      )}
+
+      {desligarModalOpen && (
+        <DesligarColaboradorModal
+          name={collaborator.name}
+          onCancel={() => setDesligarModalOpen(false)}
+          onConfirm={() => {
+            setDesligarModalOpen(false)
+            onDesligar(collaborator.id)
+          }}
+        />
       )}
 
       {deleteModalOpen && (

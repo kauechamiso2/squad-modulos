@@ -1,0 +1,95 @@
+/* "Desligar {Nome}?" - Figma 10355:4783. Por cima do painel do colaborador
+   (z-index 150/151 do PainelLateral). */
+.desligar-modal__veu {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: var(--gp-veu);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.desligar-modal__pilha {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 393px;
+  max-width: 100%;
+  outline: none;
+}
+
+.desligar-modal__fechar,
+.desligar-modal__fechar:hover {
+  background: var(--color-bg);
+}
+
+.desligar-modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  width: 100%;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--color-bg);
+}
+
+.desligar-modal__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--gp-badge-vermelho);
+}
+
+.desligar-modal__textos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  text-align: center;
+  letter-spacing: -0.26px;
+}
+
+.desligar-modal__titulo {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.1;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.desligar-modal__texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.desligar-modal__botoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .desligar-modal__veu {
+    animation: desligar-modal-entrada var(--movimento-entrada, 280ms ease-out);
+  }
+}
+
+@keyframes desligar-modal-entrada {
+  from {
+    opacity: 0;
+  }
+}

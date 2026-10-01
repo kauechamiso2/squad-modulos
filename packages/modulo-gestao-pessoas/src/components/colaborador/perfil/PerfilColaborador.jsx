@@ -14,6 +14,7 @@ import filePdfIcon from '../../../assets/icons/FilePdf.svg'
 import filePngIcon from '../../../assets/icons/FilePng.svg'
 import downloadIcon from '../../../assets/icons/DownloadSimple.svg'
 import arrowUpRightIcon from '../../../assets/icons/ArrowUpRight.svg'
+import { MarcaDoRecurso } from '../../RecursosGrid.jsx'
 import { EyeSlash } from '@phosphor-icons/react'
 import InlineEditField from '../InlineEditField.jsx'
 import CargoField from '../CargoField.jsx'
@@ -25,9 +26,8 @@ import { CampoContato, CampoMascarado } from '../../campos/CamposFluxo.jsx'
 import { STATUS, getStatus } from '../../../utils/colaboradorStatus.js'
 import { documentosDoColaborador, recursosDoColaborador } from '../../../utils/cadastro.js'
 import { getBeneficiaryValue } from '../../../utils/beneficiarios.js'
-import { getBeneficioTypeIcon } from '../../../utils/beneficioOptions.js'
-import { TIPOS_RECURSO, tituloDoRecurso } from '../../../utils/recursos.js'
-import { cnpjValido, cpfValido, emailValido, mascaraCnpj, mascaraCpf } from '../../../utils/mascaras.js'
+import { OUTRO, TIPOS_RECURSO } from '../../../utils/recursos.js'
+import { cnpjValido, cpfValido, emailValido, mascaraCnpj, mascaraCpf, tipoChavePix } from '../../../utils/mascaras.js'
 import { SUFIXO_PAGAMENTO, custoBaseDoColaborador } from '../../../utils/custos.js'
 import { useFitStatFontSize } from '../../../utils/useFitStatFontSize.js'
 import {
@@ -41,14 +41,19 @@ import {
 import './Perfil.css'
 
 const OCULTO = '••••••'
+const VAZIO = '—'
 const TIPOS_CONTA = { corrente: 'Corrente', poupanca: 'Poupança' }
 const ICONES_ARQUIVO = { pdf: filePdfIcon, png: filePngIcon }
 
-// "Status do processo" - Figma 10338:9432. So em Pendente e Rescisao
-// pendente; o contador e o do status, nunca o do mock.
-function StatusProcesso({ colaborador }) {
+// "Status do processo" - Figma 10338:9432 (admissao, so leitura) e
+// 10355:4148 (desligamento). So com checklist aberto; o contador e o do
+// status, nunca o do mock. No desligamento todo item aberto tem "Marcar como
+// feito", inclusive os que o Figma desenhou sem: sem isso ninguem chega a
+// Desligado ou Fim de contrato.
+function StatusProcesso({ colaborador, onMarcarComoFeito }) {
   const status = getStatus(colaborador)
-  if (status.id !== STATUS.PENDENTE && status.id !== STATUS.RESCISAO_PENDENTE) return null
+  if (status.id !== STATUS.PENDENTE && status.id !== STATUS.EM_DESLIGAMENTO) return null
+  const marcavel = status.id === STATUS.EM_DESLIGAMENTO
   return (
     <div className="perfil-status">
       <div className="perfil-status__topo">
@@ -58,7 +63,12 @@ function StatusProcesso({ colaborador }) {
       {status.checklist.map((item) => (
         <div className="perfil-status__item" key={item.id}>
           <img src={item.feito ? checkCircleIcon : circleDashedIcon} width={20} height={20} alt={item.feito ? 'Feito' : 'Pendente'} />
-          {item.rotulo}
+          <span className="perfil-status__rotulo">{item.rotulo}</span>
+          {marcavel && !item.feito && (
+            <button type="button" className="perfil-status__marcar" onClick={() => onMarcarComoFeito(item.id)}>
+              Marcar como feito
+            </button>
+          )}
         </div>
       ))}
     </div>
@@ -80,16 +90,19 @@ function Cabecalho({ colaborador }) {
 /*
  * Linha de campo - Figma 10338:9462: 62px, icone de 20, rotulo Medium e o
  * valor Regular. Vazio: "Adicionar" em Medium e o mais no fim da linha.
+ * Travada (Em desligamento em diante, 10355:4132): vazio vira "—", sem
+ * "Adicionar" e sem o mais.
  */
-function Linha({ icone, rotulo, vazio, acessorio, rotuloEstreito = false, children }) {
+function Linha({ icone, rotulo, vazio, travado = false, acessorio, rotuloEstreito = false, children }) {
+  const vazioTravado = vazio && travado
   return (
-    <div className={vazio ? 'perfil-linha perfil-linha--vazia' : 'perfil-linha'}>
+    <div className={vazio && !travado ? 'perfil-linha perfil-linha--vazia' : 'perfil-linha'}>
       <span className="perfil-linha__icone">{icone}</span>
       <span className={rotuloEstreito ? 'perfil-linha__rotulo perfil-linha__rotulo--estreito' : 'perfil-linha__rotulo'}>
         {rotulo}
       </span>
-      <div className="perfil-linha__valor">{children}</div>
-      {vazio ? <img className="perfil-linha__mais" src={plusGrayIcon} width={24} height={24} alt="" /> : acessorio}
+      <div className="perfil-linha__valor">{vazioTravado ? <span className="perfil-linha__vazio">{VAZIO}</span> : children}</div>
+      {vazio ? !travado && <img className="perfil-linha__mais" src={plusGrayIcon} width={24} height={24} alt="" /> : acessorio}
     </div>
   )
 }
@@ -141,10 +154,10 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
 
   return (
     <div className="perfil-campos">
-      <Linha icone={iconeSvg(phoneCallIcon)} rotulo="Contato" vazio={!colaborador.contato}>
+      <Linha travado={travado} icone={iconeSvg(phoneCallIcon)} rotulo="Contato" vazio={!colaborador.contato}>
         <CampoContato valor={colaborador.contato} disabled={travado} onSalvar={(valor) => onAtualizar('contato', valor)} />
       </Linha>
-      <Linha icone={iconeSvg(identificationCardIcon)} rotulo="Documento" vazio={!colaborador[documento.campo]}>
+      <Linha travado={travado} icone={iconeSvg(identificationCardIcon)} rotulo="Documento" vazio={!colaborador[documento.campo]}>
         <span className="perfil-linha__documento">
           <CampoMascarado
             valor={colaborador[documento.campo]}
@@ -158,7 +171,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           {colaborador[documento.campo] && <span className="perfil-linha__sufixo">{documento.sufixo}</span>}
         </span>
       </Linha>
-      <Linha icone={<Briefcase size={20} color="var(--color-text-secondary)" />} rotulo="Cargo" vazio={!colaborador.cargos.length}>
+      <Linha travado={travado} icone={<Briefcase size={20} color="var(--color-text-secondary)" />} rotulo="Cargo" vazio={!colaborador.cargos.length}>
         <CargoField
           value={colaborador.cargos}
           cargoOptions={cargosEmUso}
@@ -166,7 +179,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           onSave={(valor) => onAtualizar('cargos', valor)}
         />
       </Linha>
-      <Linha icone={iconeSvg(atIcon)} rotulo="Email" vazio={!colaborador.email}>
+      <Linha travado={travado} icone={iconeSvg(atIcon)} rotulo="Email" vazio={!colaborador.email}>
         <InlineEditField
           value={colaborador.email ?? ''}
           displayValue={colaborador.email || 'Adicionar'}
@@ -175,7 +188,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           onSave={(texto) => onAtualizar('email', texto.trim())}
         />
       </Linha>
-      <Linha icone={<UsersFour size={20} color="var(--color-text-secondary)" />} rotulo="Time" vazio={!colaborador.times.length}>
+      <Linha travado={travado} icone={<UsersFour size={20} color="var(--color-text-secondary)" />} rotulo="Time" vazio={!colaborador.times.length}>
         <TimesField
           value={colaborador.times}
           times={times}
@@ -184,7 +197,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           onCriarTime={onCriarTime}
         />
       </Linha>
-      <Linha icone={iconeSvg(userIcon)} rotulo="Reporta para" vazio={!colaborador.reportaPara}>
+      <Linha travado={travado} icone={iconeSvg(userIcon)} rotulo="Reporta para" vazio={!colaborador.reportaPara}>
         <ReportaParaField
           value={colaborador.reportaPara}
           ownId={colaborador.id}
@@ -193,7 +206,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
           onSave={(nome) => onAtualizar('reportaPara', nome)}
         />
       </Linha>
-      <Linha icone={iconeSvg(checkCircleGrayIcon)} rotulo="Ativo desde" vazio={!colaborador.dataAdmissao}>
+      <Linha travado={travado} icone={iconeSvg(checkCircleGrayIcon)} rotulo="Ativo desde" vazio={!colaborador.dataAdmissao}>
         <DateField
           value={colaborador.dataAdmissao}
           disabled={travado}
@@ -203,6 +216,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
       </Linha>
       {colaborador.tipo === 'PJ' ? (
         <Linha
+          travado={travado}
           icone={iconeSvg(piggyBankIcon)}
           rotulo="Salário"
           rotuloEstreito
@@ -228,6 +242,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
       ) : (
         <>
           <Linha
+            travado={travado}
             icone={iconeSvg(piggyBankIcon)}
             rotulo="Salário bruto"
             rotuloEstreito
@@ -242,6 +257,7 @@ function Campos({ colaborador, colaboradores, times, travado, onAtualizar, onCri
             />
           </Linha>
           <Linha
+            travado={travado}
             icone={iconeSvg(piggyBankIcon)}
             rotulo="Custo para empresa"
             rotuloEstreito
@@ -306,8 +322,16 @@ function Metricas({ colaborador, recursosDaPessoa, hoje }) {
   )
 }
 
-// Secao vazia - Figma 10338:9537: texto cinza, a acao e o mais.
+// Secao vazia - Figma 10338:9537: texto cinza, a acao e o mais. Sem `acao`
+// (perfil travado), so o texto.
 function SecaoVazia({ texto, acao, onAcao }) {
+  if (!acao) {
+    return (
+      <div className="perfil-vazio">
+        <span className="perfil-vazio__texto">{texto}</span>
+      </div>
+    )
+  }
   const conteudo = (
     <>
       <span className="perfil-vazio__acao">{acao}</span>
@@ -328,36 +352,112 @@ function SecaoVazia({ texto, acao, onAcao }) {
   )
 }
 
-function Recursos({ colaborador, recursosDaPessoa }) {
+// Tipo em cinza e nome de cada recurso na linha - Figma 10355:3706.
+// Beneficio: a categoria e o fornecedor (ou o nome de Outro). Verba: "Verba"
+// e o nome. Licenca: "Licença" e o servico (ou o nome de Outro).
+function tipoENomeDoRecurso(recurso) {
+  switch (recurso.tipoRecurso) {
+    case 'beneficio':
+      return recurso.categoria === OUTRO
+        ? { tipo: OUTRO, nome: recurso.nome }
+        : { tipo: recurso.categoria, nome: recurso.fornecedor }
+    case 'verba':
+      return { tipo: TIPOS_RECURSO.verba, nome: recurso.nome }
+    case 'licenca':
+      return { tipo: TIPOS_RECURSO.licenca, nome: recurso.servico === OUTRO ? recurso.nome : recurso.servico }
+    default:
+      throw new Error(`Tipo de recurso desconhecido "${recurso.tipoRecurso}" no recurso ${recurso.id}`)
+  }
+}
+
+// Recursos - Figma 10355:3706: uma linha de 56px com borda por recurso, o
+// logo ou icone de 32px, o tipo e o nome, o valor da pessoa e a seta, que
+// abre a pagina do recurso.
+function Recursos({ colaborador, recursosDaPessoa, travado, onAbrirRecurso }) {
   const timeDaPessoa = colaborador.times[0] ?? null
   return (
     <section className="perfil-secao">
       <p className="perfil-secao__titulo">Recursos</p>
       {recursosDaPessoa.length === 0 ? (
         // "Adicionar" ainda sem acao: o Figma nao mostra como adicionar daqui.
-        <SecaoVazia texto="Nenhum recurso adicionado" acao="Adicionar" />
+        <SecaoVazia texto="Nenhum recurso adicionado" acao={travado ? undefined : 'Adicionar'} />
       ) : (
-        recursosDaPessoa.map((recurso) => {
-          const Icone = getBeneficioTypeIcon(recurso.tipo)
-          return (
-            <div className="colaborador-detail__beneficio-row" key={recurso.id}>
-              <span className="colaborador-detail__beneficio-icon">
-                <Icone size={18} />
-              </span>
-              <span className="colaborador-detail__beneficio-info">
-                <span className="colaborador-detail__beneficio-tipo">{TIPOS_RECURSO[recurso.tipoRecurso]}</span>
-                <span className="colaborador-detail__beneficio-name">{tituloDoRecurso(recurso)}</span>
-              </span>
-              <span className="colaborador-detail__beneficio-value">
-                {formatCurrencyBRL(getBeneficiaryValue(recurso, colaborador.id, timeDaPessoa))}
-              </span>
-              <img src={arrowUpRightIcon} width={24} height={24} alt="" />
-            </div>
-          )
-        })
+        <div className="perfil-recursos">
+          {recursosDaPessoa.map((recurso) => {
+            const { tipo, nome } = tipoENomeDoRecurso(recurso)
+            return (
+              <button type="button" className="perfil-recurso" key={recurso.id} onClick={() => onAbrirRecurso(recurso.id)}>
+                <MarcaDoRecurso recurso={recurso} tamanho={32} />
+                <span className="perfil-recurso__nomes">
+                  <span className="perfil-recurso__tipo">{tipo}</span>
+                  <span className="perfil-recurso__nome">{nome || VAZIO}</span>
+                </span>
+                <span className="perfil-recurso__valor">
+                  {formatCurrencyBRL(getBeneficiaryValue(recurso, colaborador.id, timeDaPessoa))}
+                </span>
+                <img src={arrowUpRightIcon} width={24} height={24} alt="" />
+              </button>
+            )
+          })}
+        </div>
       )}
     </section>
   )
+}
+
+// Cartao de linhas rotulo e valor - Figma 10355:3750 e 10355:3778: borda,
+// raio 8, linhas de 48px, rotulo Medium e valor Regular numa coluna de 290px.
+function CartaoDeLinhas({ linhas }) {
+  return (
+    <span className="perfil-cartao">
+      {linhas.map(({ rotulo, valor, sufixo }) => (
+        <span className="perfil-cartao__linha" key={rotulo}>
+          <span className="perfil-cartao__rotulo">{rotulo}</span>
+          <span className="perfil-cartao__valor">
+            {valor || VAZIO}
+            {valor && sufixo && <span className="perfil-cartao__sufixo">{sufixo}</span>}
+          </span>
+        </span>
+      ))}
+    </span>
+  )
+}
+
+// Jornada de trabalho - Figma 10355:3750. Mockada no seed ate o Opy
+// existir; sem jornada, "Nenhuma escala conectada" e "Conectar" (so
+// interface).
+function Jornada({ jornada, travado }) {
+  return (
+    <section className="perfil-secao">
+      <p className="perfil-secao__titulo">Jornada de trabalho</p>
+      {jornada ? (
+        <CartaoDeLinhas
+          linhas={[
+            { rotulo: 'Dias da semana', valor: jornada.diasSemana },
+            { rotulo: 'Horário', valor: jornada.horario },
+            { rotulo: 'Almoço', valor: jornada.almoco },
+            { rotulo: 'Carga diária', valor: jornada.cargaDiaria },
+            { rotulo: 'Carga semanal', valor: jornada.cargaSemanal },
+            { rotulo: 'Regime', valor: jornada.regime },
+            { rotulo: 'Home office', valor: jornada.homeOffice },
+          ]}
+        />
+      ) : travado ? (
+        <SecaoVazia texto="Nenhuma escala conectada" />
+      ) : (
+        <SecaoVazia texto="Nenhuma escala conectada" acao="Conectar" />
+      )}
+    </section>
+  )
+}
+
+// Chave PIX com a mascara do tipo: CPF e CNPJ com pontos, o resto como
+// foi digitado.
+function chavePixFormatada(chave) {
+  const tipo = tipoChavePix(chave)
+  if (tipo === 'CPF') return mascaraCpf(chave.replace(/\D/g, ''))
+  if (tipo === 'CNPJ') return mascaraCnpj(chave.replace(/\D/g, ''))
+  return chave
 }
 
 function DadosBancarios({ dados, travado, onSalvar }) {
@@ -369,32 +469,29 @@ function DadosBancarios({ dados, travado, onSalvar }) {
     setAberturas((total) => total + 1)
     setAberto(true)
   }
-  const linhas = dados
-    ? [
-        ['Banco', dados.banco],
-        ['Agência', dados.agencia],
-        ['Tipo de conta', dados.numeroConta ? TIPOS_CONTA[dados.tipoConta] : ''],
-        ['Número da conta', dados.numeroConta],
-        ['Titular da conta', dados.titular],
-        ['Chave PIX', dados.chavePix],
-      ].filter(([, valor]) => String(valor ?? '').trim() !== '')
-    : []
+  const preenchido = ['banco', 'agencia', 'numeroConta', 'titular', 'chavePix'].some(
+    (campo) => String(dados?.[campo] ?? '').trim() !== '',
+  )
+  const chavePix = dados?.chavePix?.trim() ?? ''
 
   return (
     <section className="perfil-secao">
       <p className="perfil-secao__titulo">Dados bancários</p>
-      {linhas.length === 0 ? (
-        <SecaoVazia texto="Nenhum dado adicionado" acao="Adicionar" onAcao={travado ? undefined : abrir} />
+      {!preenchido ? (
+        <SecaoVazia texto="Nenhum dado adicionado" acao={travado ? undefined : 'Adicionar'} onAcao={travado ? undefined : abrir} />
       ) : (
-        // Sem Figma para o estado salvo: linhas de rotulo e valor, e o clique
-        // reabre o painel.
-        <button type="button" className="perfil-bancarios" disabled={travado} onClick={abrir}>
-          {linhas.map(([rotulo, valor]) => (
-            <span className="perfil-bancarios__linha" key={rotulo}>
-              <span className="perfil-bancarios__rotulo">{rotulo}</span>
-              <span className="perfil-bancarios__valor">{valor}</span>
-            </span>
-          ))}
+        // Estado salvo - Figma 10355:3778. O clique reabre o painel.
+        <button type="button" className="perfil-cartao-botao" disabled={travado} onClick={abrir}>
+          <CartaoDeLinhas
+            linhas={[
+              { rotulo: 'Banco', valor: dados.banco },
+              { rotulo: 'Agência', valor: dados.agencia },
+              { rotulo: 'Tipo de conta', valor: dados.numeroConta ? TIPOS_CONTA[dados.tipoConta] : '' },
+              { rotulo: 'Número da conta', valor: dados.numeroConta },
+              { rotulo: 'Titular', valor: dados.titular },
+              { rotulo: 'Chave PIX', valor: chavePix && chavePixFormatada(chavePix), sufixo: chavePix && tipoChavePix(chavePix) },
+            ]}
+          />
         </button>
       )}
       {aberturas > 0 && (
@@ -415,13 +512,13 @@ function DadosBancarios({ dados, travado, onSalvar }) {
 
 // Documentos ligados aos itens concluidos do checklist (Figma 10338:9558).
 // Download e Adicionar sao so interface: ainda nao existe upload.
-function Documentos({ colaborador }) {
+function Documentos({ colaborador, travado }) {
   const documentos = documentosDoColaborador(colaborador)
   return (
     <section className="perfil-secao">
       <p className="perfil-secao__titulo">Documentos</p>
       {documentos.length === 0 ? (
-        <SecaoVazia texto="Nenhum documento adicionado" acao="Adicionar" />
+        <SecaoVazia texto="Nenhum documento adicionado" acao={travado ? undefined : 'Adicionar'} />
       ) : (
         <div className="perfil-documentos">
           {documentos.map((documento) => {
@@ -452,14 +549,27 @@ function Documentos({ colaborador }) {
  * 10338:12202 (Em atividade). A casca (painel, tela cheia, cabecalho, notas e
  * barra do Pipo) fica no ColaboradorDetail.
  */
-function PerfilColaborador({ colaborador, colaboradores, times, recursos, travado, mode, pipoBar, notas, onAtualizar, onCriarTime }) {
+function PerfilColaborador({
+  colaborador,
+  colaboradores,
+  times,
+  recursos,
+  travado,
+  mode,
+  pipoBar,
+  notas,
+  onAtualizar,
+  onCriarTime,
+  onMarcarComoFeito,
+  onAbrirRecurso,
+}) {
   const hoje = todayIso()
   const recursosDaPessoa = recursosDoColaborador(colaborador, recursos, colaboradores, hoje)
 
   const principal = (
     <>
-      <StatusProcesso colaborador={colaborador} />
-      <div className="perfil-bloco">
+      <StatusProcesso colaborador={colaborador} onMarcarComoFeito={onMarcarComoFeito} />
+      <div className={travado ? 'perfil-bloco perfil-bloco--travado' : 'perfil-bloco'}>
         <Cabecalho colaborador={colaborador} />
         {pipoBar}
         <Campos
@@ -473,18 +583,14 @@ function PerfilColaborador({ colaborador, colaboradores, times, recursos, travad
         {mode !== 'full' && notas}
       </div>
       <Metricas colaborador={colaborador} recursosDaPessoa={recursosDaPessoa} hoje={hoje} />
-      <Recursos colaborador={colaborador} recursosDaPessoa={recursosDaPessoa} />
-      <section className="perfil-secao">
-        <p className="perfil-secao__titulo">Jornada de trabalho</p>
-        {/* So interface ate o Opy existir. */}
-        <SecaoVazia texto="Nenhuma escala conectada" acao="Conectar" />
-      </section>
+      <Recursos colaborador={colaborador} recursosDaPessoa={recursosDaPessoa} travado={travado} onAbrirRecurso={onAbrirRecurso} />
+      <Jornada jornada={colaborador.jornada} travado={travado} />
       <DadosBancarios
         dados={colaborador.dadosBancarios}
         travado={travado}
         onSalvar={(valor) => onAtualizar('dadosBancarios', valor)}
       />
-      <Documentos colaborador={colaborador} />
+      <Documentos colaborador={colaborador} travado={travado} />
     </>
   )
 

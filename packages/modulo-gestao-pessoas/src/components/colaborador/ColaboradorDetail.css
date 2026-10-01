@@ -70,15 +70,31 @@
 
 
 
-.colaborador-detail__power-button,
 .colaborador-detail__expand-button {
   width: 40px;
   height: 40px;
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__power-button--active {
-  color: #ff2633;
+/* Cabecalho - Figma 10355:3599 e 10355:4133: 12px entre o X, "Colaborador",
+   a pilula de status e os icones da direita (o PainelLateral poe 8px). */
+.colaborador-detail__acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 4px;
+}
+
+.colaborador-detail__titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 4px;
+  letter-spacing: -0.26px;
+}
+
+.colaborador-detail__titulo .status-pill {
+  letter-spacing: 0;
 }
 
 /*

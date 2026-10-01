@@ -1,10 +1,19 @@
-// Modelo de status do colaborador (contexto, Topico 1 "Status model" e
-// Topico 12). O status nunca e escolhido a mao: sai do checklist gravado.
+// Modelo de status do colaborador (contexto, "Data model > Status"). O
+// status nunca e escolhido a mao: sai do checklist gravado.
 //
 // Formato gravado no colaborador:
 //   tipo:      'CLT' | 'PJ'
 //   admissao:  { feitos: [idDoItem, ...] }
-//   rescisao:  null | { tipo: idTipoRescisao (so CLT), data: 'aaaa-mm-dd', feitos: [...] }
+//   rescisao:  null | {
+//                tipo: id de TIPOS_RESCISAO_CLT ou TIPOS_RESCISAO_PJ,
+//                data: 'aaaa-mm-dd' (data do desligamento),
+//                avisoPrevio: id de AVISOS_PREVIOS ou null (so CLT),
+//                motivo: texto ou null,
+//                multa: valor ou null (so PJ),
+//                envio: { tipo, valor } ou null (Enviar para do termo),
+//                termoGerado: boolean,
+//                feitos: [idDoItem, ...],
+//              }
 //   ausencia:  null | { tipo: idTipoAusencia, inicio: 'aaaa-mm-dd', fim: 'aaaa-mm-dd' }
 
 export const TIPOS = ['CLT', 'PJ']
@@ -12,7 +21,7 @@ export const TIPOS = ['CLT', 'PJ']
 export const STATUS = {
   PENDENTE: 'pendente',
   EM_ATIVIDADE: 'em_atividade',
-  RESCISAO_PENDENTE: 'rescisao_pendente',
+  EM_DESLIGAMENTO: 'em_desligamento',
   DESLIGADO: 'desligado',
   FIM_DE_CONTRATO: 'fim_de_contrato',
 }
@@ -20,7 +29,7 @@ export const STATUS = {
 export const STATUS_ROTULOS = {
   [STATUS.PENDENTE]: 'Pendente',
   [STATUS.EM_ATIVIDADE]: 'Em atividade',
-  [STATUS.RESCISAO_PENDENTE]: 'Rescisão pendente',
+  [STATUS.EM_DESLIGAMENTO]: 'Em desligamento',
   [STATUS.DESLIGADO]: 'Desligado',
   [STATUS.FIM_DE_CONTRATO]: 'Fim de contrato',
 }
@@ -37,32 +46,62 @@ const ITENS_ADMISSAO = {
   PJ: [{ id: 'contrato_assinado', rotulo: 'Contrato assinado' }],
 }
 
-// Rotulos provisorios (contexto, Topico 1): ainda sem Figma.
+// Rotulos do Figma 10355:3986 (CLT) e 10355:7067 (PJ), sem o "recisão" do
+// mock. Provisorios ate a revisao trabalhista.
 const ITENS_RESCISAO_CLT = [
-  { id: 'trct', rotulo: 'TRCT' },
-  { id: 'guia_saque_fgts', rotulo: 'Guia de saque do FGTS' },
-  { id: 'seguro_desemprego', rotulo: 'Requerimento do seguro-desemprego' },
-  { id: 'extrato_fgts', rotulo: 'Extrato do FGTS' },
-  { id: 'exame_demissional', rotulo: 'Exame demissional' },
-  { id: 'rescisao_assinada', rotulo: 'Rescisão assinada' },
+  { id: 'assinar_termo', rotulo: 'Assinar termo de rescisão' },
+  { id: 'guia_saque_fgts', rotulo: 'Enviar guia para saque do FGTS' },
+  { id: 'extrato_fgts', rotulo: 'Enviar extrato atualizado do FGTS' },
+  { id: 'exame_demissional', rotulo: 'Exame demissional realizado' },
+  { id: 'termo_devolvido', rotulo: 'Termo de rescisão assinado e devolvido' },
 ]
 
 const ITENS_RESCISAO_PJ = [
-  { id: 'termo_enviado', rotulo: 'Termo de encerramento enviado' },
-  { id: 'termo_devolvido', rotulo: 'Termo assinado devolvido' },
-  { id: 'ultima_nota_fiscal', rotulo: 'Última nota fiscal' },
+  { id: 'assinar_termo', rotulo: 'Assinar termo de encerramento' },
+  { id: 'pagamentos_pendentes', rotulo: 'Pagamentos pendentes' },
+  { id: 'termo_devolvido', rotulo: 'Termo assinado e devolvido' },
 ]
 
-// Topico 12: quais itens da rescisao CLT valem para cada tipo de rescisao.
-const SEM_SEGURO = ['seguro_desemprego']
-const SEM_SEGURO_E_GUIA = ['seguro_desemprego', 'guia_saque_fgts']
+// Tipos de rescisao, na ordem dos cards (Figma 10355:4796 e 10355:7761).
+// `fora`: itens do checklist CLT que nao valem para o tipo (premissa do
+// contexto: sem a guia de saque do FGTS em Pedido de demissao e Com justa
+// causa). Todo tipo PJ usa os mesmos 3 itens.
+const SEM_GUIA = ['guia_saque_fgts']
 
 export const TIPOS_RESCISAO_CLT = {
   sem_justa_causa: { rotulo: 'Sem justa causa', fora: [] },
-  com_justa_causa: { rotulo: 'Com justa causa', fora: SEM_SEGURO_E_GUIA },
-  pedido_demissao: { rotulo: 'Pedido de demissão', fora: SEM_SEGURO_E_GUIA },
-  acordo: { rotulo: 'Acordo entre as partes', fora: SEM_SEGURO },
+  com_justa_causa: { rotulo: 'Com justa causa', fora: SEM_GUIA },
+  pedido_demissao: { rotulo: 'Pedido de demissão', fora: SEM_GUIA },
+  acordo: { rotulo: 'Acordo entre partes', fora: [] },
   fim_contrato_experiencia: { rotulo: 'Fim de contrato de experiência', fora: [] },
+}
+
+export const TIPOS_RESCISAO_PJ = {
+  fim_contrato: { rotulo: 'Fim de contrato' },
+  antecipada_empresa: { rotulo: 'Antecipada pela empresa' },
+  antecipada_prestador: { rotulo: 'Antecipada pelo prestador' },
+  acordo: { rotulo: 'Acordo entre partes' },
+}
+
+// Aviso previo (CLT). Com justa causa nao tem a linha.
+export const AVISOS_PREVIOS = {
+  trabalhado: 'Trabalhado',
+  indenizado: 'Indenizado',
+  nao_se_aplica: 'Não se aplica',
+}
+
+export function tiposDeRescisao(tipoContrato) {
+  if (tipoContrato === 'CLT') return TIPOS_RESCISAO_CLT
+  if (tipoContrato === 'PJ') return TIPOS_RESCISAO_PJ
+  throw new Error(`Tipo de contrato desconhecido "${tipoContrato}"`)
+}
+
+export function rotuloTipoRescisao(colaborador) {
+  const tipo = tiposDeRescisao(colaborador.tipo)[colaborador.rescisao?.tipo]
+  if (!tipo) {
+    throw new Error(`Tipo de rescisão desconhecido "${colaborador.rescisao?.tipo}" no colaborador ${colaborador.id}`)
+  }
+  return tipo.rotulo
 }
 
 export const TIPOS_AUSENCIA = {
@@ -73,14 +112,10 @@ export const TIPOS_AUSENCIA = {
 }
 
 function itensDaRescisao(colaborador) {
+  rotuloTipoRescisao(colaborador)
   if (colaborador.tipo === 'PJ') return ITENS_RESCISAO_PJ
-  const tipoRescisao = TIPOS_RESCISAO_CLT[colaborador.rescisao.tipo]
-  if (!tipoRescisao) {
-    throw new Error(
-      `Tipo de rescisão desconhecido "${colaborador.rescisao.tipo}" no colaborador ${colaborador.id}`,
-    )
-  }
-  return ITENS_RESCISAO_CLT.filter((item) => !tipoRescisao.fora.includes(item.id))
+  const { fora } = TIPOS_RESCISAO_CLT[colaborador.rescisao.tipo]
+  return ITENS_RESCISAO_CLT.filter((item) => !fora.includes(item.id))
 }
 
 function marcarFeitos(itens, feitos = []) {
@@ -101,15 +136,17 @@ export function getChecklist(colaborador) {
   return marcarFeitos(itens, colaborador.admissao?.feitos)
 }
 
-// { id, rotulo, texto, checklist }. `texto` e o que o pill mostra
-// ("Pendente 2/3"); `checklist` so vem nos dois status pendentes.
+// { id, rotulo, texto, checklist }. `texto` e o que o pill mostra: os dois
+// checklists abertos aparecem como "Pendente X/Y" na tabela, no grid e no
+// card (Figma 10355:3884); o rotulo "Em desligamento" fica no cabecalho da
+// pagina e no filtro. `checklist` so vem com o checklist aberto.
 export function getStatus(colaborador) {
   const checklist = getChecklist(colaborador)
   const faltam = checklist.filter((item) => !item.feito).length
 
   let id
   if (colaborador.rescisao) {
-    if (faltam > 0) id = STATUS.RESCISAO_PENDENTE
+    if (faltam > 0) id = STATUS.EM_DESLIGAMENTO
     else id = colaborador.tipo === 'PJ' ? STATUS.FIM_DE_CONTRATO : STATUS.DESLIGADO
   } else {
     id = faltam > 0 ? STATUS.PENDENTE : STATUS.EM_ATIVIDADE
@@ -120,7 +157,7 @@ export function getStatus(colaborador) {
   return {
     id,
     rotulo,
-    texto: pendente ? `${rotulo} ${faltam}/${checklist.length}` : rotulo,
+    texto: pendente ? `${STATUS_ROTULOS[STATUS.PENDENTE]} ${faltam}/${checklist.length}` : rotulo,
     checklist: pendente ? checklist : null,
   }
 }
@@ -130,7 +167,25 @@ export function isEncerrado(status) {
 }
 
 export function isPendente(status) {
-  return status.id === STATUS.PENDENTE || status.id === STATUS.RESCISAO_PENDENTE
+  return status.id === STATUS.PENDENTE || status.id === STATUS.EM_DESLIGAMENTO
+}
+
+// Desligar so existe para quem ainda nao comecou o desligamento.
+export function podeDesligar(colaborador) {
+  const status = getStatus(colaborador).id
+  return status === STATUS.PENDENTE || status === STATUS.EM_ATIVIDADE
+}
+
+// "Marcar como feito" de um item do checklist de desligamento. Devolve o
+// colaborador novo; no ultimo item ele vira Desligado ou Fim de contrato.
+export function marcarItemDaRescisao(colaborador, itemId) {
+  if (!colaborador.rescisao) throw new Error(`Colaborador ${colaborador.id} sem desligamento`)
+  if (!itensDaRescisao(colaborador).some((item) => item.id === itemId)) {
+    throw new Error(`Item "${itemId}" fora do checklist de desligamento de ${colaborador.id}`)
+  }
+  const feitos = new Set(colaborador.rescisao.feitos)
+  feitos.add(itemId)
+  return { ...colaborador, rescisao: { ...colaborador.rescisao, feitos: [...feitos] } }
 }
 
 // A ausencia so vale enquanto inicio <= hoje <= fim. Datas ISO comparam

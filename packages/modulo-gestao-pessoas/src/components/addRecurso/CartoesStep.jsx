@@ -6,11 +6,12 @@ import './NovoRecurso.css'
 /*
  * Passo de cards - Figma 10343:14389 (tipo), 10343:14465 (categoria) e
  * 10343:14586 (servico): 3 por linha, 180px, badge, seta e rotulo. "Outro"
- * ocupa a linha inteira embaixo. Sem rodape: o clique avanca.
+ * ocupa a linha inteira embaixo. Sem rodape: o clique avanca. O desligamento
+ * usa o mesmo passo para o tipo de rescisao (10355:4796, 10355:7761).
  */
-function CartoesStep({ titulo, cartoes, comOutro = false, onEscolher, onClose }) {
+function CartoesStep({ tituloFluxo = 'Novo recurso', titulo, cartoes, comOutro = false, onEscolher, onClose }) {
   return (
-    <CltShell title="Novo recurso" onClose={onClose}>
+    <CltShell title={tituloFluxo} onClose={onClose}>
       <div className="clt-shell__content">
         <h1 className="clt-shell__title">{titulo}</h1>
         <div className="recurso-cartoes">

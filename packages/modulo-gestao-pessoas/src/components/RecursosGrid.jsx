@@ -21,40 +21,48 @@ const ICONES_CATEGORIA = {
 
 const ICONES_VERBA = { Coin }
 
-function IconeSvg({ src }) {
-  return <img src={src} width={24} height={24} alt="" />
+function IconeSvg({ src, tamanho }) {
+  return <img src={src} width={tamanho} height={tamanho} alt="" />
 }
 
-function iconeDoRecurso(recurso) {
-  if (recurso.tipoRecurso === 'licenca') return <Key size={24} color="var(--gp-ausencia-icone)" />
+function iconeDoRecurso(recurso, tamanho) {
+  if (recurso.tipoRecurso === 'licenca') return <Key size={tamanho} color="var(--gp-ausencia-icone)" />
   if (recurso.tipoRecurso === 'verba') {
-    if (recurso.icone === 'Desktop') return <IconeSvg src={desktopIcon} />
+    if (recurso.icone === 'Desktop') return <IconeSvg src={desktopIcon} tamanho={tamanho} />
     const Icone = ICONES_VERBA[recurso.icone]
     if (!Icone) throw new Error(`Ícone de verba desconhecido "${recurso.icone}"`)
-    return <Icone size={24} color="var(--gp-ausencia-icone)" />
+    return <Icone size={tamanho} color="var(--gp-ausencia-icone)" />
   }
-  if (recurso.categoria === 'Vale transporte') return <IconeSvg src={vanIcon} />
+  if (recurso.categoria === 'Vale transporte') return <IconeSvg src={vanIcon} tamanho={tamanho} />
   const Icone = ICONES_CATEGORIA[recurso.categoria]
   if (!Icone) throw new Error(`Categoria desconhecida "${recurso.categoria}"`)
-  return <Icone size={24} color="var(--gp-ausencia-icone)" />
+  return <Icone size={tamanho} color="var(--gp-ausencia-icone)" />
 }
 
-function MarcaDoRecurso({ recurso }) {
+// Logo ou icone do recurso: 56px nos cards (icone de 24) e 32px na pagina do
+// colaborador (icone de 20, Figma 10355:3706). A folga do logo escala junto.
+export function MarcaDoRecurso({ recurso, tamanho = 56 }) {
   const nomeDaMarca = recurso.tipoRecurso === 'licenca' ? recurso.servico : recurso.fornecedor
   const logo = LOGOS[nomeDaMarca]
+  const classeTamanho = tamanho === 56 ? '' : ' recurso-card__marca--pequena'
   if (logo) {
+    const folga = (logo.inset * tamanho) / 56
     return (
-      <span className="recurso-card__marca recurso-card__marca--logo">
+      <span className={`recurso-card__marca recurso-card__marca--logo${classeTamanho}`}>
         <img
           className="recurso-card__logo"
-          style={{ top: logo.inset, left: logo.inset, width: 56 - 2 * logo.inset, height: 56 - 2 * logo.inset }}
+          style={{ top: folga, left: folga, width: tamanho - 2 * folga, height: tamanho - 2 * folga }}
           src={logo.src}
           alt=""
         />
       </span>
     )
   }
-  return <span className="recurso-card__marca recurso-card__marca--icone">{iconeDoRecurso(recurso)}</span>
+  return (
+    <span className={`recurso-card__marca recurso-card__marca--icone${classeTamanho}`}>
+      {iconeDoRecurso(recurso, tamanho === 56 ? 24 : 20)}
+    </span>
+  )
 }
 
 /*

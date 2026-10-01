@@ -22,6 +22,7 @@ import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFl
 import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
 import NovoRecursoFlow from '../components/addRecurso/NovoRecursoFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
+import DesligamentoFlow from '../components/desligamento/DesligamentoFlow.jsx'
 import TimeDetail from '../components/time/TimeDetail.jsx'
 import BeneficioDetail from '../components/beneficio/BeneficioDetail.jsx'
 import {
@@ -174,6 +175,8 @@ function Home({ backTo }) {
   const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
   const [novoTimeStepFlowTeamId, setNovoTimeStepFlowTeamId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
+  // Quem esta sendo desligado; o fluxo abre por cima de tudo, como os outros.
+  const [desligandoId, setDesligandoId] = useState(null)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
     getCollection(COLLECTIONS.COLABORADORES),
@@ -323,10 +326,15 @@ function Home({ backTo }) {
       }
       return true
     })
-    // Sem ordenacao ativa, Pendente e Rescisao pendente vem primeiro. O sort
-    // e estavel, entao o resto mantem a ordem de cadastro. A ordenacao por
-    // Nome da tabela parte desta lista e passa por cima.
-    const prioridade = (collaborator) => (isPendente(getStatus(collaborator)) ? 0 : 1)
+    // Sem ordenacao ativa, Pendente e Em desligamento vem primeiro, e
+    // Desligado e Fim de contrato por ultimo (Figma 10355:6926). O sort e
+    // estavel, entao o resto mantem a ordem de cadastro. A ordenacao por Nome
+    // da tabela parte desta lista e passa por cima.
+    const prioridade = (collaborator) => {
+      const status = getStatus(collaborator)
+      if (isPendente(status)) return 0
+      return isEncerrado(status) ? 2 : 1
+    }
     return filtered.sort((a, b) => prioridade(a) - prioridade(b))
   }, [collaborators, searchQuery, columnFilters])
 
@@ -348,7 +356,7 @@ function Home({ backTo }) {
 
   const clearAllFilters = () => setColumnFilters(createEmptyColumnFilters())
 
-  // Contam Pendente, Em atividade e Rescisao pendente; quem esta em dois
+  // Contam Pendente, Em atividade e Em desligamento; quem esta em dois
   // times conta nos dois. Desligado e Fim de contrato nao contam.
   const teamsWithCounts = useMemo(() => {
     const ativos = collaborators.filter((collaborator) => !isEncerrado(getStatus(collaborator)))
@@ -398,6 +406,13 @@ function Home({ backTo }) {
 
   const selectAll = (ids) => setSelectedIds(new Set(ids))
 
+  // Do modal "Desligar {Nome}?", na pagina ou no menu da linha. A pagina
+  // fecha: os dois botoes do fluxo voltam para a tabela.
+  const iniciarDesligamento = (id) => {
+    if (colaboradorOverlayOpen) closeColaborador()
+    setDesligandoId(id)
+  }
+
   const handleDelete = () => {
     const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
     setCollaborators(updated)
@@ -431,6 +446,18 @@ function Home({ backTo }) {
         onExit={() => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
           setAddCollaboratorFlowOpen(false)
+        }}
+      />
+    )
+  }
+
+  if (desligandoId) {
+    return (
+      <DesligamentoFlow
+        colaboradorId={desligandoId}
+        onExit={() => {
+          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+          setDesligandoId(null)
         }}
       />
     )
@@ -500,6 +527,7 @@ function Home({ backTo }) {
                   statusOptions={STATUS_OPCOES}
                   onRowClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  onDesligar={iniciarDesligamento}
                   alertas={alertasDeCadastro}
                 />
               ) : (
@@ -509,6 +537,7 @@ function Home({ backTo }) {
                   onToggleSelect={toggleSelect}
                   onCardClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  onDesligar={iniciarDesligamento}
                   alertas={alertasDeCadastro}
                 />
               )}
@@ -608,6 +637,8 @@ function Home({ backTo }) {
           onExpand={expandColaborador}
           onCollapse={collapseColaborador}
           onDataChanged={setCollaborators}
+          onDesligar={iniciarDesligamento}
+          onAbrirRecurso={openBeneficio}
         />
       )}
 

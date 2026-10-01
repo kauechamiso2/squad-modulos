@@ -58,10 +58,10 @@ Gestão de Pessoas is the module of the Pipo agent (people and knowledge) for cr
 | PJ fields | cnpj, razaoSocial, dataAdmissao, dataFimContrato (none means a fixed PJ, a date means a temporary PJ), pagamento (Mensal, Anual or Valor fixo), valorContrato |
 | envioContrato, contratoGerado | Where the contract was sent (channel and destination) and whether it was generated |
 | dadosBancarios | banco, agencia, tipoConta (Corrente or Poupança), numeroConta, titular, chavePix. Complete with a full account (banco, agência, número and titular) or a chave PIX |
-| admissao, rescisao | Checklists. Rescisão stores the termination type for CLT |
+| admissao, rescisao | Checklists. Rescisão also stores the termination type, data, aviso prévio (CLT), motivo, multa (PJ), envio and whether the term was generated |
 | ausencia | tipo (ferias, licenca_medica, licenca_maternidade, licenca_paternidade), inicio, fim. Mocked in the seed, with no screen to edit it |
 | notas | Notes with their date |
-| contractType, desligado | Legacy fields, kept only for the bridges (see Implementation status) |
+| jornada | diasSemana, horario, almoco, cargaDiaria, cargaSemanal, regime, homeOffice. Mocked in the seed until Opy exists |
 
 ### Status
 
@@ -71,7 +71,7 @@ Status comes only from `getStatus()` in `colaboradorStatus.js`.
 | --- | --- | --- |
 | Pendente X/Y | The admission checklist is open. X is how many items are missing and Y the total. CLT has 3 items and starts at 3/3. PJ has 1 item and starts at 1/1 | Yellow |
 | Em atividade | The admission checklist reached zero. If anything from "Completar cadastro" is missing, the alert icon shows | Green |
-| Rescisão pendente X/Y | The termination document was generated. Fields are locked | Yellow |
+| Em desligamento X/Y | The offboarding flow was finished (with or without the term). Fields are locked. In the table, the grid and the checklist card it shows as "Pendente X/Y", with a red Power badge in the icon slot. The page header shows the red pill "Em desligamento" | Yellow pill, red badge and red header pill |
 | Desligado (CLT) or Fim de contrato (PJ) | The termination checklist reached zero. Locked for good | Red for Desligado, gray for Fim de contrato |
 
 **Checklist labels**, in this order:
@@ -80,18 +80,22 @@ Status comes only from `getStatus()` in `colaboradorStatus.js`.
 | --- | --- |
 | Pendente, CLT | Contrato assinado, Documentos enviados, Exame médico feito |
 | Pendente, PJ | Contrato assinado |
-| Rescisão pendente, CLT | TRCT, Guia de saque do FGTS, Requerimento do seguro-desemprego, Extrato do FGTS, Exame demissional, Rescisão assinada (provisional labels) |
-| Rescisão pendente, PJ | Termo de encerramento enviado, Termo assinado devolvido, Última nota fiscal (provisional labels) |
+| Em desligamento, CLT | Assinar termo de rescisão, Enviar guia para saque do FGTS, Enviar extrato atualizado do FGTS, Exame demissional realizado, Termo de rescisão assinado e devolvido |
+| Em desligamento, PJ | Assinar termo de encerramento, Pagamentos pendentes, Termo assinado e devolvido |
+
+The Em desligamento labels come from Figma (`10355:3986` for CLT, `10355:7067` for PJ). Figma shows the CLT list for Sem justa causa and the PJ list for Antecipada pela empresa.
 
 | Termination type (CLT) | Items | Counter |
 | --- | --- | --- |
-| Sem justa causa | 6 | 6/6 |
-| Fim de contrato de experiência | 6 | 6/6 |
-| Acordo entre as partes | 5 (no seguro-desemprego) | 5/5 |
-| Pedido de demissão | 4 (no seguro-desemprego, no guia de saque) | 4/4 |
-| Com justa causa | 4 (no seguro-desemprego, no guia de saque) | 4/4 |
+| Sem justa causa | 5 | 5/5 |
+| Fim de contrato de experiência | 5 (assumption) | 5/5 |
+| Acordo entre partes | 5 (assumption) | 5/5 |
+| Pedido de demissão | 4, without the FGTS withdrawal guide (assumption) | 4/4 |
+| Com justa causa | 4, without the FGTS withdrawal guide (assumption) | 4/4 |
 
-Checklist items have no required order. A collaborator can be Em atividade before the start date. The checklist is read-only everywhere and has no automation, so a collaborator created in the flow stays Pendente until a way to mark items exists. Have a labor-law professional review the termination checklist before production.
+Every PJ termination type uses the same 3 items (assumption).
+
+Checklist items have no required order. A collaborator can be Em atividade before the start date. The admission checklist is read-only and has no automation, so a collaborator created in the flow stays Pendente. The termination checklist can be marked on the collaborator page with "Marcar como feito" (section 5). Have a labor-law professional review the termination checklist before production.
 
 **Completar cadastro:** CLT needs e-mail, time, reporta para, recursos and dados bancários. PJ needs the same, without recursos. When anything is missing on someone Em atividade, the alert icon shows on the home.
 
@@ -99,7 +103,7 @@ Checklist items have no required order. A collaborator can be Em atividade befor
 
 Nome, cor (a light and dark pair from 36 colors, 6 families of 6 shades, with no repeats between teams), ícone, membros, líder, descrição, and a pending flag. A pending team comes from typing a new team name on the collaborator page, or from the seed.
 
-A team counts Pendente, Em atividade and Rescisão pendente members, and a person counts in every team they belong to. Desligado and Fim de contrato do not count. Only Pendente and Em atividade people can be added as members or leader.
+A team counts Pendente, Em atividade and Em desligamento members, and a person counts in every team they belong to. Desligado and Fim de contrato do not count. Only Pendente and Em atividade people can be added as members or leader.
 
 ### Recurso
 
@@ -124,7 +128,7 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 
 ### Seed
 
-- 13 collaborators covering every status, with dates relative to the real current day. Names come from Figma, plus Bruna Teixeira (Em atividade, no team), Lucas Andrade (CLT, Rescisão pendente 3/4), Renata Prado (PJ, Rescisão pendente 2/3) and André Moura (PJ, Fim de contrato).
+- 13 collaborators covering every status, with dates relative to the real current day. Names come from Figma, plus Bruna Teixeira (Em atividade, no team), Lucas Andrade (CLT, Em desligamento 3/4), Renata Prado (PJ, Em desligamento 2/3) and André Moura (PJ, Fim de contrato).
 - Absences: Victoria Cardoso (férias), Gustavo Lima (licença paternidade) and Beatriz Souza (licença médica).
 - Design, Marketing and Vendas as pending teams, only when no team with the same name exists.
 - 5 recursos, replacing the old benefits seed: Plano de saúde (Alice), Auxílio Home Office (verba, Desktop icon), Slack (licença), Vale alimentação (Caju) and Vale transporte. They mix whole-company, team and individual links, and use variants, so counts and ranges are real.
@@ -132,50 +136,26 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 
 ## Implementation status
 
-**Done** in branch `feat/gp-build-order`, one commit per part of "Build order":
+**Done** in branch `feat/gp-build-order`, parts 1 to 7 of the build order, each with a browser check at 1440 against Figma.
 
-| Part | What was built |
-| --- | --- |
-| Before | The collaborator model, `getStatus()`, the seed of collaborators and absences, the storage version key, and the Colaboradores table and grid (branch `feat/gp-status-home`) |
-| 1 | Tabs "Recursos", search placeholders, Times cards (4 per row, people count, outlined "Criar time", total of complete teams), the recurso model (`utils/recursos.js`), the Recursos cards (logo or icon, title by type, value or range, unique people) with search by title and supplier and the Tipo de recurso filter, and the seed of the 5 recursos |
-| 2 | Novo modal (Colaborador, Time, Recurso) and the CLT flow: Tipo, Nome, Cargo, Informações, the "Informações para contrato" panel, the "Enviar para" sheet and both toasts |
-| 3 | The collaborator page (`colaborador/perfil/PerfilColaborador.jsx`): Status do processo, fields in the Figma order, multi-team field that creates pending teams, Dados bancários panel, Recursos, Jornada and Documentos; the alert "Informações faltando" on the table and the grid |
-| 4 | The PJ flow (CNPJ, razão social, data de fim, pagamento and valor) and the PJ page |
-| 5 | The create-team flow from Figma, with the search-and-pick pattern (`campos/BuscaEEscolha.jsx`), the leader and description side panels and the toast "Time criado com sucesso!" |
-| 6 | The create-recurso flow (`addRecurso/`) with the Benefício, Verba and Licença paths, variants, the Atribuir panel and the Informações panel |
+- Parts 1 to 6: Times and Recursos tabs, Novo modal, create collaborator CLT and PJ, the collaborator page and the home alert, create team, create recurso.
+- Part 7: the "Desligar {Nome}?" modal from the page header and the row menu, the offboarding flow for CLT and PJ (type cards, Informações, the term panel with "Salvar sem termo" and "Gerar e enviar"), the Em desligamento state in the table, the grid and the page, "Marcar como feito" on every open termination item, the move to Desligado or Fim de contrato at zero, the Status filter with Em desligamento, and the filled Recursos, Jornada de trabalho and Dados bancários on the page. Data version 6.
+- The corrections of info-row labels (14px Medium), step titles (32px Semibold, line-height 1.1, letter-spacing -0.26px, 176px from the top, 532px wide) and the Flow shell background were already in the code. Checked in every step of every flow.
 
-The storage version is 5. Each bump rewrites this module's collaborators, recursos and teams with the seed.
+**Bridges removed in part 7:** the page's Desligar toggling `desligado`, Reativar, the `desligado` check in the field lock, and the absence of Desligar in the row menu. No bridge from the earlier table is left.
 
-**Decisions taken while building, to confirm:**
+**Bridges still open:** the recurso page is the old benefício page, fed by `camposLegados()` (`tipo`, `name`, `outroSubtipo`), and the team page reads `tipo` for the CLT and PJ bar. Both wait for the Figma of those pages.
 
-- Medium is 500 inside the module (`tokens.css`). `@squad/ui` uses 510, and with Inter loaded only at 400, 500, 600 and 700 the browser rendered every Medium text as 600.
-- The flows and new panels use module buttons (`campos/Botoes.css`, 14px with 16px padding), because `.text-button` (16px) and the disabled `.pill-button` text (#798282) of `@squad/ui` differ from Figma.
-- Field names keep the existing code names where they existed: `name`, `cargos` (list), `salario`, `custoParaEmpresa` and `dataAdmissao` (also for PJ). New fields follow this document.
-- Money stays a float in reais, as before. Values show cents ("R$12.000,00"), as in the Recursos tab Figma; the collaborator page Figma shows "R$12.000".
-- Tempo de casa keeps the "1a 9m" format; Figma shows "1 dia" and this document does not define the format.
-- Phone mask follows Figma ("11 98916 5456"); CPF and CNPJ follow the masks of this document.
-- Info-row and section labels use Medium, as Figma draws them, where this document says Regular.
-- The Vale transporte seed has the supplier "VEM", because the model needs one.
-- "Outro" name step titles: "Qual o nome do benefício?" and "Qual o nome da licença?".
-- Category icons on the light blue badge (cards) and on the yellow badge (flow) come from Phosphor when the Figma layer name collides with an existing SVG of another color.
+**Decisions where the spec is silent:**
 
-**Temporary bridges:**
+- Collaborator page: the 12px gaps of the header (Figma `10355:3599`) apply to every status, and the team pill in read mode follows `10355:3657` (32px, 12px dot, black CaretDown), losing the caret when locked.
+- Locked page: empty fields show "—", and the empty-state actions ("Adicionar", "Conectar") are hidden in Recursos, Jornada, Dados bancários and Documentos. Values stay black.
+- Term panel: "Gerar e enviar" needs a valid Enviar para. With Com justa causa the Aviso prévio row is left out of the panel.
+- Chave PIX type: Email (has @), Telefone (starts with +), CNPJ (14 digits), CPF (11 digits) or Aleatória (UUID). Anything else shows no type.
+- The Desligar item in the row menu uses the gray Power icon, as there is no Figma for the menu.
+- The Motivo panel placeholder is "Motivo do desligamento...".
 
-| Bridge | Why | Remove in |
-| --- | --- | --- |
-| Desligar and Reativar are gone from the home row menu | Desligar only toggled a boolean, which contradicts the status model | Offboarding |
-| The collaborator page Desligar sets `desligado: true` and locks the fields (no Reativar) | There is no offboarding flow yet | Offboarding |
-| Recursos also save `tipo` (the category with the old spelling) and `name` | So the old benefit detail page keeps opening | Recurso page |
-| The team page reads the base cost from `custos.js` and counts CLT and PJ by `tipo` | The team page has no Figma yet and read the old contract types | Team page |
-| The team page still uses the old centered modals for leader, description and members | Out of this round | Team page |
-
-**Known differences, not done:**
-
-- The table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners (fix with an opt-in prop), the tab height does not match Figma, and the "Ver mais..." button in the Filtros panel has no style.
-- Side panels sit 24px from the edge (this document); Figma shows 20px.
-- The supplier step shows every suggestion in two columns; Figma shows the first four.
-- The benefit detail page counts people who already left, and shows the Gift icon for Licença (old page logic).
-- Saved states without Figma follow this document: the recursos list on the profile, saved bank data, the edit state of the Informações rows, the saved leader and description.
+**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners (fix with an opt-in prop), the tab height and the home header spacing do not match Figma, the "Ver mais..." button in the Filtros panel has no style, side panels sit 24px from the side instead of 20px and the veil has no blur, and the progress bar fills to the real step (Figma never moves it, a mock error).
 
 ## Figma index
 
@@ -189,22 +169,26 @@ File `ZQZtZy7exqkUi5u33CUvuM` (Gestão de Pessoas 2.0).
 | Create collaborator PJ, and the PJ collaborator page | `10338:11286` |
 | Create team | `10342:12570` |
 | Create recurso | `10343:13283` |
+| Offboarding CLT | `10355:3451` |
+| Offboarding PJ | `10355:5041` |
 
-No Figma yet: the team page, the recurso page, offboarding, and new states of the floating search.
+No Figma yet: the team page, the recurso page, and new states of the floating search.
 
 ## Shared patterns
 
 | Pattern | Spec |
 | --- | --- |
-| Flow shell | Full screen. Header 64px with the flow title on the left and the X on the right. The X opens "Descartar edições.". Content 532px wide. Footer 80px with the progress bar (current step divided by the steps of the path), Voltar and Continuar. Steps made of cards have no footer, and a click on a card advances. Voltar goes back one step and keeps the data. In every Figma flow the progress bar does not move, which is a mock error |
+| Flow shell | Full screen, with the background linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.85)) over linear-gradient(179.3deg, #eef6fb, #ffffff). Header 64px with a 1px #e3e6e6 bottom border, 40px side padding, the flow title (16px Medium, letter-spacing -0.26px) on the left and the 40px X on the right. The X opens "Descartar edições.". Content 532px wide. Footer 80px with the progress bar (current step divided by the steps of the path), Voltar and Continuar. Steps made of cards have no footer, and a click on a card advances. Voltar goes back one step and keeps the data. In every Figma flow the progress bar does not move, which is a mock error |
 | Large input | 24px Regular, #798282 when empty and black when filled, with a green check when valid |
-| Info rows | 72px rows with a divider. Label in Regular on the left, value or "Adicionar" on the right. Click to edit, Enter saves, unless a panel is specified |
+| Info rows | 530px wide, 72px rows with a 1px #e3e6e6 bottom divider (none on the last row). Label 14px Medium black on the left, value or "Adicionar" 14px Medium black on the right. Pills are 40px high, 16px side padding, fully rounded, 8px apart: unselected with a 1px #e3e6e6 border, selected black with white text. The calendar button is the same pill with a 24px CalendarPlus. Click to edit, Enter saves, unless a panel is specified |
+| Type cards | Steps where a card choice advances. Cards 180px high in rows of 3 with 12px gaps (a last row keeps the same card width, aligned left), 24px padding, radius 16px, 1px #e3e6e6 border, white, #f4f5f5 on hover. Top: a 56px badge (radius 10px, #fbedd0) with a 24px icon, and the 24px ArrowUpRight. Bottom: the label in 16px Medium, letter-spacing -0.26px, line-height 1.2 |
+| Summary panel | Contract and term panels: 428px wide side panel, white, 1px #e3e6e6 border, radius 8px, 24px padding, 40px between header and body. Title 16px Medium, letter-spacing -0.26px. Rows 56px, #f4f5f5, radius 8px, 16px padding, 16px apart, label 14px Medium #798282 on the left and value 14px Medium black on the right (a document type such as "CPF" follows the value in #798282, 16px apart). The Enviar para row adds a 20px PencilSimpleLine. Footer with a 1px #e3e6e6 top border, 24px padding, buttons 12px apart aligned right |
 | Side panel | Opens from the right, 20px from the top and 24px from the side, over the overlay, with a slide. Title and X at the top, Cancelar and Salvar (or the specific buttons) at the bottom. The exit is the same animation reversed |
 | Search and pick | Search field with a magnifier. Typing opens a list with a User icon, the name and the cargo in gray, with the #f4f5f5 hover. Each choice becomes a row with a checked CheckSquare, the name and the cargo in gray, and a divider |
 | Hover | Background #f4f5f5, no shadow. Exceptions: Novo cards (#e3e6e6 and wiggling stickers), filter pills (#e3e6e6) and tabs (black text, no underline) |
 | Borders and text | 1px solid #e3e6e6. Secondary text #798282 |
 | Overlay | rgba(227,230,230,0.6) with blur |
-| Typography | Inter. Page title 24px Medium. Step title 32px with -1px letter-spacing. Buttons 14px Medium. Table header 12px in a 48px bar, rows 64px |
+| Typography | Inter. Page title 24px Medium. Step title 32px Semibold, line-height 1.1, letter-spacing -0.26px, at 176px from the top of the flow, 532px wide. Buttons 14px Medium. Table header 12px in a 48px bar, rows 64px |
 | Buttons | 40px high, 16px on the sides, 24px icon after the text |
 | Checkbox | Square, and CheckSquare.svg when checked |
 | Status pills | Rounded, 12px Medium. Green rgba(1,180,108,0.1) with #60c60c. Blue rgba(0,145,255,0.1) with #0091ff. Yellow rgba(209,170,66,0.1) with #eac764. Red rgba(255,38,51,0.1) with #ff2633. Gray #e3e6e6 with #798282 |
@@ -229,15 +213,15 @@ The header has the back button, "Gestão de Pessoas", the tutorial button (Gradu
 | Toolbar | 40px: "Total: X colaboradores", Filtros, and the grid and table toggle |
 | Columns | Checkbox, Nome, Time, Cargo, Tipo ("CLT" or "PJ" as text), Status, icon slot and the 3-dot menu |
 | Time column | The team names. With several teams, the first team plus "+N" (No Figma for "+N"; today the names are separated by commas) |
-| Status pill hover | Pendente and Rescisão pendente get a border in their own color and a read-only popover below with the checklist: CircleDashed for open items and a green CheckCircle for done ones. The popover stays open while the mouse moves into it. Other statuses have no popover |
-| Icon slot | Absence badges: Island (férias), Baby (licença maternidade or paternidade) and Stethoscope (licença médica), with the tooltip "{Ausência} até dd/mm", shown only while the absence is active. Alert: a gray Warning with no badge and the tooltip "Informações faltando". Clicking it opens the collaborator page. The offboarding icon also goes here (No Figma) |
+| Status pill hover | Pendente (admission) and Em desligamento (both shown as "Pendente X/Y") get a border in their own color and a read-only popover below with the checklist: CircleDashed for open items and a green CheckCircle for done ones. The popover stays open while the mouse moves into it. Other statuses have no popover |
+| Icon slot | Absence badges: Island (férias), Baby (licença maternidade or paternidade) and Stethoscope (licença médica), with the tooltip "{Ausência} até dd/mm", shown only while the absence is active. Alert: a gray Warning with no badge and the tooltip "Informações faltando". Clicking it opens the collaborator page. Offboarding: a red Power icon on a light red round badge while the person is Em desligamento (Figma `10355:3841`); its tooltip has no Figma (assumption: "Em desligamento") |
 | Desligado and Fim de contrato | Faded row, the pill keeps its color |
 | Empty values | "—" |
 | Row and selection | Hover and selected rows use #f4f5f5. While rows are selected, the floating bar shows "{N} selecionados", "Add em time" (FolderSimplePlus), a red trash and close |
 | Row menu | Ver colaborador and Excluir. Desligar returns with offboarding and then opens "Desligar {Nome}?". Reativar does not exist |
 | Grid | 4 cards per row, no photo. Top: checkbox on the left, and the absence or alert icon and the 3-dot menu on the right. Middle: name, cargo and time ("—" when empty). Bottom: the Tipo as plain text on the left and the status pill on the right |
-| Order | With no sort active, Pendente and Rescisão pendente rows come first |
-| Column filters | Nome sorts A to Z in 3 states, and its icon becomes an X while active. Time, Cargo (cargos in use), Tipo (CLT, PJ) and Status (the 5 statuses) are multi-select dropdowns that update live, with the icon becoming an X while active. Filters combine with AND across columns and OR within a column. Pendente matches any counter, and so does Rescisão pendente. Time matches a person when any of their teams is selected |
+| Order | With no sort active, Pendente and Em desligamento rows come first, and Desligado and Fim de contrato rows come last (Figma `10355:6926`) |
+| Column filters | Nome sorts A to Z in 3 states, and its icon becomes an X while active. Time, Cargo (cargos in use), Tipo (CLT, PJ) and Status (Pendente, Em atividade, Em desligamento, Desligado, Fim de contrato) are multi-select dropdowns that update live, with the icon becoming an X while active. Filters combine with AND across columns and OR within a column. Pendente matches any counter, and so does Em desligamento. Time matches a person when any of their teams is selected |
 | Filtros panel | Time, Cargo, Período (by the "Ativo desde" date), Tipo and Status, in sync with the column filters |
 | Floating search | "Buscar uma pessoa...", matching the name only |
 
@@ -319,8 +303,8 @@ The collaborator, team and recurso pages share one shell: a side panel with a sl
 
 | Element | Spec |
 | --- | --- |
-| Header | X, "Colaborador", Excluir (red trash), Desligar (power) and Expandir |
-| Status do processo | Gray card at the top while Pendente, with the counter on the right and the checklist read-only. Rescisão pendente uses the same card with the termination items. The card disappears in Em atividade |
+| Header | X, "Colaborador", Excluir (red trash), Desligar (power) and Expandir. While Em desligamento, the red pill "Em desligamento" sits after "Colaborador" and the Desligar icon disappears (Figma `10355:3986`) |
+| Status do processo | Gray card at the top while Pendente, with the counter on the right and the admission checklist read-only. While Em desligamento, the same card shows the termination items with the counter "Pendente X/Y", and open items that Figma marks with "Marcar como feito" on the right. A click marks the item done (green CheckCircle) and updates the counter. At zero, the person becomes Desligado (CLT) or Fim de contrato (PJ). The card disappears in Em atividade |
 | Profile | Generic avatar, the name and the Tipo in gray ("CLT" or "PJ"), then the static Pipo bar "Peça ao Pipo para Resumir perfil, Redigir mensagem ou Comparar cargo" |
 | Fields, CLT | Contato, Documento (the CPF followed by "CPF"), Cargo, Email, Time, Reporta para, Ativo desde, Salário bruto and Custo para empresa, each with its icon. Data de nascimento is stored but not shown |
 | Fields, PJ | Contato, Documento (the CNPJ followed by "CNPJ"), Cargo, Email, Time, Reporta para, Ativo desde and Salário, which shows the contract value with its suffix. Razão social, data de fim and pagamento are stored but not shown |
@@ -328,11 +312,11 @@ The collaborator, team and recurso pages share one shell: a side panel with a sl
 | Editing | Gray hover and a click to edit. Email is text and Enter saves. Cargo is free text with suggestions. Time accepts several teams as pills with a search, and typing a team that does not exist creates a pending team. Reporta para searches among Pendente and Em atividade people. Contato uses Telefone or Email. Dates use the calendar. Salário bruto, Custo para empresa and Salário are hidden by default, each with its own eye |
 | Notes | "Adicionar nota" in the row. Enter saves with the date |
 | Métricas | Custo total (with an eye) and Tempo de casa ("—" before the admission date) |
-| Recursos | The recursos the person receives. Empty: "Nenhum recurso adicionado" and "Adicionar". Adding from the profile has no Figma, so it has no action yet |
-| Jornada de trabalho | "Nenhuma escala conectada" and "Conectar". Interface only until Opy exists |
-| Dados bancários | Empty: "Nenhum dado adicionado" and "Adicionar", which opens a second side panel with Banco ("Nome ou código do banco"), Agência, a Corrente or Poupança switch, Número da conta, Titular da conta and Chave PIX, plus Cancelar and Salvar. Salvar needs a full account or a chave PIX. No Figma for the saved state: the section shows the data as rows, and a click reopens the panel |
+| Recursos | Filled (Figma `10355:3706`): one bordered 56px row per recurso, with the 32px logo or icon, the type in gray (the category for Benefício, "Verba" or "Licença") followed by the name, the person's value and an arrow that opens the recurso page. Empty: "Nenhum recurso adicionado" and "Adicionar". Adding from the profile has no Figma, so it has no action yet |
+| Jornada de trabalho | Filled (Figma `10355:3750`): a bordered card with 48px rows Dias da semana, Horário, Almoço, Carga diária, Carga semanal, Regime and Home Office, mocked in the seed until Opy exists. Empty: "Nenhuma escala conectada" and "Conectar", interface only |
+| Dados bancários | Empty: "Nenhum dado adicionado" and "Adicionar", which opens a second side panel with Banco ("Nome ou código do banco"), Agência, a Corrente or Poupança switch, Número da conta, Titular da conta and Chave PIX, plus Cancelar and Salvar. Salvar needs a full account or a chave PIX. Saved state (Figma `10355:3778`): a bordered card with 48px rows Banco, Agência, Tipo de conta, Número da conta, Titular and Chave PIX, with the key type in gray after the key (for example "CPF"). A click reopens the panel |
 | Documentos | Files tied to completed checklist items: "Contrato_CLT" or "Contrato_PJ" for Contrato assinado, the sent document (for example "CNH.png") for Documentos enviados, and "Exames_Medico" for Exame médico feito, each with a file-type badge and "Download". Empty: "Nenhum documento adicionado" and "Adicionar". Download and Adicionar are interface only |
-| Locking | Rescisão pendente, Desligado and Fim de contrato lock every field |
+| Locking | Em desligamento, Desligado and Fim de contrato lock every field |
 
 **Mock errors:** "Salário Bruno", "Nenhum escala conectada", "Nenhum dado adicionado" in Documentos, "Pendente 3/3" with two items done, "Nome do Titular" and "Nome ou Código do banco" with capitals, and dates, cargos and salaries that change between frames.
 
@@ -345,9 +329,9 @@ Header: "Novo time". 4 steps. The flow opens blank from Novo, or at step 2 from 
 | Step | Spec |
 | --- | --- |
 | 1. Nome | "Qual será o nome do time?". Large input "Nome do time" with the green check. Continuar is disabled until there is a name. Voltar on this step closes the flow with no modal |
-| 2. Cor e ícone | "Muito bem, hora de definir a cor e o ícone de {Nome}." with the name and the final period in #e9a716. Two 72px rows with a divider: a gray Eyedropper and "Cor" in Regular, with the light and dark circles on the right, and a gray Smiley and "Ícone" in Regular, with a gray pill holding the icon in the team color and a caret. Color and icon come prefilled (the first color not used by another team), and the pickers keep working as today. Continuar is always active |
+| 2. Cor e ícone | "Muito bem, hora de definir a cor e o ícone de {Nome}." with the name and the final period in #e9a716. Two 72px rows with a divider: a gray Eyedropper and "Cor" in 14px Medium, with the light and dark circles on the right, and a gray Smiley and "Ícone" in 14px Medium, with a gray pill holding the icon in the team color and a caret. Color and icon come prefilled (the first color not used by another team), and the pickers keep working as today. Continuar is always active |
 | 3. Quem faz parte | "Quem faz parte do time {icon} {Nome}?": the team icon on a small badge in the light team color, and the name and the question mark in the team color. Search field "Buscar nome..." with the search-and-pick pattern, listing only Pendente and Em atividade people who are not chosen yet. No suggestion grid. Unchecking removes the person. Optional, so Continuar is always active |
-| 4. Informações adicionais | "Finalize com algumas informações adicionais." Rows "Líder do time" and "Descrição" in Regular, each with "Adicionar". The footer button is "Criar time" |
+| 4. Informações adicionais | "Finalize com algumas informações adicionais." Rows "Líder do time" and "Descrição" in 14px Medium, each with "Adicionar". The footer button is "Criar time" |
 | Leader panel | Side panel "Adicionar líder" with a gray search field "Pesquisar" and rows with a checkbox, the name and the cargo in gray. The list starts with the members of step 3, and the search finds any Pendente or Em atividade person. Only one can be checked. Cancelar and Salvar. A leader who is not a member becomes one |
 | Description panel | Side panel "Adicionar descrição" with a text area "Descrição do time...", Cancelar and Salvar |
 | Saved leader or description | No Figma: the row shows the leader's name or the start of the description in place of "Adicionar", and a click reopens the panel |
@@ -412,7 +396,7 @@ Header: "Novo recurso". The type, category and service steps have no footer.
 
 - Info: Líder, Cor, Ícone and Descrição (2 lines and "ver mais..."), plus "Adicionar nota". Cor and Ícone open the pickers.
 - Metrics: Total de membros, Tempo médio de casa, Custo total do time (with an eye), Cargos representados and Tipo de contratação (a bar with CLT and PJ).
-- Members: "Add membro" searches Pendente and Em atividade people not in the team. Rows have an avatar in the team color, the name, the cargo and an X with a confirmation. The list includes Pendente, Em atividade and Rescisão pendente. Adding adds this team to the person's teams, and removing takes out only this team.
+- Members: "Add membro" searches Pendente and Em atividade people not in the team. Rows have an avatar in the team color, the name, the cargo and an X with a confirmation. The list includes Pendente, Em atividade and Em desligamento. Adding adds this team to the person's teams, and removing takes out only this team.
 - Recursos: the aggregated list with the value range.
 - Delete: a confirmation, and the members lose only this team.
 
@@ -427,15 +411,45 @@ Header: "Novo recurso". The type, category and service steps have no footer.
 
 ## 10. Offboarding
 
-**No Figma.** A 3-step flow started from the "Desligar {Nome}?" modal, from the profile icon or the row menu.
+**Figma, CLT:** section `10355:3451`. Frames: the page before (`10355:3455`, panel `10355:3598`), the Desligar modal `10355:4398` (modal `10355:4783`), termination type `10355:4796`, Informações `10355:4855`, term panel `10355:4896`, table after `10355:3841`, page Em desligamento `10355:3986` (panel `10355:4132`).
+
+**Figma, PJ:** section `10355:5041`. Frames: the page before `10355:6649`, the Desligar modal `10355:7363` (modal `10355:7748`), termination type `10355:7761`, Informações `10355:7810`, term panel `10355:7847`, table after `10355:6926`, page Em desligamento `10355:7067` (panel `10355:7213`).
+
+**Entry.** The Desligar icon (Power) in the collaborator page header, and the Desligar item of the row menu. Both open the Desligar modal (section 11). Confirming opens the flow.
+
+**Shell.** Header "Desligamento" on the left and the X on the right, which opens "Descartar edições.". 2 steps for the progress bar: Tipo de rescisão and Informações. The type step has no footer.
 
 | Step | CLT | PJ |
 | --- | --- | --- |
-| 1. Tipo de rescisão | Sem justa causa, Com justa causa, Pedido de demissão, Acordo entre as partes, Fim de contrato de experiência | Fim de contrato, Rescisão antecipada pela empresa, Rescisão antecipada pelo prestador, Acordo entre as partes |
-| 2. Informações | Data do desligamento (required), Aviso prévio (Trabalhado, Indenizado or Não se aplica, hidden for Com justa causa) and Motivo (optional) | Data do desligamento (required) and Motivo (optional) |
-| 3. Termo | "Gerar termo de rescisão", confirm the contact, "Gerar termo e enviar" | "Gerar termo de encerramento", same mechanics |
+| 1. Tipo de rescisão | "Qual o tipo de rescisão de {Nome}?", with the name in #e9a716 and the question mark in black. 5 cards with an icon on a yellow badge and an arrow: Sem justa causa (FileX), Com justa causa (Siren), Pedido de demissão (HandWaving), Acordo entre partes (Handshake) and Fim de contrato de experiência (HourglassHigh). A click advances | The same title. 4 cards: Fim de contrato (FileX), Antecipada pela empresa (DoorOpen), Antecipada pelo prestador (HandWaving) and Acordo entre partes (Handshake) |
+| 2. Informações | "Finalize com algumas informações adicionais." Rows: Data do desligamento (a "Daqui a 30 dias" pill and a calendar button), Aviso prévio (pills Trabalhado, selected by default, Indenizado and Não se aplica; hidden for Com justa causa) and Motivo do desligamento ("Adicionar") | Rows: Data do desligamento, Motivo do desligamento ("Adicionar") and Multa por rescisão antecipada (currency, "0,00" when empty) |
+| Term panel | "Informações para termo de rescisão". Rows: Nome, Documento (the CPF followed by "CPF"), Tipo de rescisão, Data do desligamento ("30 Out 2026" format), Aviso prévio and Enviar para (pencil, the same sheet as the contract) | The same title. Rows: Nome, Documento (the CNPJ followed by "CNPJ"), Tipo de rescisão, Data do desligamento, Multa por rescisão antecipada and Enviar para |
 
-Starting copy: "Qual o tipo de rescisão?", "Informações do desligamento de {Nome}" and "Confirme o contato para envio do termo". In step 2, Continuar is disabled until the date is set. In step 3, the contact comes prefilled and editable, the button waits 1 to 2 seconds, the toast "Desligamento iniciado com sucesso" appears and the flow returns to the table. The collaborator becomes Rescisão pendente with the offboarding icon and locked fields. Until the exit date, the person still counts in teams and recursos.
+The term panel footer has "Salvar sem termo" (text button) and "Gerar e enviar" (black). The X of the panel goes back to Informações and keeps the data. Motivo do desligamento is stored but not shown in the panel.
+
+**Result.** "Gerar e enviar" waits 1 to 2 seconds. Both buttons close the flow and return to the table. The person becomes Em desligamento: the row shows "Pendente X/Y" with the red Power badge (`10355:3841`), and the page shows the "Em desligamento" pill, the termination checklist with "Marcar como feito", locked fields (the team pill loses its caret and the empty fields lose "Adicionar") and no Desligar icon (`10355:3986`). Until the exit date the person still counts in teams and recursos. When the checklist reaches zero, the person becomes Desligado (CLT) or Fim de contrato (PJ), the row fades and moves to the end of the list (`10355:6926`).
+
+**Visual details read from the design context:**
+
+- Desligar modal (`10355:4783`): 393px wide, white, radius 16px, 24px padding, content centered with 40px gaps. The 40px white round X sits 40px above it. Badge 40x40, radius 8px, #ffe9ea, with a 24px red Power. Title 24px Semibold, line-height 1.1, letter-spacing -0.26px, centered, in two lines ("Desligar" and "{Nome}?"). Text 14px Regular #798282, centered, line-height 1.2. Buttons in one row, spread apart: "Cancelar" as a text button and "Desligar" black.
+- Type step (`10355:4796`, `10355:7761`): the type-card pattern. Title "Qual o tipo de rescisão" on the first line and "de {Nome}?" on the second, with only the name in #e9a716.
+- Informações (`10355:4866`, `10355:7821`): the info-row pattern. Aviso prévio puts its three pills right after the label, 12px apart. Multa por rescisão antecipada shows "0,00" in 14px Medium black.
+- Term panel (`10355:4938`, `10355:7885`): the summary-panel pattern, title "Informações para termo de rescisão" for CLT and PJ.
+- Table row (`10355:3884`): the Power badge is 32x32, fully round, #ffe9ea, with a 20px red Power, 12px before the 3-dot menu. The pill is the yellow "Pendente X/Y".
+- Page header (`10355:4133`): X, "Colaborador" (16px Medium), then the red status pill "Em desligamento" (rgba(255,38,51,0.1) with #ff2633, 12px Medium), 12px apart, and on the right only the trash (red) and the expand icon.
+- Status card (`10355:4148`): #f4f5f5, radius 8px, 12px padding. Header row with 12px by 8px padding: "Status do processo" 14px Medium black and the counter 14px Medium #798282. Item rows with 12px by 8px padding and 8px gaps: a 20px CircleDashed, the label 14px Medium black, and "Marcar como feito" 14px Medium black on the right.
+- Locked fields (`10355:4132`): the team pill (#f4f5f5, 32px high, a 12px dot in the team color and the name) loses its caret.
+
+**Assumptions, with no Figma:**
+
+- Continuar in Informações is disabled until Data do desligamento is set, although Figma draws it active.
+- "Adicionar" on Motivo do desligamento opens a side panel "Adicionar motivo" with a text area, Cancelar and Salvar, like the team description.
+- Multa por rescisão antecipada shows for every PJ termination type.
+- Both buttons show the toast "Desligamento iniciado com sucesso". Figma shows no toast.
+- The termination checklist items that Figma draws without "Marcar como feito" (Exame demissional realizado and Termo de rescisão assinado e devolvido for CLT, Termo assinado e devolvido for PJ) also get it, so the checklist can reach zero.
+- The page of a Desligado or Fim de contrato person has no Figma: it keeps the locked fields and shows the final status pill in the header.
+
+**Mock errors:** "Assinar termo de recisão" (rescisão), "Salário Bruno", "Vale Refeição" in the Recursos list (Vale alimentação), "R400,00" (R$400,00), "Agencia" (Agência), "Home Office" with capitals in Jornada, Gustavo Lima shown as CLT in the PJ result table, the PJ page in Em desligamento still showing "Adicionar" and plus icons on empty fields (they are locked), the CPF written as "124 345 567 80" (use the 000.000.000-00 mask), and "Total: 6 colaboradores" above 5 rows.
 
 ## 11. Confirmations and toasts
 
@@ -445,7 +459,7 @@ Starting copy: "Qual o tipo de rescisão?", "Informações do desligamento de {N
 | Excluir vários | "Excluir {N} colaboradores?" | Excluir |
 | Excluir time | "Tem certeza que quer excluir o time {Nome}? Essa ação não pode ser desfeita. Os colaboradores deixam de fazer parte deste time e continuam nos outros, se houver." | Excluir |
 | Excluir recurso | "Tem certeza que quer excluir o recurso {Nome}? Essa ação não pode ser desfeita." | Excluir |
-| Desligar | "Tem certeza que quer desligar o colaborador {Nome}? Você vai escolher o tipo de rescisão e gerar o termo. Depois de gerado, os campos ficam bloqueados." | Desligar |
+| Desligar | Figma `10355:4783`: its own layout, not the shared confirmation modal (see section 10 for sizes). A red Power icon on a #ffe9ea badge, the title "Desligar {Nome}?" and "Tem certeza que quer desligar o colaborador {Nome}? Os campos ficarão bloqueados para edição, mas você continuará vendo o perfil. Essa ação não pode ser desfeita.". Confirming opens the offboarding flow | Desligar |
 | Descartar edições | Title "Descartar edições." and "Tem certeza que deseja descartar? Ao sair, todo o progresso será perdido. Nenhuma informação será salva." Opens from the X of every flow, never from Voltar | Descartar |
 | Remover membro do time | A small confirmation. It takes out only that team | Remover |
 
@@ -471,8 +485,9 @@ Inline edits on the profile, saved filters and removing a member show no toast.
 | 4 | Create collaborator PJ and the PJ page | 4, 5 |
 | 5 | Create team | 6 |
 | 6 | Create recurso | 7 |
+| 7 | Offboarding CLT and PJ, the Em desligamento state on the home and the page, and the filled states of Recursos, Jornada and Dados bancários on the page | 10, 5, 1, 11 |
 
-Not in this round, because there is no Figma: the team page, the recurso page, offboarding and the floating search. Keep the bridges they need working.
+Not in this round, because there is no Figma: the team page, the recurso page and the floating search. Keep the bridges they need working.
 
 ## Open points
 
@@ -483,5 +498,5 @@ Not in this round, because there is no Figma: the team page, the recurso page, o
 - Termination checklist labels are provisional and need a labor-law review.
 - Floating search: should switching tabs clear the text, and how does the bar behave in the detail views?
 - Recurso page: should "Add time" and "Add membro" offer only Pendente and Em atividade?
-- Should Desligar hide when the status is Rescisão pendente, Desligado or Fim de contrato?
-- No Figma yet: adding a recurso from the profile, the saved state of Dados bancários, the edit state of the Informações rows, the loading state of "Gerar contrato", and logos for the other suppliers. The icon of Benefício "Outro" (Gift) is provisional.
+- Should the admission checklist also get "Marcar como feito", so new collaborators can leave Pendente?
+- No Figma yet: adding a recurso from the profile, the edit state of the Informações rows, the loading state of "Gerar contrato", and logos for the other suppliers. The icon of Benefício "Outro" (Gift) is provisional.

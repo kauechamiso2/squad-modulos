@@ -7,9 +7,10 @@ import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
 import StatusPill from './status/StatusPill.jsx'
 import AusenciaBadge from './status/AusenciaBadge.jsx'
+import DesligamentoBadge from './status/DesligamentoBadge.jsx'
 import AlertaCadastro from './status/AlertaCadastro.jsx'
 import CollaboratorRowMenu from './colaborador/CollaboratorRowMenu.jsx'
-import { getAusenciaAtiva, getStatus, isEncerrado } from '../utils/colaboradorStatus.js'
+import { STATUS, getAusenciaAtiva, getStatus, isEncerrado } from '../utils/colaboradorStatus.js'
 import { todayIso } from '../utils/formatters.js'
 import './CollaboratorsTable.css'
 
@@ -82,6 +83,7 @@ function CollaboratorsTable({
   statusOptions,
   onRowClick,
   onDataChanged,
+  onDesligar,
   alertas,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
@@ -252,6 +254,7 @@ function CollaboratorsTable({
                 <StatusPill status={status} />
               </div>
               <div className="collaborators-table__icones">
+                {status.id === STATUS.EM_DESLIGAMENTO && <DesligamentoBadge />}
                 {ausencia && <AusenciaBadge ausencia={ausencia} />}
                 {alertas.has(collaborator.id) && (
                   <AlertaCadastro onAbrir={() => onRowClick(collaborator.id)} />
@@ -261,6 +264,7 @@ function CollaboratorsTable({
                 collaborator={collaborator}
                 onView={onRowClick}
                 onDataChanged={onDataChanged}
+                onDesligar={onDesligar}
               />
             </LinhaTabela>
           )

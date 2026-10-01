@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import closeIcon from '../../../assets/icons/Close.svg'
+import caretDownIcon from '../../../assets/icons/CaretDownBlack.svg'
 import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
 import { getTeamColorTones } from '../../../utils/teamOptions.js'
 import '@squad/ui/styles/SelectListModal.css'
@@ -60,6 +61,9 @@ function TimesField({ value, times, disabled, onSave, onCriarTime }) {
       <span className="perfil-time" key={nome}>
         <span className="perfil-time__ponto" style={{ background: corDoTime(porNome.get(nome)) }} />
         {nome}
+        {/* Leitura: a seta do Figma 10355:3657, que some com o perfil
+            travado (10355:4132). */}
+        {!removiveis && !disabled && <img src={caretDownIcon} width={16} height={16} alt="" />}
         {removiveis && (
           <button
             type="button"

@@ -9,9 +9,13 @@ const VAZIO = '—'
 /*
  * Painel "Informações para contrato" - Figma 10338:10720. Abre por cima do
  * fluxo. `linhas`: [{ rotulo, valor, sufixo, sufixoPerto }] na ordem do Figma; vazio
- * mostra "—". O X volta para Informações sem perder nada.
+ * mostra "—". O X volta para Informações sem perder nada. O desligamento usa o
+ * mesmo painel para o termo de rescisao (10355:4938), com outros textos.
  */
 function InformacoesContratoPanel({
+  titulo = 'Informações para contrato',
+  rotuloSalvarSem = 'Salvar sem contrato',
+  rotuloGerar = 'Gerar contrato',
   aberto,
   linhas,
   enviarPara,
@@ -27,16 +31,16 @@ function InformacoesContratoPanel({
       className="gp-painel"
       classNameVeu="gp-painel"
       aberto={aberto}
-      titulo="Informações para contrato"
+      titulo={titulo}
       iconeFechar={closeIcon}
       onFechar={gerando ? () => {} : onFechar}
       rodape={
         <>
           <button type="button" className="gp-botao-texto" disabled={gerando} onClick={onSalvarSemContrato}>
-            Salvar sem contrato
+            {rotuloSalvarSem}
           </button>
           <button type="button" className="gp-botao" disabled={!podeGerar || gerando} onClick={onGerarContrato}>
-            Gerar contrato
+            {rotuloGerar}
           </button>
         </>
       }

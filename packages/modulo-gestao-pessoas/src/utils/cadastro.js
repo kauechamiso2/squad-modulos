@@ -62,10 +62,8 @@ export function documentosDoColaborador(colaborador) {
   return documentos
 }
 
-// Campos do perfil travam em Rescisao pendente, Desligado e Fim de contrato.
-// O `desligado` legado ainda trava, enquanto o Desligar da pagina for a ponte
-// de antes do desligamento.
+// Campos do perfil travam em Em desligamento, Desligado e Fim de contrato.
 export function perfilTravado(colaborador) {
   const status = getStatus(colaborador).id
-  return status !== STATUS.PENDENTE && status !== STATUS.EM_ATIVIDADE ? true : Boolean(colaborador.desligado)
+  return status !== STATUS.PENDENTE && status !== STATUS.EM_ATIVIDADE
 }

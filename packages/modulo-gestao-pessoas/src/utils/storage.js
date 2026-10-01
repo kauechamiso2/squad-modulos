@@ -108,11 +108,13 @@ export function duplicateItems(name, ids) {
 //   4: campos da pagina CLT (CPF, contato, custo, dados bancarios, documentos).
 //   5: campos da pagina PJ (CNPJ, razao social, pagamento, valor do contrato);
 //      sem os campos antigos `contractType` e `desligado`.
+//   6: checklist de desligamento do Figma (10355:3986, 10355:7067), tipos de
+//      rescisao PJ, dados do desligamento e jornada de trabalho mockada.
 //
 // So mexe em chaves deste modulo: o localStorage e dividido com os outros
 // modulos do apps/web. Nao roda quando a versao gravada e mais nova que a
 // deste codigo, para nunca apagar dado mais novo.
-export const DATA_VERSION = 5
+export const DATA_VERSION = 6
 const DATA_VERSION_KEY = storageKey('versao-dados')
 
 export function resetDataIfOutdated() {

@@ -96,3 +96,18 @@ export function isoParaDigitos(iso) {
 export function formatarDataBr(iso) {
   return iso ? mascaraData(isoParaDigitos(iso)) : null
 }
+
+// Tipo da chave PIX, mostrado em cinza depois dela (Figma 10355:3778):
+// e-mail, telefone com +, CNPJ (14 digitos), CPF (11 digitos) ou aleatoria.
+// Uma chave sem formato conhecido nao ganha tipo.
+export function tipoChavePix(chave) {
+  const texto = String(chave ?? '').trim()
+  if (!texto) return null
+  if (texto.includes('@')) return 'Email'
+  if (texto.startsWith('+')) return 'Telefone'
+  if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(texto)) return 'Aleatória'
+  const digitos = texto.replace(/\D/g, '')
+  if (/^[\d.\-/ ]+$/.test(texto) && digitos.length === 14) return 'CNPJ'
+  if (/^[\d.\- ]+$/.test(texto) && digitos.length === 11) return 'CPF'
+  return null
+}

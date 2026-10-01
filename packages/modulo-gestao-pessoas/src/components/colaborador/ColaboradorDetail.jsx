@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { NotePencil, Power, FrameCorners } from '@phosphor-icons/react'
+import { NotePencil, FrameCorners } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
 import backToModalIcon from '../../assets/icons/Back-to-Modal.svg'
+import powerIcon from '../../assets/icons/Power.svg'
 import { IconButton, PainelLateral } from '@squad/ui'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
 import PerfilColaborador from './perfil/PerfilColaborador.jsx'
 import { perfilTravado } from '../../utils/cadastro.js'
+import { STATUS, getStatus, marcarItemDaRescisao, podeDesligar } from '../../utils/colaboradorStatus.js'
 import { COLLECTIONS, addItem, getCollection, setCollection } from '../../utils/storage.js'
 import { formatDateDMonthYear } from '../../utils/formatters.js'
 import { useToast } from '../toast/ToastContext.jsx'
+import '../status/StatusPill.css'
 import './ColaboradorDetail.css'
 
 /*
@@ -18,7 +21,7 @@ import './ColaboradorDetail.css'
  * barra do Pipo e notas -, e o conteudo do Figma (CLT e PJ) fica em
  * perfil/PerfilColaborador.
  */
-function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged }) {
+function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged, onDesligar, onAbrirRecurso }) {
   const { showToast } = useToast()
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
@@ -48,7 +51,15 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
   const collaborator = collaborators.find((item) => item.id === id) ?? null
   if (!collaborator) return null
 
-  const desligado = Boolean(collaborator.desligado)
+  const status = getStatus(collaborator)
+  // Pilula do cabecalho: vermelha em Em desligamento e Desligado (Figma
+  // 10355:4133), cinza em Fim de contrato. Sem Figma para os dois ultimos:
+  // premissa do contexto, o status final no cabecalho.
+  const pilulaCabecalho = {
+    [STATUS.EM_DESLIGAMENTO]: 'desligado',
+    [STATUS.DESLIGADO]: 'desligado',
+    [STATUS.FIM_DE_CONTRATO]: 'fim_de_contrato',
+  }[status.id]
 
   const persist = (updatedList) => {
     setCollection(COLLECTIONS.COLABORADORES, updatedList)
@@ -68,11 +79,14 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
     onClose()
   }
 
-  // Ponte ate o fluxo de desligamento: o Desligar marca `desligado` e trava
-  // os campos. Reativar nao existe mais.
+  // Confirmar o modal abre o fluxo de desligamento, que fica na home.
   const handleConfirmDesligar = () => {
-    updateField('desligado', true)
     setDesligarModalOpen(false)
+    onDesligar(id)
+  }
+
+  const marcarComoFeito = (itemId) => {
+    persist(collaborators.map((item) => (item.id === id ? marcarItemDaRescisao(item, itemId) : item)))
   }
 
   const cancelAddNota = () => {
@@ -154,21 +168,12 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
    * modo painel, entao entra como classe extra.
    */
   const cabecalhoDireita = (
-    <>
+    <span className="colaborador-detail__acoes">
       <IconButton icon={trashIcon} alt="Excluir" onClick={() => setDeleteModalOpen(true)} />
-      <button
-        type="button"
-        className={
-          desligado
-            ? 'icon-button colaborador-detail__power-button colaborador-detail__power-button--active'
-            : 'icon-button colaborador-detail__power-button'
-        }
-        onClick={() => setDesligarModalOpen(true)}
-        disabled={desligado}
-        aria-label="Desligar"
-      >
-        <Power size={24} weight={desligado ? 'fill' : 'regular'} />
-      </button>
+      {/* Some depois do desligamento iniciado (Figma 10355:4133). */}
+      {podeDesligar(collaborator) && (
+        <IconButton icon={powerIcon} alt="Desligar" onClick={() => setDesligarModalOpen(true)} />
+      )}
       {mode === 'full' ? (
         <button type="button" className="icon-button colaborador-detail__expand-button" onClick={onCollapse} aria-label="Recolher">
           <img src={backToModalIcon} alt="" width={24} height={24} />
@@ -178,13 +183,18 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
           <FrameCorners size={24} />
         </button>
       )}
-    </>
+    </span>
   )
 
   return (
     <PainelLateral
       aberto={aberto}
-      titulo="Colaborador"
+      titulo={
+        <span className="colaborador-detail__titulo">
+          Colaborador
+          {pilulaCabecalho && <span className={`status-pill status-pill--${pilulaCabecalho}`}>{status.rotulo}</span>}
+        </span>
+      }
       /* O foco inicial vem para o X, nunca para a lixeira. */
       acaoEsquerda={<IconButton icon={closeIcon} alt="Fechar" data-foco-inicial onClick={onClose} />}
       acaoDireita={cabecalhoDireita}
@@ -208,6 +218,8 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
           pipoBar={pipoBar}
           notas={notesSection}
           onAtualizar={updateField}
+          onMarcarComoFeito={marcarComoFeito}
+          onAbrirRecurso={onAbrirRecurso}
           onCriarTime={(nome) => addItem(COLLECTIONS.TIMES, { name: nome, pending: true })}
         />
       </div>

@@ -3,9 +3,10 @@ import ChecklistPopover from './ChecklistPopover.jsx'
 import './StatusPill.css'
 
 /*
- * Pill de status da home (Figma 10331:3109). Pendente e Rescisao pendente
- * trazem `status.checklist`: no hover o pill ganha borda na propria cor e
- * abre o popover so leitura logo abaixo (10331:3724, 10331:4355, 10331:3940).
+ * Pill de status da home (Figma 10331:3109). Pendente e Em desligamento
+ * (os dois como "Pendente X/Y", Figma 10355:3884) trazem `status.checklist`:
+ * no hover o pill ganha borda na propria cor e abre o popover so leitura
+ * logo abaixo (10331:3724, 10331:4355, 10331:3940).
  * Os outros status nao abrem nada.
  */
 function StatusPill({ status }) {

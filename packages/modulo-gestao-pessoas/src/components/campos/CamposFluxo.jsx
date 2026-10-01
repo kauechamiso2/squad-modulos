@@ -190,12 +190,18 @@ export function BotaoCalendario({ valor, onEscolher, rotulo, minDate, rodape, ch
   )
 }
 
-// Data de admissao: a pilula "Proxima segunda" e o botao de calendario;
-// depois de escolhida, a data em DD/MM/AAAA, que reabre o calendario.
-export function CampoDataAdmissao({ valor, onSalvar }) {
+// Data com atalho: a pilula do atalho e o botao de calendario; depois de
+// escolhida, a data em DD/MM/AAAA, que reabre o calendario. Na admissao o
+// atalho e "Proxima segunda"; no desligamento, "Daqui a 30 dias".
+export function CampoDataAdmissao({
+  valor,
+  onSalvar,
+  atalho = { rotulo: 'Próxima segunda', data: proximaSegundaIso },
+  rotuloCalendario = 'Escolher data de admissão',
+}) {
   if (valor) {
     return (
-      <BotaoCalendario valor={valor} onEscolher={onSalvar} rotulo="Escolher data de admissão">
+      <BotaoCalendario valor={valor} onEscolher={onSalvar} rotulo={rotuloCalendario}>
         {(alternar) => (
           <button type="button" className="linha-fluxo__botao" onClick={alternar}>
             {formatarDataBr(valor)}
@@ -206,10 +212,10 @@ export function CampoDataAdmissao({ valor, onSalvar }) {
   }
   return (
     <div className="linha-fluxo__pilulas">
-      <button type="button" className="linha-fluxo__pilula" onClick={() => onSalvar(proximaSegundaIso())}>
-        Próxima segunda
+      <button type="button" className="linha-fluxo__pilula" onClick={() => onSalvar(atalho.data())}>
+        {atalho.rotulo}
       </button>
-      <BotaoCalendario valor={valor} onEscolher={onSalvar} rotulo="Escolher data de admissão" />
+      <BotaoCalendario valor={valor} onEscolher={onSalvar} rotulo={rotuloCalendario} />
     </div>
   )
 }
@@ -262,22 +268,26 @@ export function CampoDataFim({ valor, semData, minDate, onSalvar }) {
   )
 }
 
-// Pagamento (PJ): Mensal (padrao, em preto), Anual e Valor fixo.
-export function CampoPagamento({ valor, opcoes, onSalvar }) {
+// Pilulas de escolha unica, 12px entre elas. Pagamento (PJ): Mensal (padrao,
+// em preto), Anual e Valor fixo. `opcoes`: textos, ou { id, rotulo }.
+export function CampoPagamento({ valor, opcoes, onSalvar, rotulo = 'Pagamento' }) {
   return (
-    <div className="linha-fluxo__pilulas linha-fluxo__pilulas--largas" role="radiogroup" aria-label="Pagamento">
-      {opcoes.map((opcao) => (
-        <button
-          type="button"
-          role="radio"
-          aria-checked={valor === opcao}
-          key={opcao}
-          className={valor === opcao ? 'linha-fluxo__pilula linha-fluxo__pilula--selecionada' : 'linha-fluxo__pilula'}
-          onClick={() => onSalvar(opcao)}
-        >
-          {opcao}
-        </button>
-      ))}
+    <div className="linha-fluxo__pilulas linha-fluxo__pilulas--largas" role="radiogroup" aria-label={rotulo}>
+      {opcoes.map((opcao) => {
+        const id = typeof opcao === 'string' ? opcao : opcao.id
+        return (
+          <button
+            type="button"
+            role="radio"
+            aria-checked={valor === id}
+            key={id}
+            className={valor === id ? 'linha-fluxo__pilula linha-fluxo__pilula--selecionada' : 'linha-fluxo__pilula'}
+            onClick={() => onSalvar(id)}
+          >
+            {typeof opcao === 'string' ? opcao : opcao.rotulo}
+          </button>
+        )
+      })}
     </div>
   )
 }
