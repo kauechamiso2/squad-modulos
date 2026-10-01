@@ -1,25 +1,27 @@
 import CheckVerde from '../../campos/CheckVerde.jsx'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
-import '@squad/ui/styles/buttons.css'
+import '../../campos/Botoes.css'
 import '../../addCollaborator/clt/CltShell.css'
 
+// Passo 1 - Figma 10342:12820 e 10342:12832. Voltar aqui fecha o fluxo sem
+// modal.
 function TimeNomeStep({ name, onNameChange, onBack, onClose, onContinue }) {
   const canContinue = name.trim().length > 0
 
   return (
     <CltShell
-      title="Novo Time"
+      title="Novo time"
       onClose={onClose}
       progress={25}
       footerLeft={
-        <button type="button" className="text-button" onClick={onBack}>
+        <button type="button" className="gp-botao-texto" onClick={onBack}>
           Voltar
         </button>
       }
       footerRight={
         <button
           type="button"
-          className="pill-button"
+          className="gp-botao"
           disabled={!canContinue}
           onClick={onContinue}
         >

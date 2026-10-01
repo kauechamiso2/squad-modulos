@@ -7,6 +7,10 @@ import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, generateId } from '../../../utils/storage.js'
 import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOptions.js'
 import { useToast } from '../../toast/ToastContext.jsx'
+import { STATUS, getStatus } from '../../../utils/colaboradorStatus.js'
+
+// 4 passos para a barra de progresso: Nome, Cor e icone, Membros, Informacoes.
+const progresso = (passo) => (passo / 4) * 100
 
 // The step-by-step full-screen flow for creating a team, triggered from the
 // "Time" card in the Criar Novo modal (brand-new team, starts at Tela 1 -
@@ -30,6 +34,15 @@ function NovoTimeStepFlow({ teamId, onExit }) {
       .filter((collaborator) => collaborator.times.includes(existingTeam.name))
       .map((collaborator) => collaborator.id)
   }, [existingTeam, collaborators])
+
+  // So Pendente e Em atividade podem entrar como membro ou lider.
+  const candidatos = useMemo(
+    () =>
+      collaborators.filter((collaborator) =>
+        [STATUS.PENDENTE, STATUS.EM_ATIVIDADE].includes(getStatus(collaborator).id),
+      ),
+    [collaborators],
+  )
 
   const usedColors = useMemo(
     () => times.filter((team) => team.id !== teamId && team.color).map((team) => team.color),
@@ -65,7 +78,9 @@ function NovoTimeStepFlow({ teamId, onExit }) {
   }
 
   const handleSave = () => {
-    const finalMemberIds = memberOrder
+    // Um lider que nao e membro entra no time.
+    const finalMemberIds =
+      leaderId && !memberOrder.includes(leaderId) ? [...memberOrder, leaderId] : memberOrder
     const previousName = existingTeam?.name ?? null
 
     const updatedTimes = existingTeam
@@ -123,8 +138,9 @@ function NovoTimeStepFlow({ teamId, onExit }) {
     })
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
 
-    showToast('success', 'Time criado com sucesso')
-    onExit()
+    showToast('success', 'Time criado com sucesso!')
+    // Volta para a aba Times (contexto, secao 6).
+    onExit({ criado: true })
   }
 
   return (
@@ -147,6 +163,7 @@ function NovoTimeStepFlow({ teamId, onExit }) {
           iconName={iconName}
           onIconChange={handleIconChange}
           usedColors={usedColors}
+          progress={progresso(2)}
           onBack={existingTeam ? onExit : () => setStep('nome')}
           onClose={openDiscardConfirm}
           onContinue={() => setStep('membros')}
@@ -158,8 +175,10 @@ function NovoTimeStepFlow({ teamId, onExit }) {
           name={name}
           colorId={colorId}
           iconName={iconName}
-          collaborators={collaborators}
+          candidatos={candidatos}
+          colaboradores={collaborators}
           memberOrder={memberOrder}
+          progress={progresso(3)}
           onMemberOrderChange={setMemberOrder}
           onBack={() => setStep('cor-icone')}
           onClose={openDiscardConfirm}
@@ -172,8 +191,10 @@ function NovoTimeStepFlow({ teamId, onExit }) {
           leaderId={leaderId}
           onLeaderChange={setLeaderId}
           memberOrder={memberOrder}
-          collaborators={collaborators}
+          candidatos={candidatos}
+          colaboradores={collaborators}
           descricao={descricao}
+          progress={progresso(4)}
           onDescricaoChange={setDescricao}
           onBack={() => setStep('membros')}
           onClose={openDiscardConfirm}

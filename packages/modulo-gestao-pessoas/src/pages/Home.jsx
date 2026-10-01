@@ -440,10 +440,11 @@ function Home({ backTo }) {
     return (
       <NovoTimeStepFlow
         teamId={novoTimeStepFlowTeamId}
-        onExit={() => {
+        onExit={(resultado) => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
           setNovoTimeStepFlowOpen(false)
           setNovoTimeStepFlowTeamId(null)
+          if (resultado?.criado) setActiveTab('times')
         }}
       />
     )

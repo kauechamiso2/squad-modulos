@@ -1,52 +1,59 @@
 import { useState } from 'react'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
-import LiderModal from '../LiderModal.jsx'
-import DescricaoModal from '../DescricaoModal.jsx'
-import '@squad/ui/styles/buttons.css'
+import { LinhaFluxo } from '../../campos/CamposFluxo.jsx'
+import { DescricaoPanel, LiderPanel } from './TimePaineis.jsx'
+import '../../campos/Botoes.css'
 import '../../addCollaborator/clt/CltShell.css'
-import '../../colaborador/ColaboradorDetail.css'
 import './NovoTimeSteps.css'
 
-const DESCRICAO_PREVIEW_LIMIT = 40
+const LIMITE_DESCRICAO = 40
 
+/*
+ * Passo 4 - Figma 10342:12977 (linhas 10342:12985). O Figma nao mostra o
+ * lider nem a descricao salvos: a linha mostra o nome do lider ou o comeco da
+ * descricao no lugar de "Adicionar", e o clique reabre o painel.
+ */
 function TimeInfoStep({
   leaderId,
   onLeaderChange,
   memberOrder,
-  collaborators,
+  candidatos,
+  colaboradores,
   descricao,
   onDescricaoChange,
+  progress,
   onBack,
   onClose,
   onCreate,
 }) {
-  const [openModal, setOpenModal] = useState(null)
-  const closeModal = () => setOpenModal(null)
-
-  const members = collaborators.filter((collaborator) => memberOrder.includes(collaborator.id))
-  const leader = leaderId
-    ? collaborators.find((collaborator) => collaborator.id === leaderId) ?? null
-    : null
-
-  const trimmedDescricao = descricao.trim()
-  const descricaoPreview =
-    trimmedDescricao.length > DESCRICAO_PREVIEW_LIMIT
-      ? `${trimmedDescricao.slice(0, DESCRICAO_PREVIEW_LIMIT)}…`
-      : trimmedDescricao
+  const [painel, setPainel] = useState(null)
+  // Os paineis ficam montados para animar a saida; a chave nova a cada
+  // abertura zera o rascunho deles.
+  const [aberturas, setAberturas] = useState(0)
+  const abrir = (qual) => {
+    setAberturas((total) => total + 1)
+    setPainel(qual)
+  }
+  const fechar = () => setPainel(null)
+  const porId = new Map(colaboradores.map((colaborador) => [colaborador.id, colaborador]))
+  const membros = memberOrder.map((id) => porId.get(id)).filter(Boolean)
+  const lider = leaderId ? porId.get(leaderId) ?? null : null
+  const resumo =
+    descricao.length > LIMITE_DESCRICAO ? `${descricao.slice(0, LIMITE_DESCRICAO)}…` : descricao
 
   return (
     <>
       <CltShell
-        title="Novo Time"
+        title="Novo time"
         onClose={onClose}
-        progress={100}
+        progress={progress}
         footerLeft={
-          <button type="button" className="text-button" onClick={onBack}>
+          <button type="button" className="gp-botao-texto" onClick={onBack}>
             Voltar
           </button>
         }
         footerRight={
-          <button type="button" className="pill-button" onClick={onCreate}>
+          <button type="button" className="gp-botao" onClick={onCreate}>
             Criar time
           </button>
         }
@@ -57,56 +64,44 @@ function TimeInfoStep({
             <br />
             informações adicionais.
           </h1>
-
           <div>
-            <div className="time-step__row time-step__row--bordered">
-              <span className="time-step__row-label" style={{ flex: 1 }}>
-                Líder do time
-              </span>
-              <button
-                type="button"
-                className="colaborador-detail__value-button"
-                onClick={() => setOpenModal('lider')}
-              >
-                {leader ? leader.name : 'Adicionar'}
+            <LinhaFluxo rotulo="Líder do time">
+              <button type="button" className="linha-fluxo__botao" onClick={() => abrir('lider')}>
+                {lider ? lider.name : 'Adicionar'}
               </button>
-            </div>
-
-            <div className="time-step__row time-step__row--bordered">
-              <span className="time-step__row-label" style={{ flex: 1 }}>
-                Descrição
-              </span>
-              <button
-                type="button"
-                className="colaborador-detail__value-button"
-                onClick={() => setOpenModal('descricao')}
-              >
-                {trimmedDescricao ? descricaoPreview : 'Adicionar'}
+            </LinhaFluxo>
+            <LinhaFluxo rotulo="Descrição">
+              <button type="button" className="linha-fluxo__botao" onClick={() => abrir('descricao')}>
+                {descricao ? resumo : 'Adicionar'}
               </button>
-            </div>
+            </LinhaFluxo>
           </div>
         </div>
       </CltShell>
 
-      {openModal === 'lider' && (
-        <LiderModal
-          value={leaderId}
-          collaborators={members}
-          onClose={closeModal}
-          onSave={(newLeaderId) => {
-            onLeaderChange(newLeaderId)
-            closeModal()
+      {aberturas > 0 && (
+        <LiderPanel
+          key={`lider-${aberturas}`}
+          aberto={painel === 'lider'}
+          valor={leaderId}
+          membros={membros}
+          candidatos={candidatos}
+          onFechar={fechar}
+          onSalvar={(id) => {
+            onLeaderChange(id)
+            fechar()
           }}
         />
       )}
-
-      {openModal === 'descricao' && (
-        <DescricaoModal
-          value={descricao}
-          onClose={closeModal}
-          onSave={(value) => {
-            onDescricaoChange(value)
-            closeModal()
+      {aberturas > 0 && (
+        <DescricaoPanel
+          key={`descricao-${aberturas}`}
+          aberto={painel === 'descricao'}
+          valor={descricao}
+          onFechar={fechar}
+          onSalvar={(texto) => {
+            onDescricaoChange(texto)
+            fechar()
           }}
         />
       )}

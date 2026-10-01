@@ -1,0 +1,160 @@
+.busca-escolha {
+  position: relative;
+}
+
+/* Campo - 10342:12905: 56px, borda, raio 8, lupa de 24 a direita. */
+.busca-escolha__campo {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  cursor: text;
+}
+
+.busca-escolha__campo:focus-within {
+  border-color: var(--color-text);
+}
+
+.busca-escolha__entrada {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.busca-escolha__entrada::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* Lista - 10342:12909: 6px abaixo do campo, padding 16, itens de 12px. */
+.busca-escolha__lista {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+}
+
+.busca-escolha__opcao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.busca-escolha__opcao:hover,
+.busca-escolha__opcao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.busca-escolha__nome,
+.busca-escolha__detalhe {
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.busca-escolha__nome {
+  color: var(--color-text);
+}
+
+.busca-escolha__detalhe {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-secondary);
+}
+
+.busca-escolha__detalhe--regular {
+  font-weight: var(--font-weight-regular);
+  letter-spacing: -0.08px;
+}
+
+.busca-escolha__vazio {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* Escolhidos - 10342:12944: linhas com o CheckSquare, divisoria, 12px. */
+.busca-escolha__escolhidos {
+  display: flex;
+  flex-direction: column;
+  margin-top: 12px;
+}
+
+.busca-escolha__escolhido {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 64px;
+  padding: 12px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.busca-escolha__escolhido:last-child {
+  border-bottom: none;
+}
+
+.busca-escolha__escolhido .busca-escolha__nome {
+  margin-right: -4px;
+  letter-spacing: -0.08px;
+}
+
+.busca-escolha__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 360px;
+}
+
+.busca-escolha__escolhido:focus-visible {
+  outline: none;
+}
+
+.busca-escolha__escolhido:focus-visible .busca-escolha__check,
+.busca-escolha__escolhido:hover .busca-escolha__check {
+  background: var(--color-overlay);
+}

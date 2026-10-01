@@ -26,16 +26,33 @@
 }
 
 .time-step__row-label {
+  flex: 1;
+  min-width: 0;
   font-size: 14px;
+  line-height: 1.2;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
 
 /* Step 2 - color circles + icon pill */
+/* Cor - Figma 10342:12857: os dois circulos de 28px num botao de 40px. */
 .time-step__color-dots {
   display: flex;
   align-items: center;
   gap: 8px;
+  height: 40px;
+  padding: 12px 6px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  cursor: pointer;
+}
+
+.time-step__color-dots:hover,
+.time-step__color-dots:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
 }
 
 .time-step__color-dot {
@@ -48,17 +65,25 @@
   box-sizing: border-box;
 }
 
+/* Icone - Figma 10342:12866: pilula cinza com o icone na cor do time. */
 .time-step__icon-pill {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
   height: 40px;
   padding: 12px;
   border: none;
-  border-radius: 999px;
-  background: #f4f5f5;
+  border-radius: 360px;
+  background: var(--color-overlay);
   color: var(--color-text);
+  cursor: pointer;
+}
+
+.time-step__icon-pill:hover,
+.time-step__icon-pill:focus-visible {
+  outline: none;
+  background: var(--color-border);
 }
 
 /* Step 3 - inline title badge, search field, member grid */
@@ -199,4 +224,131 @@
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
+}
+
+/* Paineis de lider e descricao - Figma 10342:13032 e 10342:13099. */
+.time-painel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: 24px;
+}
+
+.time-painel__busca {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-overlay);
+  cursor: text;
+}
+
+.time-painel__busca input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: -0.08px;
+  color: var(--color-text);
+}
+
+.time-painel__busca input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.time-painel__lista {
+  display: flex;
+  flex-direction: column;
+}
+
+.time-painel__pessoa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 64px;
+  padding: 12px 0;
+  box-sizing: border-box;
+  border: none;
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.time-painel__pessoa:last-child {
+  border-bottom: none;
+}
+
+.time-painel__check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 360px;
+}
+
+.time-painel__pessoa:hover .time-painel__check,
+.time-painel__pessoa:focus-visible .time-painel__check {
+  background: var(--color-overlay);
+}
+
+.time-painel__pessoa:focus-visible {
+  outline: none;
+}
+
+.time-painel__nome {
+  margin-right: -4px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.time-painel__cargo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.time-painel__vazio {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.time-painel__descricao {
+  box-sizing: border-box;
+  width: 100%;
+  height: 221px;
+  padding: 16px;
+  border: 1px solid var(--gp-borda-forte);
+  border-radius: 8px;
+  outline: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 16px;
+  letter-spacing: -0.26px;
+  color: var(--color-text);
+}
+
+.time-painel__descricao::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.time-painel__descricao:focus-visible {
+  border-color: var(--color-text);
 }

@@ -362,6 +362,13 @@ function Recursos({ colaborador, recursosDaPessoa }) {
 
 function DadosBancarios({ dados, travado, onSalvar }) {
   const [aberto, setAberto] = useState(false)
+  // Montado depois da primeira abertura, para animar a saida; a chave nova a
+  // cada abertura zera o rascunho.
+  const [aberturas, setAberturas] = useState(0)
+  const abrir = () => {
+    setAberturas((total) => total + 1)
+    setAberto(true)
+  }
   const linhas = dados
     ? [
         ['Banco', dados.banco],
@@ -377,11 +384,11 @@ function DadosBancarios({ dados, travado, onSalvar }) {
     <section className="perfil-secao">
       <p className="perfil-secao__titulo">Dados bancários</p>
       {linhas.length === 0 ? (
-        <SecaoVazia texto="Nenhum dado adicionado" acao="Adicionar" onAcao={travado ? undefined : () => setAberto(true)} />
+        <SecaoVazia texto="Nenhum dado adicionado" acao="Adicionar" onAcao={travado ? undefined : abrir} />
       ) : (
         // Sem Figma para o estado salvo: linhas de rotulo e valor, e o clique
         // reabre o painel.
-        <button type="button" className="perfil-bancarios" disabled={travado} onClick={() => setAberto(true)}>
+        <button type="button" className="perfil-bancarios" disabled={travado} onClick={abrir}>
           {linhas.map(([rotulo, valor]) => (
             <span className="perfil-bancarios__linha" key={rotulo}>
               <span className="perfil-bancarios__rotulo">{rotulo}</span>
@@ -390,9 +397,10 @@ function DadosBancarios({ dados, travado, onSalvar }) {
           ))}
         </button>
       )}
-      {aberto && (
+      {aberturas > 0 && (
         <DadosBancariosPanel
-          aberto
+          key={aberturas}
+          aberto={aberto}
           valor={dados}
           onFechar={() => setAberto(false)}
           onSalvar={(valor) => {
