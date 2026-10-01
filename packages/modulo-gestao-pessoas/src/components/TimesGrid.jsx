@@ -1,13 +1,11 @@
 import { UsersFour } from '@phosphor-icons/react'
 import arrowUpRightIcon from '../assets/icons/ArrowUpRight.svg'
-import dotsThreeIcon from '../assets/icons/DotsThree.svg'
+import userIcon from '../assets/icons/User.svg'
 import {
   getTeamColorTones,
   getTeamIconComponent,
   guessTeamIconName,
 } from '../utils/teamOptions.js'
-import { IconButton } from '@squad/ui'
-import TimeCardMenu from './time/TimeCardMenu.jsx'
 import './TimesGrid.css'
 
 const PENDING_TONE = {
@@ -35,7 +33,23 @@ function IconCluster({ FrontIcon, tone }) {
   )
 }
 
-function TimesGrid({ teams, onCriarTime, onCardClick, onDataChanged }) {
+// Contagem de pessoas do card: icone User de 16px e o numero (10334:5476).
+function ContagemPessoas({ total }) {
+  return (
+    <span className="time-card__count">
+      <img src={userIcon} width={16} height={16} alt="" />
+      {total}
+    </span>
+  )
+}
+
+/*
+ * Cards da aba Times (Figma 10334:5436). O completo nao tem menu: o card
+ * inteiro abre a pagina do time, e o Excluir fica no cabecalho dela. O
+ * pendente tem o botao "Criar time" com contorno no lugar da seta e nao
+ * abre pagina.
+ */
+function TimesGrid({ teams, onCriarTime, onCardClick }) {
   // Pending drafts always lead the default grid, regardless of creation
   // order - once a draft is completed via Criar Time, pending flips false
   // and it falls back into the regular group in normal order.
@@ -61,17 +75,9 @@ function TimesGrid({ teams, onCriarTime, onCardClick, onDataChanged }) {
                   Criar time
                 </button>
               </div>
-              <div className="time-card__bottom-row">
-                <div className="time-card__info">
-                  <span className="time-card__name">{team.name}</span>
-                  <span className="time-card__count">{team.memberCount} pessoas</span>
-                </div>
-                <IconButton
-                  icon={dotsThreeIcon}
-                  alt="Mais opções"
-                  iconSize={24}
-                  className="time-card__menu-button"
-                />
+              <div className="time-card__info">
+                <span className="time-card__name">{team.name}</span>
+                <ContagemPessoas total={team.memberCount} />
               </div>
             </div>
           )
@@ -91,12 +97,9 @@ function TimesGrid({ teams, onCriarTime, onCardClick, onDataChanged }) {
               <IconCluster FrontIcon={FrontIcon} tone={tone} />
               <img src={arrowUpRightIcon} width={24} height={24} alt="" />
             </div>
-            <div className="time-card__bottom-row">
-              <div className="time-card__info">
-                <span className="time-card__name">{team.name}</span>
-                <span className="time-card__count">{team.memberCount} pessoas</span>
-              </div>
-              <TimeCardMenu team={team} onView={onCardClick} onDataChanged={onDataChanged} />
+            <div className="time-card__info">
+              <span className="time-card__name">{team.name}</span>
+              <ContagemPessoas total={team.memberCount} />
             </div>
           </div>
         )

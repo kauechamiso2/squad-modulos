@@ -9,7 +9,7 @@ import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
-import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
+import RecursosGrid from '../components/RecursosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
 import { useToast } from '../components/toast/ToastContext.jsx'
 import AddEmTimeModal from '../components/AddEmTimeModal.jsx'
@@ -32,17 +32,16 @@ import {
   duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
-import { formatDateDMonthYear } from '../utils/formatters.js'
-import { STATUS_OPCOES, TIPOS, getStatus, isPendente } from '../utils/colaboradorStatus.js'
-import { getBenefitMemberCount } from '../utils/beneficiarios.js'
-import { getBenefitFilterTipo } from '../utils/beneficioOptions.js'
+import { formatDateDMonthYear, todayIso } from '../utils/formatters.js'
+import { STATUS_OPCOES, TIPOS, getStatus, isEncerrado, isPendente } from '../utils/colaboradorStatus.js'
+import { fornecedorDoRecurso, pessoasDoRecurso, tituloDoRecurso, TIPOS_RECURSO } from '../utils/recursos.js'
 import { MODULE_BASE } from '../routes.js'
 import './Home.css'
 
 const TABS = [
   { id: 'colaboradores', label: 'Colaboradores' },
   { id: 'times', label: 'Times' },
-  { id: 'beneficios', label: 'Benefícios' },
+  { id: 'beneficios', label: 'Recursos' },
 ]
 
 
@@ -207,19 +206,30 @@ function Home({ backTo }) {
     setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
   }, [beneficioOverlayOpen])
 
-  const filteredBeneficios = useMemo(() => {
-    return beneficios.filter((benefit) => {
-      if (beneficiosFilters.tipo.size > 0) {
-        const filterTipo = getBenefitFilterTipo(benefit)
-        if (!filterTipo || !beneficiosFilters.tipo.has(filterTipo)) return false
-      }
-      const count = getBenefitMemberCount(benefit, collaborators)
-      const { min, max } = beneficiosFilters.pessoas
-      if (min != null && count < min) return false
-      if (max != null && count > max) return false
-      return true
-    })
-  }, [beneficios, beneficiosFilters, collaborators])
+  // A busca casa o titulo do card e o fornecedor: "Alice" acha o Plano de
+  // saude. A contagem e de pessoas unicas, sem quem ja saiu.
+  const filteredRecursos = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    const hoje = todayIso()
+    return beneficios
+      .map((recurso) => ({ recurso, pessoas: pessoasDoRecurso(recurso, collaborators, hoje).length }))
+      .filter(({ recurso, pessoas }) => {
+        if (query) {
+          const textos = [tituloDoRecurso(recurso), fornecedorDoRecurso(recurso)].filter(Boolean)
+          if (!textos.some((texto) => texto.toLowerCase().includes(query))) return false
+        }
+        if (
+          beneficiosFilters.tipo.size > 0 &&
+          !beneficiosFilters.tipo.has(TIPOS_RECURSO[recurso.tipoRecurso])
+        ) {
+          return false
+        }
+        const { min, max } = beneficiosFilters.pessoas
+        if (min != null && pessoas < min) return false
+        if (max != null && pessoas > max) return false
+        return true
+      })
+  }, [beneficios, beneficiosFilters, collaborators, searchQuery])
 
   const beneficiosFiltersSummary = useMemo(() => {
     const parts = [...beneficiosFilters.tipo]
@@ -327,12 +337,13 @@ function Home({ backTo }) {
 
   const clearAllFilters = () => setColumnFilters(createEmptyColumnFilters())
 
+  // Contam Pendente, Em atividade e Rescisao pendente; quem esta em dois
+  // times conta nos dois. Desligado e Fim de contrato nao contam.
   const teamsWithCounts = useMemo(() => {
+    const ativos = collaborators.filter((collaborator) => !isEncerrado(getStatus(collaborator)))
     return times.map((team) => ({
       ...team,
-      memberCount: collaborators.filter((collaborator) =>
-        collaborator.times.includes(team.name),
-      ).length,
+      memberCount: ativos.filter((collaborator) => collaborator.times.includes(team.name)).length,
     }))
   }, [times, collaborators])
 
@@ -489,7 +500,7 @@ function Home({ backTo }) {
           ) : activeTab === 'times' ? (
             <div className="home__panel">
               <TimesToolbar
-                total={times.length}
+                total={times.filter((team) => !team.pending).length}
                 onFiltrosClick={() => setTimesFiltrosOpen(true)}
                 filtersSummary={timesFiltersSummary}
                 onClearAllFilters={clearTimesFilters}
@@ -501,7 +512,6 @@ function Home({ backTo }) {
                   setNovoTimeStepFlowOpen(true)
                 }}
                 onCardClick={openTime}
-                onDataChanged={setCollaborators}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -512,12 +522,7 @@ function Home({ backTo }) {
                 filtersSummary={beneficiosFiltersSummary}
                 onClearAllFilters={clearBeneficiosFilters}
               />
-              <BeneficiosGrid
-                benefits={filteredBeneficios}
-                collaborators={collaborators}
-                onCardClick={openBeneficio}
-                onDataChanged={setBeneficios}
-              />
+              <RecursosGrid recursos={filteredRecursos} onCardClick={openBeneficio} />
             </div>
           ) : (
             <div className="home__panel" />

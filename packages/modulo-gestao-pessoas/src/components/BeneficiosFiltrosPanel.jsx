@@ -4,16 +4,9 @@ import closeIconWhite from '../assets/icons/CloseWhite.svg'
 import { IconButton, PainelLateral } from '@squad/ui'
 import './FiltrosPanel.css'
 
-const TIPO_OPTIONS = [
-  'Plano de Saúde',
-  'Vale Transporte',
-  'Vale Alimentação',
-  'Bem-Estar',
-  'Plano Odontológico',
-  'Seguro de Vida',
-  'Fixo',
-  'Verba',
-]
+import { TIPOS_RECURSO } from '../utils/recursos.js'
+
+const TIPO_OPTIONS = Object.values(TIPOS_RECURSO)
 
 function FilterPill({ selected, onClick, children }) {
   return (
@@ -106,7 +99,7 @@ function BeneficiosFiltrosPanel({ isOpen, onClose, filters, onSave }) {
       >
         <>
           <section className="filtros-panel__section">
-            <span className="filtros-panel__label">Tipo de benefício:</span>
+            <span className="filtros-panel__label">Tipo de recurso:</span>
             <div className="filtros-panel__pills">
               {TIPO_OPTIONS.map((option) => (
                 <FilterPill

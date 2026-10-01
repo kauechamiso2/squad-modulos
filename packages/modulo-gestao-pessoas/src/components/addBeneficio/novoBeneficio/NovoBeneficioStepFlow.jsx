@@ -14,6 +14,30 @@ import { resolveBeneficiaryIds } from '../../../utils/beneficiarios.js'
 import { centsToAmount } from '../../../utils/formatters.js'
 import { useToast } from '../../toast/ToastContext.jsx'
 
+// Ponte ate o fluxo de recurso novo (Parte 6): o fluxo antigo grava as
+// categorias com a grafia antiga e "Outro" com Fixo ou Verba. A aba Recursos
+// le o modelo novo, entao o registro sai com os dois.
+const CATEGORIA_NOVA = {
+  'Plano de Saúde': 'Plano de saúde',
+  'Vale Transporte': 'Vale transporte',
+  'Vale Alimentação': 'Vale alimentação',
+  'Bem-Estar': 'Bem-estar',
+  'Plano Odontológico': 'Plano odontológico',
+  'Seguro de Vida': 'Seguro de vida',
+}
+
+function camposDoModeloNovo(record) {
+  if (record.tipo === 'Outro' && record.outroSubtipo === 'Verba') {
+    return { tipoRecurso: 'verba', nome: record.name, icone: 'Coin' }
+  }
+  if (record.tipo === 'Outro') {
+    return { tipoRecurso: 'beneficio', categoria: 'Outro', nome: record.name }
+  }
+  const categoria = CATEGORIA_NOVA[record.tipo]
+  if (!categoria) throw new Error(`Categoria desconhecida "${record.tipo}"`)
+  return { tipoRecurso: 'beneficio', categoria, fornecedor: record.name }
+}
+
 function createEmptyVariant() {
   return { id: generateId(), digits: '', colaboradorIds: new Set() }
 }
@@ -117,7 +141,7 @@ function NovoBeneficioStepFlow({ onExit }) {
       contatoFornecedor: infoAdicional.contato.trim() || null,
       emailFornecedor: infoAdicional.email.trim() || null,
     }
-    addItem(COLLECTIONS.BENEFICIOS, record)
+    addItem(COLLECTIONS.BENEFICIOS, { ...record, ...camposDoModeloNovo(record) })
     showToast('success', 'Benefício criado com sucesso')
     onExit()
   }

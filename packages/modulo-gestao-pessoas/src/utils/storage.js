@@ -1,5 +1,6 @@
 import { todayIso } from './formatters.js'
 import { buildSeedColaboradores } from './seedColaboradores.js'
+import { buildSeedRecursos } from './seedRecursos.js'
 
 // Todas as chaves deste modulo vivem sob um prefixo proprio. No monorepo
 // varios modulos dividem a mesma origem, entao chaves cruas como "times" ou
@@ -99,23 +100,26 @@ export function duplicateItems(name, ids) {
   return updated
 }
 
-// Versao do formato dos colaboradores. A 2 trouxe tipo (CLT/PJ), checklists,
-// rescisao e ausencia. Dado do modelo anterior e apagado, nao convertido
-// (decisao do contexto, Topico 1), e no lugar entra o seed.
+// Versao dos dados deste modulo. Subir a versao apaga os dados antigos do
+// modulo - colaboradores, recursos e times - e grava o seed de novo. Dado do
+// modelo anterior e apagado, nao convertido.
+//   2: colaboradores com tipo, checklists, rescisao e ausencia.
+//   3: recursos (Beneficio, Verba, Licenca) no lugar dos beneficios antigos.
 //
 // So mexe em chaves deste modulo: o localStorage e dividido com os outros
-// modulos do apps/web. Benefícios e times ficam como estao. Nao roda quando a
-// versao gravada e mais nova que a deste codigo, para nunca apagar dado mais
-// novo.
-export const DATA_VERSION = 2
+// modulos do apps/web. Nao roda quando a versao gravada e mais nova que a
+// deste codigo, para nunca apagar dado mais novo.
+export const DATA_VERSION = 3
 const DATA_VERSION_KEY = storageKey('versao-dados')
 
-export function resetColaboradoresIfOutdated() {
+export function resetDataIfOutdated() {
   const stored = Number(localStorage.getItem(DATA_VERSION_KEY) ?? 0)
   if (stored >= DATA_VERSION) return
 
   const colaboradores = buildSeedColaboradores(todayIso())
   writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
+  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores))
+  writeCollection(COLLECTIONS.TIMES, [])
   ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
   localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
 }
@@ -131,51 +135,6 @@ function ensurePendingTimes(names) {
   writeCollection(COLLECTIONS.TIMES, [
     ...times,
     ...missing.map((name) => ({ id: generateId(), name, pending: true })),
-  ])
-}
-
-function ensureSeeded(name, seedFactory) {
-  if (readCollection(name) !== null) return
-  writeCollection(name, seedFactory())
-}
-
-export function seedInitialData() {
-  ensureSeeded(COLLECTIONS.BENEFICIOS, () => [
-    {
-      id: generateId(),
-      name: 'Plano de Saude',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'alice',
-    },
-    {
-      id: generateId(),
-      name: 'Vale Refeição',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'caju',
-    },
-    {
-      id: generateId(),
-      name: 'Auxilio Home Office',
-      memberCount: 12,
-      iconType: 'badge',
-      icon: 'desktop',
-    },
-    {
-      id: generateId(),
-      name: 'Gympass',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'gympass',
-    },
-    {
-      id: generateId(),
-      name: 'Vale Transporte',
-      memberCount: 12,
-      iconType: 'badge',
-      icon: 'van',
-    },
   ])
 }
 
