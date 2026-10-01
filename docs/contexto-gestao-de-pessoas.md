@@ -132,20 +132,50 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 
 ## Implementation status
 
-**Done** in branch `feat/gp-status-home`: the collaborator model, `getStatus()`, the seed of collaborators and absences, the storage version key, and the Colaboradores table and grid (Tipo and Status columns and filters, the status popover, absence badges and tooltips, faded rows, "—" and the grid card without a photo).
+**Done** in branch `feat/gp-build-order`, one commit per part of "Build order":
 
-**Localhost on 2026-10-01** still shows: the tab "Benefícios", the Novo modal card "Benefício", the Times tab with 3 cards per row, "N pessoas" and a "Criar time" link, Freelancer and Consultor in the create-collaborator flow, and the old create-team flow (bold labels, black icons, the 2x3 suggestion grid with people in Fim de contrato, a names-only search list, and centered modals for leader and description).
+| Part | What was built |
+| --- | --- |
+| Before | The collaborator model, `getStatus()`, the seed of collaborators and absences, the storage version key, and the Colaboradores table and grid (branch `feat/gp-status-home`) |
+| 1 | Tabs "Recursos", search placeholders, Times cards (4 per row, people count, outlined "Criar time", total of complete teams), the recurso model (`utils/recursos.js`), the Recursos cards (logo or icon, title by type, value or range, unique people) with search by title and supplier and the Tipo de recurso filter, and the seed of the 5 recursos |
+| 2 | Novo modal (Colaborador, Time, Recurso) and the CLT flow: Tipo, Nome, Cargo, Informações, the "Informações para contrato" panel, the "Enviar para" sheet and both toasts |
+| 3 | The collaborator page (`colaborador/perfil/PerfilColaborador.jsx`): Status do processo, fields in the Figma order, multi-team field that creates pending teams, Dados bancários panel, Recursos, Jornada and Documentos; the alert "Informações faltando" on the table and the grid |
+| 4 | The PJ flow (CNPJ, razão social, data de fim, pagamento and valor) and the PJ page |
+| 5 | The create-team flow from Figma, with the search-and-pick pattern (`campos/BuscaEEscolha.jsx`), the leader and description side panels and the toast "Time criado com sucesso!" |
+| 6 | The create-recurso flow (`addRecurso/`) with the Benefício, Verba and Licença paths, variants, the Atribuir panel and the Informações panel |
+
+The storage version is 5. Each bump rewrites this module's collaborators, recursos and teams with the seed.
+
+**Decisions taken while building, to confirm:**
+
+- Medium is 500 inside the module (`tokens.css`). `@squad/ui` uses 510, and with Inter loaded only at 400, 500, 600 and 700 the browser rendered every Medium text as 600.
+- The flows and new panels use module buttons (`campos/Botoes.css`, 14px with 16px padding), because `.text-button` (16px) and the disabled `.pill-button` text (#798282) of `@squad/ui` differ from Figma.
+- Field names keep the existing code names where they existed: `name`, `cargos` (list), `salario`, `custoParaEmpresa` and `dataAdmissao` (also for PJ). New fields follow this document.
+- Money stays a float in reais, as before. Values show cents ("R$12.000,00"), as in the Recursos tab Figma; the collaborator page Figma shows "R$12.000".
+- Tempo de casa keeps the "1a 9m" format; Figma shows "1 dia" and this document does not define the format.
+- Phone mask follows Figma ("11 98916 5456"); CPF and CNPJ follow the masks of this document.
+- Info-row and section labels use Medium, as Figma draws them, where this document says Regular.
+- The Vale transporte seed has the supplier "VEM", because the model needs one.
+- "Outro" name step titles: "Qual o nome do benefício?" and "Qual o nome da licença?".
+- Category icons on the light blue badge (cards) and on the yellow badge (flow) come from Phosphor when the Figma layer name collides with an existing SVG of another color.
 
 **Temporary bridges:**
 
 | Bridge | Why | Remove in |
 | --- | --- | --- |
-| The current creation flow saves `tipo` and an open admission checklist. Fixo becomes CLT, and PJ, Freelancer and Consultor become PJ | So a new collaborator enters as Pendente | Build order parts 2 and 4 |
 | Desligar and Reativar are gone from the home row menu | Desligar only toggled a boolean, which contradicts the status model | Offboarding |
-| The collaborator page still toggles `desligado` and offers Reativar. The home ignores it | The page is still the old one | Part 3, and offboarding |
-| The seed writes the legacy fields `contractType` and `desligado: true` for Pedro Martins and André Moura | So the old collaborator page shows the right fields | Parts 3 and 4 |
+| The collaborator page Desligar sets `desligado: true` and locks the fields (no Reativar) | There is no offboarding flow yet | Offboarding |
+| Recursos also save `tipo` (the category with the old spelling) and `name` | So the old benefit detail page keeps opening | Recurso page |
+| The team page reads the base cost from `custos.js` and counts CLT and PJ by `tipo` | The team page has no Figma yet and read the old contract types | Team page |
+| The team page still uses the old centered modals for leader, description and members | Out of this round | Team page |
 
-**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners (fix with an opt-in prop), the tab height does not match Figma, and the "Ver mais..." button in the Filtros panel has no style.
+**Known differences, not done:**
+
+- The table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners (fix with an opt-in prop), the tab height does not match Figma, and the "Ver mais..." button in the Filtros panel has no style.
+- Side panels sit 24px from the edge (this document); Figma shows 20px.
+- The supplier step shows every suggestion in two columns; Figma shows the first four.
+- The benefit detail page counts people who already left, and shows the Gift icon for Licença (old page logic).
+- Saved states without Figma follow this document: the recursos list on the profile, saved bank data, the edit state of the Informações rows, the saved leader and description.
 
 ## Figma index
 
