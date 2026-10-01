@@ -43,7 +43,7 @@ const OPTIONS = [
   },
   {
     id: 'beneficio',
-    label: 'Benefício',
+    label: 'Recurso',
     functional: true,
     stickers: [
       { src: giftStickerIcon, size: BENEFICIO_STICKER_SIZE, left: 64.67, top: 37.5, rotate: -17.07 },

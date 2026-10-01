@@ -1,0 +1,38 @@
+/*
+ * Tokens do modulo. Ficam numa classe, e nao em :root, porque o localStorage
+ * e o CSS sao dividos com os outros modulos do apps/web - em :root vazariam
+ * para eles. A `.gp-modulo` envolve as rotas do modulo (GestaoPessoasRoutes)
+ * com display: contents, entao a home, os fluxos e os paineis herdam.
+ * Valores do Figma; Fim de contrato usa o cinza do contexto.
+ */
+.gp-modulo {
+  display: contents;
+
+  /*
+   * SF Pro Medium vira Inter 500 (contexto, "Stack and working rules"). O
+   * @squad/ui usa 510, e o apps/web so carrega o Inter em 400, 500, 600 e
+   * 700: pela regra de escolha de peso do CSS, 510 cai no 600 e todo texto
+   * Medium do modulo saia Semibold. So este modulo muda.
+   */
+  --font-weight-medium: 500;
+
+  --gp-status-pendente-fundo: rgba(209, 170, 66, 0.1);
+  --gp-status-pendente-texto: #eac764;
+  --gp-status-ativo-fundo: rgba(1, 180, 108, 0.1);
+  --gp-status-ativo-texto: #60c60c;
+  --gp-status-desligado-fundo: rgba(255, 38, 51, 0.1);
+  --gp-status-desligado-texto: #ff2633;
+  --gp-status-fim-fundo: var(--color-border);
+  --gp-status-fim-texto: var(--color-text-secondary);
+  --gp-texto-esmaecido: #b2b9b9;
+  --gp-ausencia-fundo: #e5f4ff;
+  --gp-ausencia-icone: #0091ff;
+  --gp-tooltip-fundo: #000000;
+  --gp-tooltip-texto: #ffffff;
+  --gp-popover-sombra: 0px 0px 25.7px rgba(0, 0, 0, 0.12);
+  --gp-destaque: #e9a716;
+  --gp-check: #60c60c;
+  --gp-badge-amarelo: #fbedd0;
+  --gp-veu: rgba(227, 230, 230, 0.6);
+  --gp-titulo-folha: #0c0d0d;
+}

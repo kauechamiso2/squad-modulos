@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import { ToastProvider } from './components/toast/ToastContext.jsx'
+import './tokens.css'
 
 // O modulo nao cria roteador proprio - o apps/web tem o unico HashRouter.
 // Home continua sendo a tela unica que le a URL por conta propria
@@ -16,9 +17,11 @@ import { ToastProvider } from './components/toast/ToastContext.jsx'
 function GestaoPessoasRoutes({ backTo }) {
   return (
     <ToastProvider>
-      <Routes>
-        <Route path="/*" element={<Home backTo={backTo} />} />
-      </Routes>
+      <div className="gp-modulo">
+        <Routes>
+          <Route path="/*" element={<Home backTo={backTo} />} />
+        </Routes>
+      </div>
     </ToastProvider>
   )
 }

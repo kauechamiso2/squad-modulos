@@ -31,6 +31,14 @@ export function addDaysIso(isoDate, days) {
   return `${yyyy}-${mm}-${dd}`
 }
 
+// A proxima segunda-feira a partir de hoje (nunca hoje).
+export function proximaSegundaIso() {
+  const hoje = todayIso()
+  const [ano, mes, dia] = hoje.split('-').map(Number)
+  const diaDaSemana = new Date(ano, mes - 1, dia).getDay()
+  return addDaysIso(hoje, (8 - diaDaSemana) % 7 || 7)
+}
+
 export function formatDatePt(isoDate) {
   const [year, month, day] = isoDate.split('-').map(Number)
   return `${day} ${MONTHS_PT[month - 1]} ${year}`

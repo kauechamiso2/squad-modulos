@@ -1,24 +1,24 @@
-import { Check } from '@phosphor-icons/react'
+import CheckVerde from '../../campos/CheckVerde.jsx'
 import CltShell from './CltShell.jsx'
-import '@squad/ui/styles/buttons.css'
+import '../../campos/Botoes.css'
 import './CltShell.css'
 
-function CltNomeStep({ name, onNameChange, onBack, onClose, onContinue }) {
+function CltNomeStep({ name, onNameChange, progress, onBack, onClose, onContinue }) {
   const canContinue = name.trim().length > 0
 
   return (
     <CltShell
       onClose={onClose}
-      progress={33}
+      progress={progress}
       footerLeft={
-        <button type="button" className="text-button" onClick={onBack}>
+        <button type="button" className="gp-botao-texto" onClick={onBack}>
           Voltar
         </button>
       }
       footerRight={
         <button
           type="button"
-          className="pill-button"
+          className="gp-botao"
           disabled={!canContinue}
           onClick={onContinue}
         >
@@ -48,7 +48,7 @@ function CltNomeStep({ name, onNameChange, onBack, onClose, onContinue }) {
             value={name}
             onChange={(event) => onNameChange(event.target.value)}
           />
-          {name && <Check size={24} weight="bold" className="clt-large-input-check" />}
+          {name && <CheckVerde />}
         </div>
       </div>
     </CltShell>

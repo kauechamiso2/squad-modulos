@@ -151,8 +151,9 @@ export function textoAusencia(ausencia) {
   return `${TIPOS_AUSENCIA[ausencia.tipo]} até ${dia}/${mes}`
 }
 
-// Ponte ate o Topico 5: o fluxo de criacao ainda grava os tipos antigos.
-// Fixo vira CLT; PJ, Freelancer e Consultor viram PJ.
+// Ponte ate a Parte 4: o caminho PJ de hoje ainda grava o contractType
+// antigo. PJ, Freelancer e Consultor viram PJ. O CLT ja grava `tipo` direto.
 export function tipoDoContractType(contractType) {
-  return contractType === 'Fixo' || contractType === 'CLT' ? 'CLT' : 'PJ'
+  if (['PJ', 'Freelancer', 'Consultor'].includes(contractType)) return 'PJ'
+  throw new Error(`contractType "${contractType}" não passa mais pela ponte`)
 }

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Briefcase, Check, Plus } from '@phosphor-icons/react'
+import CheckVerde from '../../campos/CheckVerde.jsx'
+import { Briefcase, Plus } from '@phosphor-icons/react'
 import CltShell from './CltShell.jsx'
 import NovoTimePanel from './NovoTimePanel.jsx'
 import { COLLECTIONS, getCollection } from '../../../utils/storage.js'
@@ -63,7 +64,7 @@ function EntityField({ value, onChange, items, placeholder, onOpenCreate, render
             setOpen(true)
           }}
         />
-        {value && <Check size={24} weight="bold" className="clt-large-input-check" />}
+        {value && <CheckVerde />}
       </div>
 
       {open && rect && (

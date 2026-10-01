@@ -7,7 +7,7 @@ import { IconButton } from '@squad/ui'
 // are given) a fixed footer with a progress bar. Tela 1 (tipo de
 // contratação) renders no footer at all, since it navigates immediately on
 // card click.
-function CltShell({ title = 'Novo Colaborador', onClose, progress, footerLeft, footerRight, children }) {
+function CltShell({ title = 'Novo colaborador', onClose, progress, footerLeft, footerRight, children }) {
   const hasFooter = Boolean(footerLeft || footerRight)
 
   return (

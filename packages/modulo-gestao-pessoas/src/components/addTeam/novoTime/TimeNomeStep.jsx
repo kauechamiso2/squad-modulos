@@ -1,4 +1,4 @@
-import { Check } from '@phosphor-icons/react'
+import CheckVerde from '../../campos/CheckVerde.jsx'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
 import '@squad/ui/styles/buttons.css'
 import '../../addCollaborator/clt/CltShell.css'
@@ -49,7 +49,7 @@ function TimeNomeStep({ name, onNameChange, onBack, onClose, onContinue }) {
             value={name}
             onChange={(event) => onNameChange(event.target.value)}
           />
-          {name && <Check size={24} weight="bold" className="clt-large-input-check" />}
+          {name && <CheckVerde />}
         </div>
       </div>
     </CltShell>

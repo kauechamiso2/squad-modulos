@@ -1,0 +1,40 @@
+/* Figma 10338:10977: trilho cinza de 40px, opcao ativa em branco. */
+.seletor-segmentado {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  height: 40px;
+  padding: 4px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+}
+
+.seletor-segmentado__opcao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 8px 16px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 360px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.seletor-segmentado__opcao--ativa {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.seletor-segmentado__opcao:focus-visible {
+  outline: none;
+  color: var(--color-text);
+}

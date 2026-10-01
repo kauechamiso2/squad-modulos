@@ -2,27 +2,6 @@
   display: flex;
   min-height: 100vh;
   background: var(--color-bg);
-
-  /*
-   * Tokens do modulo para status, ausencia e linha esmaecida. Ficam no .home,
-   * e nao em :root, pelo mesmo motivo das variaveis do @squad/ui abaixo.
-   * Valores do Figma da home (10331:4871); Fim de contrato ainda nao tem
-   * Figma e usa o cinza do contexto (Topico 14).
-   */
-  --gp-status-pendente-fundo: rgba(209, 170, 66, 0.1);
-  --gp-status-pendente-texto: #eac764;
-  --gp-status-ativo-fundo: rgba(1, 180, 108, 0.1);
-  --gp-status-ativo-texto: #60c60c;
-  --gp-status-desligado-fundo: rgba(255, 38, 51, 0.1);
-  --gp-status-desligado-texto: #ff2633;
-  --gp-status-fim-fundo: var(--color-border);
-  --gp-status-fim-texto: var(--color-text-secondary);
-  --gp-texto-esmaecido: #b2b9b9;
-  --gp-ausencia-fundo: #e5f4ff;
-  --gp-ausencia-icone: #0091ff;
-  --gp-tooltip-fundo: #000000;
-  --gp-tooltip-texto: #ffffff;
-  --gp-popover-sombra: 0px 0px 25.7px rgba(0, 0, 0, 0.12);
 }
 
 .home__content {
