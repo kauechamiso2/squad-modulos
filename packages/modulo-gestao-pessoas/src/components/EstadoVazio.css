@@ -1,0 +1,45 @@
+/* Empty state - Figma 10379:2581 (ilustracao) e 10379:2743 (textos e botao):
+   80px abaixo da barra, 428px, centralizado na area de conteudo. O titulo
+   comeca logo abaixo da ilustracao (a parte de baixo dela ja e vazia) e o
+   botao fica 40px abaixo dos textos. */
+.estado-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 428px;
+  max-width: 100%;
+  margin: 80px auto 0;
+}
+
+.estado-vazio__ilustracao {
+  display: block;
+  width: 428px;
+  max-width: 100%;
+  height: auto;
+}
+
+.estado-vazio__textos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 40px;
+  text-align: center;
+  letter-spacing: -0.08px;
+}
+
+.estado-vazio__titulo {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.estado-vazio__subtitulo {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
