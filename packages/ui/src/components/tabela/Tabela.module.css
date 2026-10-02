@@ -72,8 +72,14 @@
  * Hover: a linha ganha sombra e "flutua" sobre as outras. E o mesmo efeito do
  * Gestao de Pessoas - nao e fundo cinza. Fundo cinza e o estado SELECIONADO.
  */
+/*
+ * Hover da linha. O Gestao de Pessoas passou a usar fundo cinza e o Fluxo de
+ * Caixa continua com a sombra, que e o que o Figma dele desenha (2279:101702).
+ * Os defaults sao os do Fluxo de Caixa, que era o comportamento ate aqui.
+ */
 .linha:hover {
-  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+  background: var(--tabela-linha-hover-fundo, transparent);
+  box-shadow: var(--tabela-linha-hover-sombra, 0px 0px 6px rgba(0, 0, 0, 0.12));
 }
 
 .linhaSelecionada {

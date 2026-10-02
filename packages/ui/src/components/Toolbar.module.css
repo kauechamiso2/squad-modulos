@@ -89,6 +89,10 @@
 
 /* Corpo clicavel do chip: um <button> sem desenho proprio, so para receber o
    clique separado do X. Herda tipografia do .chipTexto. */
+/* Hover dos botoes da barra: mesmo fundo do hover dos botoes redondos. */
+.botaoFiltros:hover,
+.chip:hover { background: var(--color-overlay); }
+
 .chipCorpo {
   display: flex;
   align-items: center;

@@ -16,7 +16,7 @@
   position: fixed;
   inset: 0;
   z-index: 150;
-  background: rgba(227, 230, 230, 0.4);
+  background: var(--painel-veu-cor, rgba(227, 230, 230, 0.4));
   backdrop-filter: var(--painel-veu-filtro, none);
   opacity: 0;
   pointer-events: none;
@@ -94,6 +94,21 @@
 .botaoFechar:hover { background: var(--color-overlay); }
 
 /* Sem anel do navegador; o teclado ganha o mesmo fundo do hover. */
+.rolagem:hover { scrollbar-color: rgba(0, 0, 0, 0.24) transparent; }
+
+.rolagem::-webkit-scrollbar { width: 10px; }
+
+.rolagem::-webkit-scrollbar-track { background: transparent; }
+
+.rolagem::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  background-clip: padding-box;
+  border-right: 4px solid transparent;
+  border-radius: 999px;
+}
+
+.rolagem:hover::-webkit-scrollbar-thumb { background-color: rgba(0, 0, 0, 0.24); }
+
 .botaoFechar:focus { outline: none; }
 .botaoFechar:focus-visible { outline: none; background: var(--color-overlay); }
 
@@ -104,6 +119,18 @@
   flex: 1;
   min-height: 0;
   overflow: hidden auto;
+  /*
+   * Barra de rolagem discreta: invisivel em repouso e revelada no hover, que
+   * para roda e trackpad coincide com o cursor ja estar sobre o painel.
+   *
+   * O afastamento do polegar em relacao ao texto e variavel e nasce em 0: no
+   * Gestao de Pessoas sao 8px, mas aplicar isso a todos encolheria a largura
+   * util dos paineis do Fluxo de Caixa, que foi medida contra o Figma.
+   */
+  padding-right: var(--painel-rolagem-padding-direita, 0);
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+
   /* Espaco para o rodape, que e absoluto sobre o painel. */
   padding-bottom: var(--painel-espaco-rodape, 169px);
 }
