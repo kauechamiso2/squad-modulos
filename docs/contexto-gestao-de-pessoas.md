@@ -155,9 +155,10 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 - "Add time" offers complete teams that are not linked yet. With Toda a empresa linked, "Add time" and "Add membro" are hidden, since it is exclusive. The Toda a empresa row uses a gray badge with Buildings.
 - Removing a team or a person from a recurso has no confirmation (only team members have one, per section 8). Copy and PhoneOutgoing show only when there is a value; PhoneOutgoing is a `tel:` link.
 - Panels and modals opened from a detail page render above both modes.
+- Review 1: the selection bar has no Duplicar; every stacked layer has its own veil with blur (`--gp-veu`, `--gp-veu-filtro`); the color and icon pickers are side panels, and the color picker shows the team's current color in place of its family's option; the Filtros options and "Ver mais..." are filter pills; the edit box is 290x40 everywhere (in Contato the Telefone/Email switch sits to the left of it, and on the collaborator page the label column shrinks to fit both); one field in edit mode at a time; team names are unique; the Atribuir panel shows the cargo and lists assigned people last. Recurso "Informações" keeps the "Adicionar" side panel of section 7, so it has no inline edit box.
 - Earlier decisions (part 7): locked pages show "—" on empty fields and hide empty-state actions; the term panel needs a valid Enviar para; the Chave PIX type is inferred from its format.
 
-**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners, the tab height and the home header spacing do not match Figma, the "Ver mais..." button in the Filtros panel has no style, the side-panel veil has no blur, the progress bar fills to the real step (Figma never moves it, a mock error), and money is still stored as reais with decimals, not integer cents.
+**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners, the tab height and the home header spacing do not match Figma, the progress bar fills to the real step (Figma never moves it, a mock error), and money is still stored as reais with decimals, not integer cents.
 
 ## Figma index
 
