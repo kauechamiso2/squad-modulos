@@ -86,9 +86,10 @@ export function removeItems(name, ids) {
   return items
 }
 
-// Versao dos dados deste modulo. Subir a versao apaga os dados antigos do
-// modulo - colaboradores, recursos e times - e grava o seed de novo. Dado do
-// modelo anterior e apagado, nao convertido.
+// Versao dos dados deste modulo. Subir a versao apaga os dados do modulo
+// (todas as chaves squad:gestao-pessoas:) e nao grava nada: o modulo comeca
+// vazio (contexto, "Seed and reset"). Dado do modelo anterior e apagado, nao
+// convertido. Os dados de exemplo so entram pelo atalho ?seed=exemplo.
 //   2: colaboradores com tipo, checklists, rescisao e ausencia.
 //   3: recursos (Beneficio, Verba, Licenca) no lugar dos beneficios antigos.
 //   4: campos da pagina CLT (CPF, contato, custo, dados bancarios, documentos).
@@ -98,23 +99,41 @@ export function removeItems(name, ids) {
 //      rescisao PJ, dados do desligamento e jornada de trabalho mockada.
 //   7: paginas de detalhe - o time Design completo, notas de exemplo e os
 //      dados de contato da Alice; recursos sem os campos legados `tipo` e `name`.
+//   8: o modulo comeca vazio; quem tinha o seed das versoes anteriores fica
+//      sem dados.
 //
 // So mexe em chaves deste modulo: o localStorage e dividido com os outros
 // modulos do apps/web. Nao roda quando a versao gravada e mais nova que a
 // deste codigo, para nunca apagar dado mais novo.
-export const DATA_VERSION = 7
+export const DATA_VERSION = 8
 const DATA_VERSION_KEY = storageKey('versao-dados')
 
 export function resetDataIfOutdated() {
   const stored = Number(localStorage.getItem(DATA_VERSION_KEY) ?? 0)
   if (stored >= DATA_VERSION) return
-
-  const colaboradores = buildSeedColaboradores(todayIso())
-  writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
-  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores, todayIso()))
-  writeCollection(COLLECTIONS.TIMES, buildSeedTimes(colaboradores, todayIso()))
-  ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
+  limparDadosDoModulo()
   localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
+}
+
+// Apaga todas as chaves deste modulo, menos a da versao. As dos outros
+// modulos do apps/web nao sao tocadas.
+export function limparDadosDoModulo() {
+  const chaves = []
+  for (let indice = 0; indice < localStorage.length; indice += 1) {
+    const chave = localStorage.key(indice)
+    if (chave?.startsWith(KEY_PREFIX) && chave !== DATA_VERSION_KEY) chaves.push(chave)
+  }
+  chaves.forEach((chave) => localStorage.removeItem(chave))
+}
+
+// Dados de exemplo (contexto, "Seed and reset"), so pelo atalho
+// ?seed=exemplo: gravados por cima dos dados atuais.
+export function gravarDadosDeExemplo(hoje = todayIso()) {
+  const colaboradores = buildSeedColaboradores(hoje)
+  writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
+  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores, hoje))
+  writeCollection(COLLECTIONS.TIMES, buildSeedTimes(colaboradores, hoje))
+  ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
 }
 
 // Os times citados pelo seed entram como times pendentes - o mesmo registro
