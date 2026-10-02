@@ -86,21 +86,6 @@ export function removeItems(name, ids) {
   return items
 }
 
-export function duplicateItems(name, ids) {
-  const idSet = new Set(ids)
-  const items = getCollection(name)
-  const duplicates = items
-    .filter((item) => idSet.has(item.id))
-    .map((item) => ({
-      ...item,
-      id: generateId(),
-      name: `${item.name} (cópia)`,
-    }))
-  const updated = [...items, ...duplicates]
-  writeCollection(name, updated)
-  return updated
-}
-
 // Versao dos dados deste modulo. Subir a versao apaga os dados antigos do
 // modulo - colaboradores, recursos e times - e grava o seed de novo. Dado do
 // modelo anterior e apagado, nao convertido.
