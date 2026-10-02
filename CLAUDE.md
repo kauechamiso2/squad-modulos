@@ -99,9 +99,17 @@ importação trouxe o commit `6953ba6`; a partir dela `packages/modulo-gestao-pe
 é a **fonte da verdade** e o repositório antigo não deve ser consultado nem
 clonado. Mudança visual passa a ser avaliada contra o Figma.
 
+A especificação do módulo, transcrita do Figma 2.0 com os node ids, é
+[`docs/contexto-gestao-de-pessoas.md`](docs/contexto-gestao-de-pessoas.md):
+tipos CLT e PJ, status calculado por checklist, cargo como texto livre, vários
+times por pessoa e recursos (Benefício, Verba, Licença). Ela vale sobre os
+documentos antigos do módulo (`analise-` e `diferencas-gestao-de-pessoas.md`),
+que ficam só como histórico.
+
 ## Onde ler mais
 
 - [`README.md`](README.md) — o que é, como rodar, estrutura.
 - [`CONTRIBUTING.md`](CONTRIBUTING.md) — branches, PRs, módulo novo.
 - [`docs/divida-tecnica.md`](docs/divida-tecnica.md) — o que ficou pendente e por quê.
+- [`docs/contexto-gestao-de-pessoas.md`](docs/contexto-gestao-de-pessoas.md) — especificação do Gestão de Pessoas.
 - `docs/modulo-*.md` e `docs/analise-*.md` — decisões de cada módulo.

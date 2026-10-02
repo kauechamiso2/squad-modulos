@@ -1,5 +1,14 @@
 # Dívida técnica — squad-modulos
 
+> **Gestão de Pessoas: parte deste registro está superada** pelo
+> [`contexto-gestao-de-pessoas.md`](contexto-gestao-de-pessoas.md), que é a
+> especificação atual do módulo. Não valem mais: a coleção e o fluxo de Cargos
+> (a aba saiu; cargo é texto livre), o "Novo Benefício" (hoje "Recurso", com
+> Benefício, Verba e Licença), a "ausência total de testes" (o módulo tem testes
+> de `utils/` com `npm test`) e os nomes de arquivo com espaço em
+> `assets/images` (hoje nomeados por fornecedor). Os demais itens continuam
+> abertos.
+
 Registro do que ficou pendente na montagem do monorepo. Itens marcados
 **[herdado]** já existiam no projeto original e foram preservados de propósito,
 porque esta etapa exigia fidelidade visual e comportamental. **[novo]** é dívida

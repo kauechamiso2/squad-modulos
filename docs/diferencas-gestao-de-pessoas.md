@@ -1,5 +1,11 @@
 # Gestão de Pessoas — histórico de paridade com o repositório de origem
 
+> **Substituído.** Este documento descreve o módulo como ele era antes do
+> Figma 2.0 (tipos Fixo, Freelancer e Consultor, aba Cargos, aba Benefícios,
+> desligamento por um booleano). O modelo, as telas e as regras atuais estão em
+> [`contexto-gestao-de-pessoas.md`](contexto-gestao-de-pessoas.md). Fica aqui só
+> como registro histórico.
+
 > **Status: sincronização encerrada.** `packages/modulo-gestao-pessoas` é a
 > fonte da verdade. O repositório `brunovasconcelos-maker/squad-gestao-pessoas`
 > não é mais consultado, e a pasta local `~/Documents/gestao-de-pessoa` está

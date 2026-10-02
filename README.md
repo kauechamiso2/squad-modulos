@@ -85,15 +85,16 @@ squad-modulos/
 │   ├── ui/                         Design system compartilhado
 │   │   ├── src/tokens.css          Tokens (cores, pesos, radius, sombras, paleta dos tiles)
 │   │   ├── src/components/         IconButton, WizardShell, ModalOverlay,
-│   │   │                           FieldModalShell, Checkbox, DiscardConfirmModal, ModuleCard
+│   │   │                           FieldModalShell, Checkbox, PainelLateral, ModuleCard, …
 │   │   └── src/styles/             CSS compartilhado (buttons, SelectListModal, …)
-│   ├── modulo-gestao-pessoas/      Cópia fiel do projeto original
+│   ├── modulo-gestao-pessoas/      Módulo alinhado ao Figma 2.0
 │   │   └── src/                    components/, pages/, utils/, assets/
 │   └── modulo-pesquisa-clima/      Segundo módulo; CSS Modules, tokens próprios
 │       └── src/                    components/, pages/, lib/, styles/, assets/
 ├── docs/
-│   ├── analise-gestao-de-pessoas.md    Engenharia reversa do projeto original
-│   ├── diferencas-gestao-de-pessoas.md Comparação visual contra o original
+│   ├── contexto-gestao-de-pessoas.md   Especificação atual do Gestão de Pessoas
+│   ├── analise-gestao-de-pessoas.md    Engenharia reversa do projeto original (histórico)
+│   ├── diferencas-gestao-de-pessoas.md Comparação visual contra o original (histórico)
 │   ├── modulo-pesquisa-clima.md        Migração do 2º módulo: o que foi duplicado e por quê
 │   └── divida-tecnica.md
 └── package.json                    workspaces: apps/*, packages/*
