@@ -126,20 +126,22 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 - A recurso reaching a person through more than one link counts once.
 - The team cost sums its members. A person in two teams counts in both.
 
-### Seed
+### Seed and reset
 
-- 13 collaborators covering every status, with dates relative to the real current day. Names come from Figma, plus Bruna Teixeira (Em atividade, no team), Lucas Andrade (CLT, Em desligamento 3/4), Renata Prado (PJ, Em desligamento 2/3) and André Moura (PJ, Fim de contrato).
-- Absences: Victoria Cardoso (férias), Gustavo Lima (licença paternidade) and Beatriz Souza (licença médica).
-- Design, Marketing and Vendas as pending teams, only when no team with the same name exists.
-- 5 recursos, replacing the old benefits seed: Plano de saúde (Alice), Auxílio Home Office (verba, Desktop icon), Slack (licença), Vale alimentação (Caju) and Vale transporte. They mix whole-company, team and individual links, and use variants, so counts and ranges are real.
-- Documents for collaborators whose checklist items are done.
+The module starts empty for every visitor. Data lives in the visitor's own browser (localStorage), so each person who opens the link has their own data and nobody sees anyone else's. There is no automatic seed.
+
+- Reset: bumping `squad:gestao-pessoas:versao-dados` clears the module's data for visitors who already had the old seed, and writes nothing.
+- Sample data for development and demos: opening the module with `?seed=exemplo` after the hash route (for example `#/gestao-de-pessoas?seed=exemplo`) writes the sample data below over the current data, once, and removes the parameter. `?reset=1` clears the module's data. Neither has a button in the interface.
+- Sample data: 13 collaborators covering every status, with dates relative to the real current day (names from Figma, plus Bruna Teixeira, Lucas Andrade, Renata Prado and André Moura), 3 absences (Victoria Cardoso férias, Gustavo Lima licença paternidade, Beatriz Souza licença médica), the teams Design, Marketing and Vendas, 5 recursos (Plano de saúde Alice, Auxílio Home Office, Slack, Vale alimentação Caju, Vale transporte) with mixed links and variants, jornada for some people, documents for done checklist items, and notes.
 
 ## Implementation status
 
-**Done** in branch `feat/gp-build-order`, parts 1 to 8 of the build order, each checked in the browser at 1440 against Figma. Data version 7.
+**Done** on `main`: parts 1 to 8 of the build order and review 1, each checked in the browser at 1440 against Figma. Branch `feat/gp-empty-states`: the module starts empty and the three tabs have empty states. Data version 8.
 
 - Parts 1 to 6: Times and Recursos tabs, Novo modal, create collaborator CLT and PJ, the collaborator page and the home alert, create team, create recurso.
 - Part 7: the "Desligar {Nome}?" modal, the offboarding flow for CLT and PJ, the Em desligamento state in the table, the grid and the page, "Marcar como feito" on every open termination item, Desligado and Fim de contrato at zero, and the filled Recursos, Jornada de trabalho and Dados bancários on the page.
+- Empty start: no automatic seed. Version 8 clears the module's keys for visitors who had the old seed and writes nothing. The sample data loads only with `#/gestao-de-pessoas?seed=exemplo` (over the current data) and `?reset=1` clears the module; both remove themselves from the URL and also work when typed with the page open (it reloads).
+- Empty states (Figma `10379:2546`): "Total: 0 …" and the 428px block with the illustration (SVGs in `src/assets/illustrations`, cleaned of the section background the Figma export carried), title, subtitle and "Novo". A search or filter with no results keeps the current behavior.
 - Part 8: the collaborator, team and recurso pages in panel and full screen, all built from shared components in `components/detalhe/` (shell and header, profile row, fields, section title, metric cards, list rows, notes timeline). Opening by link lands in full screen; expand and Back-to-Modal switch modes. The recurso page moved to the route `#/recurso/:id`. The seed has notes for Bruno Vasconcelos, Gabriel Luz, the Design team and the Alice plan.
 
 **Bridges:** none left. The old benefício page and the legacy recurso fields `tipo` and `name` (`camposLegados`) were removed with part 8, and the team page no longer reads its own cost formula.
@@ -155,6 +157,7 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 - "Add time" offers complete teams that are not linked yet. With Toda a empresa linked, "Add time" and "Add membro" are hidden, since it is exclusive. The Toda a empresa row uses a gray badge with Buildings.
 - Removing a team or a person from a recurso has no confirmation (only team members have one, per section 8). Copy and PhoneOutgoing show only when there is a value; PhoneOutgoing is a `tel:` link.
 - Panels and modals opened from a detail page render above both modes.
+- Empty states: the block is centered in the content area, like the floating search (Figma centers it on the page, 38px to the left), and the title starts right below the illustration, as in Figma (its lower part is empty).
 - Review 1: the selection bar has no Duplicar; every stacked layer has its own veil with blur (`--gp-veu`, `--gp-veu-filtro`); the color and icon pickers are side panels, and the color picker shows the team's current color in place of its family's option; the Filtros options and "Ver mais..." are filter pills; the edit box is 290x40 everywhere (in Contato the Telefone/Email switch sits to the left of it, and on the collaborator page the label column shrinks to fit both); one field in edit mode at a time; team names are unique; the Atribuir panel shows the cargo and lists assigned people last. Recurso "Informações" keeps the "Adicionar" side panel of section 7, so it has no inline edit box.
 - Earlier decisions (part 7): locked pages show "—" on empty fields and hide empty-state actions; the term panel needs a valid Enviar para; the Chave PIX type is inferred from its format.
 
@@ -172,6 +175,7 @@ File `ZQZtZy7exqkUi5u33CUvuM` (Gestão de Pessoas 2.0).
 | Create collaborator PJ, and the PJ collaborator page | `10338:11286` |
 | Create team | `10342:12570` |
 | Create recurso | `10343:13283` |
+| Empty states of the three tabs | `10379:2546` |
 | Offboarding CLT | `10355:3451` |
 | Offboarding PJ | `10355:5041` |
 | Collaborator, team and recurso pages (panel and full screen) | `10355:1553` |
@@ -216,6 +220,8 @@ No Figma yet: new states of the floating search, and the edit states of the deta
 | Notes timeline | Full screen only: a container with a 1px #e3e6e6 top border, 30px top, 16px side and bottom padding, 24px between notes. Each note has a 1px #798282 left border, 16px left padding and 16px between the date (12px Regular #798282, "02 Set 2026") and the text (14px Regular black). Oldest first. "Adicionar nota" closes the list, with a 20px NotePencil and 14px Regular text, 12px apart |
 
 ## 1. Home
+
+**Empty states (Figma `10379:2546`):** frames Colaboradores `10379:2547`, Times `10379:2755`, Recursos `10379:2955`. When a tab has no items at all, the toolbar shows the total with 0 and, centered in the content area, a 428px block: the illustration (428x200, a faded grid of squares masked in an ellipse with a tilted white sticker holding the tab icon: a list glyph for Colaboradores, UsersFour for Times, Gift for Recursos; illustration `10379:2581`, `10379:2789`, `10379:2989`), then 16px below the title in 16px Semibold ("Nenhum colaborador adicionado", "Nenhum time adicionado", "Nenhum recurso adicionado"), the subtitle in 14px Medium #798282 ("Você pode começar a adicionar no botão abaixo"), and 40px below the black "Novo" pill with the Plus, which opens the Novo modal. The floating search stays. A search or filter with no results does not use this block (No Figma: keep the current behavior). Mock errors: "a baixo", "Total: 0" without the noun, and the view toggle drawn on the Times and Recursos frames.
 
 The header has the back button, "Gestão de Pessoas", the tutorial button (GraduationCap) and "Novo" (black pill, plus after the text). The tabs are Colaboradores, Times and Recursos.
 

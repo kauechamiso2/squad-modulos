@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
+import EstadoVazio from '../components/EstadoVazio.jsx'
 import Tabs from '../components/Tabs.jsx'
 import CollaboradoresToolbar from '../components/CollaboradoresToolbar.jsx'
 import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
@@ -503,7 +504,11 @@ function Home({ backTo }) {
                 filtersSummary={filtersSummary}
                 onClearAllFilters={clearAllFilters}
               />
-              {view === 'table' ? (
+              {/* Sem nenhum colaborador: o empty state no lugar da tabela e da
+                  grade. Busca ou filtro sem resultado mostra a tabela vazia. */}
+              {collaborators.length === 0 ? (
+                <EstadoVazio aba="colaboradores" onNovo={() => setNovoModalOpen(true)} />
+              ) : view === 'table' ? (
                 <CollaboratorsTable
                   collaborators={filteredCollaborators}
                   selectedIds={selectedIds}
@@ -542,14 +547,18 @@ function Home({ backTo }) {
                 filtersSummary={timesFiltersSummary}
                 onClearAllFilters={clearTimesFilters}
               />
-              <TimesGrid
-                teams={filteredTeams}
-                onCriarTime={(teamId) => {
-                  setNovoTimeStepFlowTeamId(teamId)
-                  setNovoTimeStepFlowOpen(true)
-                }}
-                onCardClick={openTime}
-              />
+              {times.length === 0 ? (
+                <EstadoVazio aba="times" onNovo={() => setNovoModalOpen(true)} />
+              ) : (
+                <TimesGrid
+                  teams={filteredTeams}
+                  onCriarTime={(teamId) => {
+                    setNovoTimeStepFlowTeamId(teamId)
+                    setNovoTimeStepFlowOpen(true)
+                  }}
+                  onCardClick={openTime}
+                />
+              )}
             </div>
           ) : activeTab === 'beneficios' ? (
             <div className="home__panel">
@@ -559,7 +568,11 @@ function Home({ backTo }) {
                 filtersSummary={beneficiosFiltersSummary}
                 onClearAllFilters={clearBeneficiosFilters}
               />
-              <RecursosGrid recursos={filteredRecursos} onCardClick={openBeneficio} />
+              {beneficios.length === 0 ? (
+                <EstadoVazio aba="recursos" onNovo={() => setNovoModalOpen(true)} />
+              ) : (
+                <RecursosGrid recursos={filteredRecursos} onCardClick={openBeneficio} />
+              )}
             </div>
           ) : (
             <div className="home__panel" />
