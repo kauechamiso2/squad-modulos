@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Home.jsx'
+import CargaCenarioVertice from './pages/CargaCenarioVertice.jsx'
 import { ToastProvider } from './components/toast/ToastContext.jsx'
 import './tokens.css'
 
@@ -19,6 +20,8 @@ function GestaoPessoasRoutes({ backTo }) {
     <ToastProvider>
       <div className="gp-modulo">
         <Routes>
+          {/* Cenario de teste com usuarios (contexto, "Seed and reset"). */}
+          <Route path="/teste-vertice-consultoria" element={<CargaCenarioVertice />} />
           <Route path="/*" element={<Home backTo={backTo} />} />
         </Routes>
       </div>

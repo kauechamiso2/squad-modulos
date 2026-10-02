@@ -2,6 +2,7 @@ import { todayIso } from './formatters.js'
 import { buildSeedColaboradores } from './seedColaboradores.js'
 import { buildSeedTimes } from './seedTimes.js'
 import { buildSeedRecursos } from './seedRecursos.js'
+import { buildCenarioVertice } from './seedVerticeConsultoria.js'
 
 // Todas as chaves deste modulo vivem sob um prefixo proprio. No monorepo
 // varios modulos dividem a mesma origem, entao chaves cruas como "times" ou
@@ -124,6 +125,16 @@ export function limparDadosDoModulo() {
     if (chave?.startsWith(KEY_PREFIX) && chave !== DATA_VERSION_KEY) chaves.push(chave)
   }
   chaves.forEach((chave) => localStorage.removeItem(chave))
+}
+
+// Cenario de teste Vertice Consultoria (contexto, "Seed and reset"), pela
+// rota #/gestao-de-pessoas/teste-vertice-consultoria: grava por cima dos
+// dados atuais do modulo, com o dia da carga como D0.
+export function gravarCenarioVertice(hoje = todayIso()) {
+  const { colaboradores, times, recursos } = buildCenarioVertice(hoje)
+  writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
+  writeCollection(COLLECTIONS.TIMES, times)
+  writeCollection(COLLECTIONS.BENEFICIOS, recursos)
 }
 
 // Dados de exemplo (contexto, "Seed and reset"), so pelo atalho
