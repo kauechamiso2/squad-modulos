@@ -136,10 +136,12 @@ The module starts empty for every visitor. Data lives in the visitor's own brows
 
 ## Implementation status
 
-**Done** in branch `feat/gp-build-order`, parts 1 to 8 of the build order, each checked in the browser at 1440 against Figma. Data version 7.
+**Done** on `main`: parts 1 to 8 of the build order and review 1, each checked in the browser at 1440 against Figma. Branch `feat/gp-empty-states`: the module starts empty and the three tabs have empty states. Data version 8.
 
 - Parts 1 to 6: Times and Recursos tabs, Novo modal, create collaborator CLT and PJ, the collaborator page and the home alert, create team, create recurso.
 - Part 7: the "Desligar {Nome}?" modal, the offboarding flow for CLT and PJ, the Em desligamento state in the table, the grid and the page, "Marcar como feito" on every open termination item, Desligado and Fim de contrato at zero, and the filled Recursos, Jornada de trabalho and Dados bancários on the page.
+- Empty start: no automatic seed. Version 8 clears the module's keys for visitors who had the old seed and writes nothing. The sample data loads only with `#/gestao-de-pessoas?seed=exemplo` (over the current data) and `?reset=1` clears the module; both remove themselves from the URL and also work when typed with the page open (it reloads).
+- Empty states (Figma `10379:2546`): "Total: 0 …" and the 428px block with the illustration (SVGs in `src/assets/illustrations`, cleaned of the section background the Figma export carried), title, subtitle and "Novo". A search or filter with no results keeps the current behavior.
 - Part 8: the collaborator, team and recurso pages in panel and full screen, all built from shared components in `components/detalhe/` (shell and header, profile row, fields, section title, metric cards, list rows, notes timeline). Opening by link lands in full screen; expand and Back-to-Modal switch modes. The recurso page moved to the route `#/recurso/:id`. The seed has notes for Bruno Vasconcelos, Gabriel Luz, the Design team and the Alice plan.
 
 **Bridges:** none left. The old benefício page and the legacy recurso fields `tipo` and `name` (`camposLegados`) were removed with part 8, and the team page no longer reads its own cost formula.
@@ -155,6 +157,7 @@ The module starts empty for every visitor. Data lives in the visitor's own brows
 - "Add time" offers complete teams that are not linked yet. With Toda a empresa linked, "Add time" and "Add membro" are hidden, since it is exclusive. The Toda a empresa row uses a gray badge with Buildings.
 - Removing a team or a person from a recurso has no confirmation (only team members have one, per section 8). Copy and PhoneOutgoing show only when there is a value; PhoneOutgoing is a `tel:` link.
 - Panels and modals opened from a detail page render above both modes.
+- Empty states: the block is centered in the content area, like the floating search (Figma centers it on the page, 38px to the left), and the title starts right below the illustration, as in Figma (its lower part is empty).
 - Review 1: the selection bar has no Duplicar; every stacked layer has its own veil with blur (`--gp-veu`, `--gp-veu-filtro`); the color and icon pickers are side panels, and the color picker shows the team's current color in place of its family's option; the Filtros options and "Ver mais..." are filter pills; the edit box is 290x40 everywhere (in Contato the Telefone/Email switch sits to the left of it, and on the collaborator page the label column shrinks to fit both); one field in edit mode at a time; team names are unique; the Atribuir panel shows the cargo and lists assigned people last. Recurso "Informações" keeps the "Adicionar" side panel of section 7, so it has no inline edit box.
 - Earlier decisions (part 7): locked pages show "—" on empty fields and hide empty-state actions; the term panel needs a valid Enviar para; the Chave PIX type is inferred from its format.
 
