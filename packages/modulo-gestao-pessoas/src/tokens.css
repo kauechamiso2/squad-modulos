@@ -33,7 +33,10 @@
   --gp-destaque: #e9a716;
   --gp-check: #60c60c;
   --gp-badge-amarelo: #fbedd0;
+  /* Veu de toda camada que abre por cima de outra (Shared patterns, Overlay e
+     Stacked layers): a cor e o desfoque. */
   --gp-veu: rgba(227, 230, 230, 0.6);
+  --gp-veu-filtro: blur(20px);
   --gp-titulo-folha: #0c0d0d;
   --gp-borda-forte: #d3d7d7;
   --gp-icone-amarelo: #5d4309;
@@ -42,4 +45,14 @@
   /* Barra "Tipo de contratacao" da pagina do time (Figma 10355:3305). */
   --gp-contratacao-clt: #039300;
   --gp-contratacao-pj: #2a79d7;
+}
+
+/*
+ * O ModalOverlay do @squad/ui tem o veu escuro rgba(0,0,0,0.2) por padrao,
+ * que continua valendo nos outros modulos. Aqui ele segue o veu do modulo.
+ */
+.gp-modulo .modal-overlay {
+  background: var(--gp-veu);
+  -webkit-backdrop-filter: var(--gp-veu-filtro);
+  backdrop-filter: var(--gp-veu-filtro);
 }

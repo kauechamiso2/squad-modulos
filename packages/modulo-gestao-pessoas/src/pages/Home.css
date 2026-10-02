@@ -67,7 +67,8 @@
  * valendo para os outros modulos.
  */
 .gp-painel {
-  --painel-veu-cor: rgba(227, 230, 230, 0.6);
+  --painel-veu-cor: var(--gp-veu);
+  --painel-veu-filtro: var(--gp-veu-filtro);
   --painel-altura: calc(100vh - 40px);
 }
 

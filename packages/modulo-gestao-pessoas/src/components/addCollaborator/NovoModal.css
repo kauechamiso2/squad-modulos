@@ -1,9 +1,9 @@
 .novo-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(227, 230, 230, 0.6);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: var(--gp-veu);
+  backdrop-filter: var(--gp-veu-filtro);
+  -webkit-backdrop-filter: var(--gp-veu-filtro);
   display: flex;
   align-items: center;
   justify-content: center;

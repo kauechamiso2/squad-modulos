@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { createPortal } from 'react-dom'
 import { PainelLateral } from '@squad/ui'
 import closeIcon from '../../../assets/icons/Close.svg'
 import SeletorSegmentado from '../../campos/SeletorSegmentado.jsx'
 import Campo from '../../campos/CampoPainel.jsx'
 import { dadosBancariosCompletos } from '../../../utils/cadastro.js'
+import CamadaDetalhe from '../../detalhe/CamadaDetalhe.jsx'
 import '../../campos/Botoes.css'
 import './Perfil.css'
 
@@ -23,13 +23,10 @@ function DadosBancariosPanel({ aberto, valor, onFechar, onSalvar }) {
   const [rascunho, setRascunho] = useState(() => ({ ...VAZIO, ...valor }))
   const set = (campo) => (texto) => setRascunho((atual) => ({ ...atual, [campo]: texto }))
 
-  // Fora do painel do colaborador, que define as proprias --painel-* (540px,
-  // tela cheia) e elas vazariam para este. Dentro da .gp-modulo, para manter
-  // os tokens do modulo.
-  const destino = document.querySelector('.gp-modulo')
-  if (!destino) throw new Error('DadosBancariosPanel precisa estar dentro de .gp-modulo')
-
-  return createPortal(
+  // Na camada acima da pagina do colaborador (Stacked layers): fora do painel,
+  // que tem transform e as proprias --painel-*, e acima dele nos dois modos.
+  return (
+    <CamadaDetalhe>
     <PainelLateral
       className="gp-painel gp-painel--rolagem-afastada"
       classNameVeu="gp-painel"
@@ -78,8 +75,8 @@ function DadosBancariosPanel({ aberto, valor, onFechar, onSalvar }) {
           <Campo rotulo="Chave PIX" placeholder="Chave" valor={rascunho.chavePix} onChange={set('chavePix')} />
         </div>
       </div>
-    </PainelLateral>,
-    destino,
+    </PainelLateral>
+    </CamadaDetalhe>
   )
 }
 
