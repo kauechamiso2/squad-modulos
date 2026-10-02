@@ -1,5 +1,6 @@
 import { todayIso } from './formatters.js'
 import { buildSeedColaboradores } from './seedColaboradores.js'
+import { buildSeedTimes } from './seedTimes.js'
 import { buildSeedRecursos } from './seedRecursos.js'
 
 // Todas as chaves deste modulo vivem sob um prefixo proprio. No monorepo
@@ -110,11 +111,13 @@ export function duplicateItems(name, ids) {
 //      sem os campos antigos `contractType` e `desligado`.
 //   6: checklist de desligamento do Figma (10355:3986, 10355:7067), tipos de
 //      rescisao PJ, dados do desligamento e jornada de trabalho mockada.
+//   7: paginas de detalhe - o time Design completo, notas de exemplo e os
+//      dados de contato da Alice; recursos sem os campos legados `tipo` e `name`.
 //
 // So mexe em chaves deste modulo: o localStorage e dividido com os outros
 // modulos do apps/web. Nao roda quando a versao gravada e mais nova que a
 // deste codigo, para nunca apagar dado mais novo.
-export const DATA_VERSION = 6
+export const DATA_VERSION = 7
 const DATA_VERSION_KEY = storageKey('versao-dados')
 
 export function resetDataIfOutdated() {
@@ -123,8 +126,8 @@ export function resetDataIfOutdated() {
 
   const colaboradores = buildSeedColaboradores(todayIso())
   writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
-  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores))
-  writeCollection(COLLECTIONS.TIMES, [])
+  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores, todayIso()))
+  writeCollection(COLLECTIONS.TIMES, buildSeedTimes(colaboradores, todayIso()))
   ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
   localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
 }

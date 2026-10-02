@@ -6,7 +6,7 @@ import { fornecedorDoRecurso, pessoasDoRecurso, tituloDoRecurso, valorDoRecurso 
 
 const hoje = '2026-10-01'
 const colaboradores = buildSeedColaboradores(hoje)
-const recursos = buildSeedRecursos(colaboradores)
+const recursos = buildSeedRecursos(colaboradores, hoje)
 const porTitulo = Object.fromEntries(recursos.map((recurso) => [tituloDoRecurso(recurso), recurso]))
 const contar = (titulo) => pessoasDoRecurso(porTitulo[titulo], colaboradores, hoje).length
 
@@ -40,10 +40,4 @@ test('valor unico e faixa', () => {
   assert.equal(valorDoRecurso(porTitulo.Slack), 'R$50,00')
   assert.equal(valorDoRecurso(porTitulo['Plano de saúde']), 'R$400,00-500,00')
   assert.equal(valorDoRecurso(porTitulo['Vale alimentação']), 'R$800,00-1.200,00')
-})
-
-test('campos legados para a pagina de detalhe de beneficio', () => {
-  assert.equal(porTitulo['Plano de saúde'].tipo, 'Plano de Saúde')
-  assert.equal(porTitulo['Plano de saúde'].name, 'Alice')
-  assert.equal(porTitulo['Auxílio Home Office'].outroSubtipo, 'Verba')
 })

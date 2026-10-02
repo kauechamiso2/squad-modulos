@@ -1,5 +1,5 @@
 import { generateId } from './storage.js'
-import { camposLegados } from './recursos.js'
+import { notaDoSeed } from './seedTimes.js'
 
 // Os 5 recursos do Figma da aba Recursos (10334:5539), ligados aos
 // colaboradores e times do seed. Misturam empresa toda, times e pessoas, e
@@ -22,7 +22,7 @@ function valorUnico(valor) {
   return [{ id: generateId(), valor, aplicaATodos: true, colaboradorIds: [] }]
 }
 
-export function buildSeedRecursos(colaboradores) {
+export function buildSeedRecursos(colaboradores, hoje) {
   const ids = (...nomes) => idsPorNome(colaboradores, nomes)
   const naoDesign = colaboradores
     .filter((colaborador) => !colaborador.times.includes('Design'))
@@ -45,6 +45,14 @@ export function buildSeedRecursos(colaboradores) {
       fornecedor: 'Alice',
       beneficiarios: { todaEmpresa: true, teamNames: [], colaboradorIds: [] },
       valores: [variante(400, naoDesign), variante(500, doDesign)],
+      // Contato do Figma 10355:2883 e notas para a linha do tempo.
+      linkBeneficio: 'alice.com.br',
+      contatoFornecedor: '11 3456 1234',
+      emailFornecedor: 'contato@alice.com',
+      notas: [
+        notaDoSeed(hoje, -90, 'Reajuste anual negociado em 8%, abaixo da média do mercado.'),
+        notaDoSeed(hoje, -15, 'Incluída a cobertura de telemedicina sem custo adicional.'),
+      ],
     },
     {
       tipoRecurso: 'verba',
@@ -63,6 +71,8 @@ export function buildSeedRecursos(colaboradores) {
     {
       tipoRecurso: 'licenca',
       servico: 'Slack',
+      linkBeneficio: 'slack.com',
+      emailFornecedor: 'feedback@slack.com',
       beneficiarios: { todaEmpresa: false, teamNames: ['Design', 'Marketing'], colaboradorIds: ids('Lucas Andrade') },
       valores: valorUnico(50),
     },
@@ -98,6 +108,5 @@ export function buildSeedRecursos(colaboradores) {
     emailFornecedor: null,
     notas: [],
     ...recurso,
-    ...camposLegados(recurso),
   }))
 }

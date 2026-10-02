@@ -18,7 +18,6 @@ import {
   OUTRO,
   SERVICOS_LICENCA,
   TIPOS_RECURSO,
-  camposLegados,
   pessoasDoRecurso,
 } from '../../utils/recursos.js'
 
@@ -119,7 +118,7 @@ function NovoRecursoFlow({ onExit }) {
       recurso.servico = servico
       if (servico === OUTRO) recurso.nome = nome.trim()
     }
-    addItem(COLLECTIONS.BENEFICIOS, { ...recurso, ...camposLegados(recurso) })
+    addItem(COLLECTIONS.BENEFICIOS, recurso)
     showToast('success', 'Recurso criado com sucesso')
     onExit({ criado: true })
   }

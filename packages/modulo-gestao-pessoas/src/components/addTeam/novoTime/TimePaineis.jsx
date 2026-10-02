@@ -24,22 +24,54 @@ function Rodape({ onCancelar, onSalvar, salvarDesabilitado = false }) {
  * "Adicionar lider" - Figma 10342:13032. A lista comeca com os membros do
  * passo 3; a busca acha qualquer pessoa Pendente ou Em atividade. So um
  * marcado. Quem vira lider sem ser membro entra no time ao salvar.
+ *
+ * Com `multiplo`, o mesmo painel escolhe varias pessoas ("Add membro" e
+ * "Add time" das paginas de time e recurso, que nao tem Figma): `valor` e
+ * `onSalvar` usam uma lista de ids, e sem `membros` a lista mostra todos os
+ * `candidatos`. `subtitulo(pessoa)` troca o cargo em cinza.
  */
-export function LiderPanel({ aberto, valor, membros, candidatos, onFechar, onSalvar }) {
+export function LiderPanel({
+  aberto,
+  valor,
+  membros,
+  candidatos,
+  onFechar,
+  onSalvar,
+  titulo = 'Adicionar líder',
+  multiplo = false,
+  vazio = 'Nenhum membro escolhido ainda.',
+  subtitulo = (pessoa) => pessoa.cargos?.[0],
+}) {
   const [busca, setBusca] = useState('')
-  const [escolhido, setEscolhido] = useState(valor)
+  const [escolhidos, setEscolhidos] = useState(() => new Set(multiplo ? valor : valor ? [valor] : []))
   const termo = busca.trim().toLowerCase()
-  const lista = termo ? candidatos.filter((pessoa) => pessoa.name.toLowerCase().includes(termo)) : membros
+  const inicial = membros ?? candidatos
+  const lista = termo ? candidatos.filter((pessoa) => pessoa.name.toLowerCase().includes(termo)) : inicial
+
+  const alternar = (id) => {
+    setEscolhidos((atual) => {
+      if (!multiplo) return atual.has(id) ? new Set() : new Set([id])
+      const proximo = new Set(atual)
+      if (proximo.has(id)) proximo.delete(id)
+      else proximo.add(id)
+      return proximo
+    })
+  }
 
   return (
     <PainelLateral
       className="gp-painel gp-painel--rolagem-afastada"
       classNameVeu="gp-painel"
       aberto={aberto}
-      titulo="Adicionar líder"
+      titulo={titulo}
       iconeFechar={closeIcon}
       onFechar={onFechar}
-      rodape={<Rodape onCancelar={onFechar} onSalvar={() => onSalvar(escolhido)} />}
+      rodape={
+        <Rodape
+          onCancelar={onFechar}
+          onSalvar={() => onSalvar(multiplo ? [...escolhidos] : ([...escolhidos][0] ?? null))}
+        />
+      }
     >
       <div className="time-painel">
         <label className="time-painel__busca">
@@ -48,7 +80,8 @@ export function LiderPanel({ aberto, valor, membros, candidatos, onFechar, onSal
         </label>
         <div className="time-painel__lista">
           {lista.map((pessoa) => {
-            const marcado = pessoa.id === escolhido
+            const marcado = escolhidos.has(pessoa.id)
+            const extra = subtitulo(pessoa)
             return (
               <button
                 type="button"
@@ -56,19 +89,17 @@ export function LiderPanel({ aberto, valor, membros, candidatos, onFechar, onSal
                 aria-checked={marcado}
                 key={pessoa.id}
                 className="time-painel__pessoa"
-                onClick={() => setEscolhido(marcado ? null : pessoa.id)}
+                onClick={() => alternar(pessoa.id)}
               >
                 <span className="time-painel__check">
                   <img src={marcado ? checkSquareIcon : squareIcon} width={24} height={24} alt="" />
                 </span>
                 <span className="time-painel__nome">{pessoa.name}</span>
-                {pessoa.cargos?.[0] && <span className="time-painel__cargo">{pessoa.cargos[0]}</span>}
+                {extra && <span className="time-painel__cargo">{extra}</span>}
               </button>
             )
           })}
-          {lista.length === 0 && (
-            <p className="time-painel__vazio">{termo ? 'Nenhum resultado.' : 'Nenhum membro escolhido ainda.'}</p>
-          )}
+          {lista.length === 0 && <p className="time-painel__vazio">{termo ? 'Nenhum resultado.' : vazio}</p>}
         </div>
       </div>
     </PainelLateral>

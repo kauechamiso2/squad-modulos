@@ -39,12 +39,14 @@ function iconeDoRecurso(recurso, tamanho) {
   return <Icone size={tamanho} color="var(--gp-ausencia-icone)" />
 }
 
-// Logo ou icone do recurso: 56px nos cards (icone de 24) e 32px na pagina do
-// colaborador (icone de 20, Figma 10355:3706). A folga do logo escala junto.
+// Logo ou icone do recurso: 56px nos cards (icone de 24), 40px no perfil da
+// pagina do recurso (raio 8, Figma 10355:2885) e 32px nas linhas de lista
+// (icone de 20, Figma 10355:3706). A folga do logo escala junto.
 export function MarcaDoRecurso({ recurso, tamanho = 56 }) {
   const nomeDaMarca = recurso.tipoRecurso === 'licenca' ? recurso.servico : recurso.fornecedor
   const logo = LOGOS[nomeDaMarca]
-  const classeTamanho = tamanho === 56 ? '' : ' recurso-card__marca--pequena'
+  const classeTamanho = { 56: '', 40: ' recurso-card__marca--perfil', 32: ' recurso-card__marca--pequena' }[tamanho]
+  if (classeTamanho == null) throw new Error(`Tamanho de marca sem desenho: ${tamanho}`)
   if (logo) {
     const folga = (logo.inset * tamanho) / 56
     return (
@@ -60,7 +62,7 @@ export function MarcaDoRecurso({ recurso, tamanho = 56 }) {
   }
   return (
     <span className={`recurso-card__marca recurso-card__marca--icone${classeTamanho}`}>
-      {iconeDoRecurso(recurso, tamanho === 56 ? 24 : 20)}
+      {iconeDoRecurso(recurso, tamanho === 32 ? 20 : 24)}
     </span>
   )
 }

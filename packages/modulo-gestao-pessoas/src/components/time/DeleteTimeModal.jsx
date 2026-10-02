@@ -6,7 +6,7 @@ function DeleteTimeModal({ name, onCancel, onConfirm }) {
     <ConfirmModal
       icon={Trash}
       title={`Excluir ${name}?`}
-      message={`Tem certeza que quer excluir o time ${name}? Essa ação não pode ser desfeita. Os colaboradores desse time ficarão sem time atribuído.`}
+      message={`Tem certeza que quer excluir o time ${name}? Essa ação não pode ser desfeita. Os colaboradores deixam de fazer parte deste time e continuam nos outros, se houver.`}
       confirmLabel="Excluir"
       onCancel={onCancel}
       onConfirm={onConfirm}

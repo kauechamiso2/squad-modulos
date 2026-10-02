@@ -1,695 +1,399 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Crown,
-  Eyedropper,
-  Smiley,
-  FileText,
-  NotePencil,
-  FrameCorners,
-  CaretDown,
-  Plus,
-  X,
-  Eye,
-  EyeSlash,
-} from '@phosphor-icons/react'
-import closeIcon from '../../assets/icons/Close.svg'
-import trashIcon from '../../assets/icons/Trash.svg'
+import { createElement, useEffect, useState } from 'react'
+import crownIcon from '../../assets/icons/Crown.svg'
+import eyedropperIcon from '../../assets/icons/Eyedropper.svg'
+import smileyIcon from '../../assets/icons/Smiley.svg'
+import fileTextIcon from '../../assets/icons/FileTextGray.svg'
 import userIcon from '../../assets/icons/User.svg'
+import caretDownIcon from '../../assets/icons/CaretDownBlack.svg'
+import xIcon from '../../assets/icons/X.svg'
 import arrowUpRightIcon from '../../assets/icons/ArrowUpRight.svg'
-import backToModalIcon from '../../assets/icons/Back-to-Modal.svg'
-import LiderModal from '../addTeam/LiderModal.jsx'
+import DetalheShell, { CabecalhoDetalhe } from '../detalhe/DetalheShell.jsx'
+import CamadaDetalhe from '../detalhe/CamadaDetalhe.jsx'
+import {
+  AdicionarNota,
+  AvatarIniciais,
+  CampoDetalhe,
+  LinhaDoTempo,
+  LinhaLista,
+  LinhaPerfil,
+  ListaDetalhe,
+  MetricaBarra,
+  MetricaLinhas,
+  MetricaValor,
+  MetricasGrade,
+  SecaoDetalhe,
+} from '../detalhe/Blocos.jsx'
+import { iconeCampo } from '../detalhe/iconeCampo.jsx'
+import { MarcaDoRecurso } from '../RecursosGrid.jsx'
+import { DescricaoPanel, LiderPanel } from '../addTeam/novoTime/TimePaineis.jsx'
 import ColorPickerModal from '../addTeam/ColorPickerModal.jsx'
 import IconPickerModal from '../addTeam/IconPickerModal.jsx'
-import DescricaoModal from '../addTeam/DescricaoModal.jsx'
-import MembrosModal from '../addTeam/MembrosModal.jsx'
 import DeleteTimeModal from './DeleteTimeModal.jsx'
 import RemoveMemberModal from './RemoveMemberModal.jsx'
-import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
-import { custoBaseDoColaborador } from '../../utils/custos.js'
-import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
-import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
-import { formatDateDMonthYear, formatCurrencyBRL } from '../../utils/formatters.js'
+import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { STATUS, getStatus } from '../../utils/colaboradorStatus.js'
+import { metricasDoTime } from '../../utils/detalhes.js'
+import { tipoENomeDoRecurso } from '../../utils/recursos.js'
+import { formatarTempoDeCasa } from '../../utils/tempoDeCasa.js'
+import { novaNota } from '../../utils/notas.js'
+import { todayIso } from '../../utils/formatters.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../utils/teamOptions.js'
 import { useToast } from '../toast/ToastContext.jsx'
-import '../addTeam/Step1TeamInfo.css'
-import './TimeDetail.css'
-import { IconButton, PainelLateral } from '@squad/ui'
 
-function getInitials(name) {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  if (parts.length === 0) return ''
-  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase()
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+function formatNumero(valor) {
+  return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function computeAverageTenureMonths(members) {
-  const now = new Date()
-  const monthsList = members
-    .map((member) => getCollaboratorActiveSince(member))
-    .filter(Boolean)
-    .map((iso) => {
-      const [year, month, day] = iso.split('-').map(Number)
-      const start = new Date(year, month - 1, day)
-      const totalMonths =
-        (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
-      return Math.max(totalMonths, 0)
-    })
-  if (monthsList.length === 0) return null
-  return monthsList.reduce((sum, value) => sum + value, 0) / monthsList.length
-}
+// So Pendente e Em atividade entram como membro ou lider (contexto, "Team").
+const podeEntrar = (pessoa) => [STATUS.PENDENTE, STATUS.EM_ATIVIDADE].includes(getStatus(pessoa).id)
 
-function formatTenure(months) {
-  if (months == null) return '—'
-  const rounded = Math.round(months)
-  const years = Math.floor(rounded / 12)
-  const remMonths = rounded % 12
-  return `${years}a ${remMonths}m`
-}
-
-function formatBeneficioAggregate(values) {
-  if (values.length === 0) return '—'
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  if (min === max) return formatCurrencyBRL(min)
-  const fmt = (value) =>
-    value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  return `R$${fmt(min)}-${fmt(max)}`
-}
-
-// Custo total has no currency prefix - just the number.
-function formatNumberBRL(value) {
-  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
-
-// Same "Custo total" formula as the Colaborador page: the member's own
-// salário/valorPagamento plus every benefit value individually assigned to
-// them (not aggregated across the team, which is what beneficiosDoTime does).
-// Ponte ate a pagina do time ter Figma: o custo base vem do modelo novo
-// (custo para empresa no CLT, valor do contrato no PJ).
-function computeMemberCusto(member, collaborators, beneficios) {
-  const salarioValue = custoBaseDoColaborador(member)
-  const beneficiosValue = beneficios
-    .filter((benefit) => Boolean(benefit.tipo))
-    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(member.id))
-    .reduce((sum, benefit) => {
-      const variant = benefit.valores?.find(
-        (item) => item.aplicaATodos || item.colaboradorIds?.includes(member.id),
-      )
-      return sum + (variant?.valor ?? 0)
-    }, 0)
-  return salarioValue + beneficiosValue
-}
-
-function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged }) {
+/*
+ * Pagina do time - Figma 10355:3214 (painel) e 10355:2346 (tela cheia). So
+ * times completos abrem. Campos 10355:3228, metricas 10355:3274, membros
+ * 10355:3309 e recursos 10355:3344.
+ */
+function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged, onAbrirRecurso }) {
   const { showToast } = useToast()
   const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
-  const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
-  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
+  const [colaboradores, setColaboradores] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
+  const recursos = getCollection(COLLECTIONS.BENEFICIOS)
 
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [removeMemberTarget, setRemoveMemberTarget] = useState(null)
-  const [openFieldModal, setOpenFieldModal] = useState(null)
-  const [descExpanded, setDescExpanded] = useState(false)
-  const [addingNota, setAddingNota] = useState(false)
-  const [notaText, setNotaText] = useState('')
-  const notaInputRef = useRef(null)
-  const notaSavingRef = useRef(false)
-  const [custoVisible, setCustoVisible] = useState(false)
-
+  const [excluindo, setExcluindo] = useState(false)
+  const [removendo, setRemovendo] = useState(null)
+  const [modal, setModal] = useState(null)
+  const [painel, setPainel] = useState(null)
+  // Os paineis ficam montados para animar a saida; a chave nova a cada
+  // abertura zera o rascunho deles.
+  const [aberturas, setAberturas] = useState(0)
+  const [descricaoAberta, setDescricaoAberta] = useState(false)
 
   /*
-   * O painel fica montado enquanto a saida anima (o PainelLateral so o tira
-   * do DOM no fim da transicao), entao nem o estado local nem os dados lidos
-   * do storage se reiniciam sozinhos a cada abertura como acontecia quando o
-   * Home desmontava. Releia e zere aqui, na subida de `aberto`.
+   * O painel fica montado enquanto a saida anima, entao releia e zere aqui,
+   * na subida de `aberto`.
    */
   useEffect(() => {
     if (!aberto) return
     setTimes(getCollection(COLLECTIONS.TIMES))
-    setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-    setDeleteModalOpen(false)
-    setRemoveMemberTarget(null)
-    setOpenFieldModal(null)
-    setDescExpanded(false)
-    setAddingNota(false)
-    setNotaText('')
-    setCustoVisible(false)
+    setColaboradores(getCollection(COLLECTIONS.COLABORADORES))
+    setExcluindo(false)
+    setRemovendo(null)
+    setModal(null)
+    setPainel(null)
+    setDescricaoAberta(false)
   }, [aberto])
 
-  const team = times.find((item) => item.id === id) ?? null
+  const time = times.find((item) => item.id === id) ?? null
+  if (!time) return null
 
-  const persistTimes = (updatedTimes) => {
-    setCollection(COLLECTIONS.TIMES, updatedTimes)
-    setTimes(updatedTimes)
+  const hoje = todayIso()
+  const metricas = metricasDoTime(time, colaboradores, recursos, hoje)
+  const { light, dark } = getTeamColorTones(time.color)
+  const IconeTime = getTeamIconComponent(time.icon)
+  const lider = colaboradores.find((pessoa) => pessoa.id === time.leaderId) ?? null
+  const idsMembros = new Set(metricas.membros.map((pessoa) => pessoa.id))
+
+  const gravarTimes = (lista) => {
+    setCollection(COLLECTIONS.TIMES, lista)
+    setTimes(lista)
+  }
+  const atualizarTime = (campos) => gravarTimes(times.map((item) => (item.id === id ? { ...item, ...campos } : item)))
+
+  const gravarColaboradores = (lista) => {
+    setCollection(COLLECTIONS.COLABORADORES, lista)
+    setColaboradores(lista)
+    onDataChanged?.(lista)
   }
 
-  const persistCollaborators = (updatedCollaborators) => {
-    setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
-    setCollaborators(updatedCollaborators)
-    onDataChanged?.(updatedCollaborators)
-  }
-
-  const updateTeamField = (field, value) => {
-    if (!team) return
-    persistTimes(times.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
-  }
-
-  const members = useMemo(() => {
-    if (!team) return []
-    return collaborators.filter(
-      (collaborator) => Array.isArray(collaborator.times) && collaborator.times.includes(team.name),
+  // Entrar soma este time aos da pessoa; sair tira so este time.
+  const adicionarMembros = (ids) => {
+    const novos = new Set(ids)
+    gravarColaboradores(
+      colaboradores.map((pessoa) =>
+        novos.has(pessoa.id) && !pessoa.times.includes(time.name) ? { ...pessoa, times: [...pessoa.times, time.name] } : pessoa,
+      ),
     )
-  }, [collaborators, team])
-
-  /*
-   * Estes ganchos precisam vir antes do `if (!team)`: um gancho depois de um
-   * return condicional muda a ordem entre renders. Nenhum deles depende de
-   * `team` - todos partem de `members`, que ja trata o time ausente.
-   */
-  const avgTenureMonths = computeAverageTenureMonths(members)
-
-  const custoTotalTime = useMemo(
-    () => members.reduce((sum, member) => sum + computeMemberCusto(member, collaborators, beneficios), 0),
-    [members, collaborators, beneficios],
-  )
-  const custoDisplayText = custoVisible ? formatNumberBRL(custoTotalTime) : '••••••'
-
-  const cargoCounts = useMemo(() => {
-    const map = new Map()
-    members.forEach((member) => {
-      ;(member.cargos ?? []).forEach((cargoName) => {
-        map.set(cargoName, (map.get(cargoName) ?? 0) + 1)
-      })
-    })
-    return Array.from(map.entries()).sort((a, b) => b[1] - a[1])
-  }, [members])
-
-  const contractPercentages = useMemo(() => {
-    // Ponte: a barra conta CLT e PJ pelo `tipo` (contexto, secao 8).
-    const counts = { CLT: 0, PJ: 0 }
-    members.forEach((member) => {
-      counts[member.tipo] += 1
-    })
-    const total = members.length
-    return {
-      CLT: total ? Math.round((counts.CLT / total) * 100) : 0,
-      PJ: total ? Math.round((counts.PJ / total) * 100) : 0,
-    }
-  }, [members])
-
-  const nonMemberCollaborators = useMemo(() => {
-    const memberIds = new Set(members.map((member) => member.id))
-    return collaborators.filter((collaborator) => !memberIds.has(collaborator.id))
-  }, [collaborators, members])
-
-  const beneficiosDoTime = useMemo(() => {
-    return beneficios
-      .filter((benefit) => Boolean(benefit.tipo))
-      .map((benefit) => {
-        const beneficiaryIds = resolveBeneficiaryIds(benefit.beneficiarios, collaborators)
-        const qualifyingMemberIds = members
-          .filter((member) => beneficiaryIds.has(member.id))
-          .map((member) => member.id)
-        if (qualifyingMemberIds.length === 0) return null
-        const values = qualifyingMemberIds
-          .map((memberId) => {
-            const variant = benefit.valores?.find(
-              (item) => item.aplicaATodos || item.colaboradorIds?.includes(memberId),
-            )
-            return variant ? variant.valor : null
-          })
-          .filter((value) => value != null)
-        return {
-          benefit,
-          filterTipo: getBenefitFilterTipo(benefit),
-          Icon: getBeneficioTypeIcon(benefit.tipo),
-          aggregateValue: formatBeneficioAggregate(values),
-        }
-      })
-      .filter(Boolean)
-  }, [beneficios, collaborators, members])
-
-  if (!team) return null
-
-  const { light, dark } = getTeamColorTones(team.color)
-  const TeamIcon = getTeamIconComponent(team.icon)
-  const leader = members.find((member) => member.id === team.leaderId) ?? null
-
-  const handleDelete = () => {
-    const updatedTimes = times.filter((item) => item.id !== id)
-    setCollection(COLLECTIONS.TIMES, updatedTimes)
-
-    const updatedCollaborators = collaborators.map((collaborator) =>
-      Array.isArray(collaborator.times) && collaborator.times.includes(team.name)
-        ? { ...collaborator, times: [] }
-        : collaborator,
+  }
+  const removerMembro = (pessoaId) => {
+    gravarColaboradores(
+      colaboradores.map((pessoa) =>
+        pessoa.id === pessoaId ? { ...pessoa, times: pessoa.times.filter((nome) => nome !== time.name) } : pessoa,
+      ),
     )
-    setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
-    onDataChanged?.(updatedCollaborators)
+    if (time.leaderId === pessoaId) atualizarTime({ leaderId: null })
+  }
+
+  const excluir = () => {
+    gravarTimes(times.filter((item) => item.id !== id))
+    gravarColaboradores(
+      colaboradores.map((pessoa) =>
+        pessoa.times.includes(time.name) ? { ...pessoa, times: pessoa.times.filter((nome) => nome !== time.name) } : pessoa,
+      ),
+    )
     showToast('danger', 'Time excluído com sucesso')
     onClose()
   }
 
-  const handleRemoveMember = (memberId) => {
-    const updated = collaborators.map((collaborator) =>
-      collaborator.id === memberId ? { ...collaborator, times: [] } : collaborator,
-    )
-    persistCollaborators(updated)
-    if (team.leaderId === memberId) {
-      updateTeamField('leaderId', null)
-    }
+  const abrirPainel = (qual) => {
+    setAberturas((total) => total + 1)
+    setPainel(qual)
   }
 
-  const startAddNota = () => {
-    setNotaText('')
-    setAddingNota(true)
-  }
+  const adicionarNota = (texto) => atualizarTime({ notas: [...(time.notas ?? []), novaNota(texto)] })
+  const candidatos = colaboradores.filter(podeEntrar)
 
-  const cancelAddNota = () => {
-    setAddingNota(false)
-    setNotaText('')
-  }
-
-  const saveNota = () => {
-    const trimmed = notaText.trim()
-    if (!trimmed) {
-      cancelAddNota()
-      return
-    }
-    notaSavingRef.current = true
-    const notas = [...(team.notas ?? []), { text: trimmed, timestamp: new Date().toISOString() }]
-    updateTeamField('notas', notas)
-    setAddingNota(false)
-    setNotaText('')
-  }
-
-  const handleNotaBlur = () => {
-    if (notaSavingRef.current) {
-      notaSavingRef.current = false
-      return
-    }
-    cancelAddNota()
-  }
-
-
-  const profileSection = (
-    <div className="time-detail__profile">
-      <span className="time-detail__badge" style={{ background: light }}>
-        <TeamIcon size={24} color={dark} />
-      </span>
-      <span className="time-detail__name">{team.name}</span>
-    </div>
+  const perfil = (
+    <LinhaPerfil
+      avatar={
+        <span className="detalhe-avatar-perfil detalhe-avatar-perfil--time" style={{ background: light }}>
+          {createElement(IconeTime, { size: 24, color: dark })}
+        </span>
+      }
+      nome={time.name}
+    />
   )
 
-  const infoList = (
-    <div className="time-detail__info-list">
-      <div className="time-detail__row">
-        <Crown size={20} className="time-detail__row-icon" />
-        <span className="time-detail__row-label">Líder</span>
-        <button
-          type="button"
-          className="time-detail__value-button time-detail__leader-button"
-          onClick={() => setOpenFieldModal('lider')}
-        >
-          <span className="time-detail__avatar-sm">
-            <img src={userIcon} alt="" width={12} height={12} />
-          </span>
-          <span>{leader?.name ?? 'Adicionar'}</span>
-        </button>
-      </div>
-
-      <div className="time-detail__row">
-        <Eyedropper size={20} className="time-detail__row-icon" />
-        <span className="time-detail__row-label">Cor</span>
-        <div className="time-detail__row-control team-field-row__control">
-          <span className="team-color-dot" style={{ background: light }} />
-          <span className="team-color-dot" style={{ background: dark }} />
-          <button
-            type="button"
-            className="team-color-swatch-button"
-            style={{ background: dark }}
-            onClick={() => setOpenFieldModal('cor')}
-            aria-label="Escolher cor do time"
-          />
-        </div>
-      </div>
-
-      <div className="time-detail__row">
-        <Smiley size={20} className="time-detail__row-icon" />
-        <span className="time-detail__row-label">Ícone</span>
-        <button
-          type="button"
-          className="time-detail__icon-pill"
-          onClick={() => setOpenFieldModal('icone')}
-          aria-label="Escolher icone do time"
-        >
-          <TeamIcon size={16} color={dark} />
-          <CaretDown size={16} />
-        </button>
-      </div>
-
-      <div className="time-detail__row time-detail__row--descricao">
-        <FileText size={20} className="time-detail__row-icon" />
-        <span className="time-detail__row-label">Descrição</span>
-        <div className="time-detail__descricao-content">
-          <p
-            className={
-              descExpanded
-                ? 'time-detail__descricao-text'
-                : 'time-detail__descricao-text time-detail__descricao-text--clamped'
-            }
-            onClick={() => setOpenFieldModal('descricao')}
-          >
-            {team.descricao || 'Adicionar'}
-          </p>
-          {team.descricao && (
-            <button
-              type="button"
-              className="time-detail__ver-mais"
-              onClick={(event) => {
-                event.stopPropagation()
-                setDescExpanded((value) => !value)
-              }}
-            >
-              {descExpanded ? 'ver menos...' : 'ver mais...'}
-            </button>
+  const campos = (
+    <div className="detalhe-campos">
+      <CampoDetalhe icone={iconeCampo(crownIcon)} rotulo="Líder" vazio={!lider}>
+        <button type="button" className={lider ? 'detalhe-valor-botao' : 'detalhe-valor-botao detalhe-valor-botao--vazio'} onClick={() => abrirPainel('lider')}>
+          {lider ? (
+            <>
+              <span className="detalhe-avatar-pequeno">
+                <img src={userIcon} width={12} height={12} alt="" />
+              </span>
+              {lider.name}
+            </>
+          ) : (
+            'Adicionar'
           )}
-        </div>
-      </div>
-    </div>
-  )
-
-  const notesSection = (
-    <div className="time-detail__notes">
-      {(team.notas ?? []).map((nota, index) => (
-        <div className="time-detail__nota" key={index}>
-          <span className="time-detail__nota-date">
-            {formatDateDMonthYear(nota.timestamp.slice(0, 10))}
-          </span>
-          <p className="time-detail__nota-text">{nota.text}</p>
-        </div>
-      ))}
-
-      {addingNota ? (
-        <input
-          ref={notaInputRef}
-          type="text"
-          autoFocus
-          className="time-detail__add-nota-input"
-          placeholder="Escreva uma nota..."
-          value={notaText}
-          onChange={(event) => setNotaText(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              notaSavingRef.current = true
-              saveNota()
-            }
-            if (event.key === 'Escape') cancelAddNota()
-          }}
-          onBlur={handleNotaBlur}
-        />
-      ) : (
-        <button type="button" className="time-detail__add-nota" onClick={startAddNota}>
-          <NotePencil size={20} color="var(--color-text-secondary)" />
-          Adicionar nota
         </button>
-      )}
-    </div>
-  )
-
-  const metricsSection = (
-    <div className="time-detail__metrics">
-      <p className="time-detail__section-label">Métricas</p>
-
-      <div className="time-detail__stats-row">
-        <div className="time-detail__stat-card">
-          <span className="time-detail__stat-label">Total de membros</span>
-          <span className="time-detail__stat-value">{members.length}</span>
-        </div>
-        <div className="time-detail__stat-card">
-          <span className="time-detail__stat-label">Tempo média de casa</span>
-          <span className="time-detail__stat-value">{formatTenure(avgTenureMonths)}</span>
-        </div>
-      </div>
-
-      <div className="time-detail__stat-card">
-        <div className="time-detail__stat-header">
-          <span className="time-detail__stat-label time-detail__stat-label--medium">
-            Custo total do time
-          </span>
-          <button
-            type="button"
-            className="time-detail__stat-toggle"
-            onClick={() => setCustoVisible((value) => !value)}
-            aria-label={custoVisible ? 'Ocultar custo total do time' : 'Mostrar custo total do time'}
-          >
-            {custoVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
-          </button>
-        </div>
-        <span className="time-detail__stat-value">{custoDisplayText}</span>
-      </div>
-
-      <div className="time-detail__stat-card">
-        <span className="time-detail__stat-label">Cargos representados</span>
-        {cargoCounts.length === 0 ? (
-          <span className="time-detail__cargo-name">—</span>
-        ) : (
-          cargoCounts.map(([cargoName, count]) => (
-            <div className="time-detail__cargo-row" key={cargoName}>
-              <span className="time-detail__cargo-name">{cargoName}</span>
-              <span className="time-detail__cargo-count">{count}</span>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="time-detail__stat-card">
-        <span className="time-detail__contract-label">Tipo de contratação</span>
-        <div className="time-detail__contract-bar">
-          <span style={{ flex: contractPercentages.CLT || 0.0001, background: '#039300' }} />
-          <span style={{ flex: contractPercentages.PJ || 0.0001, background: '#2a79d7' }} />
-        </div>
-        <p className="time-detail__contract-legend">
-          CLT: {contractPercentages.CLT}% | PJ: {contractPercentages.PJ}%
-        </p>
-      </div>
-    </div>
-  )
-
-  const membrosSection = (
-    <div className="time-detail__membros">
-      <div className="time-detail__section-header">
-        <p className="time-detail__section-label time-detail__section-label--flex">Membros</p>
-        <button
-          type="button"
-          className="time-detail__add-membro-button"
-          onClick={() => setOpenFieldModal('membros')}
-        >
-          Add membro
-          <Plus size={20} color="#798282" />
+      </CampoDetalhe>
+      <CampoDetalhe icone={iconeCampo(eyedropperIcon)} rotulo="Cor">
+        <button type="button" className="detalhe-pilula" aria-label="Escolher cor do time" onClick={() => setModal('cor')}>
+          <span className="detalhe-pilula__ponto" style={{ background: dark }} />
+          <img src={caretDownIcon} width={16} height={16} alt="" />
         </button>
-      </div>
-
-      <div className="time-detail__member-list">
-        {members.map((member) => (
-          <div className="time-detail__member-row" key={member.id}>
-            <span className="time-detail__member-avatar" style={{ background: dark }}>
-              {getInitials(member.name)}
-            </span>
-            <div className="time-detail__member-info">
-              <span className="time-detail__member-name">{member.name}</span>
-              <span className="time-detail__member-cargo">{member.cargos?.[0] ?? ''}</span>
-            </div>
+      </CampoDetalhe>
+      <CampoDetalhe icone={iconeCampo(smileyIcon)} rotulo="Ícone">
+        <button type="button" className="detalhe-pilula detalhe-pilula--icone" aria-label="Escolher ícone do time" onClick={() => setModal('icone')}>
+          {createElement(IconeTime, { size: 24, color: dark })}
+          <img src={caretDownIcon} width={16} height={16} alt="" />
+        </button>
+      </CampoDetalhe>
+      <CampoDetalhe icone={iconeCampo(fileTextIcon)} rotulo="Descrição" vazio={!time.descricao} topo={Boolean(time.descricao)}>
+        {time.descricao ? (
+          <span className="detalhe-descricao">
             <button
               type="button"
-              className="time-detail__member-remove"
-              onClick={() => setRemoveMemberTarget(member)}
-              aria-label="Remover membro"
+              className={descricaoAberta ? 'detalhe-descricao__texto detalhe-descricao__texto--aberto' : 'detalhe-descricao__texto'}
+              onClick={() => abrirPainel('descricao')}
             >
-              <X size={24} />
+              {time.descricao}
             </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  const beneficiosSection = beneficiosDoTime.length > 0 && (
-    <div className="time-detail__beneficios">
-      <p className="time-detail__section-label">Benefícios</p>
-      <div className="time-detail__beneficio-list">
-        {beneficiosDoTime.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
-          <div className="time-detail__beneficio-row" key={benefit.id}>
-            <span className="time-detail__beneficio-icon">
-              <Icon size={18} />
-            </span>
-            <span className="time-detail__beneficio-info">
-              <span className="time-detail__beneficio-tipo">{filterTipo}</span>
-              <span className="time-detail__beneficio-name">{benefit.name}</span>
-            </span>
-            <span className="time-detail__beneficio-value">{aggregateValue}</span>
-            <img src={arrowUpRightIcon} width={24} height={24} alt="" />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
-  /*
-   * A casca (veu, painel de 540, deslize de 280ms) e o @squad/ui/PainelLateral,
-   * o mesmo do detalhe do colaborador - uma animacao so, a do ui.
-   *
-   * O modo tela cheia continua sendo CSS daqui: ele anima largura, posicao e
-   * padding no MESMO elemento do modo painel, entao entra como classe extra.
-   */
-  const cabecalhoDireita = (
-    <>
-        <IconButton icon={trashIcon} alt="Excluir" onClick={() => setDeleteModalOpen(true)} />
-        {mode === 'full' ? (
-          <button
-            type="button"
-            className="icon-button time-detail__expand-button"
-            onClick={onCollapse}
-            aria-label="Recolher"
-          >
-            <img src={backToModalIcon} alt="" width={24} height={24} />
-          </button>
+            <button type="button" className="detalhe-descricao__ver-mais" onClick={() => setDescricaoAberta((valor) => !valor)}>
+              {descricaoAberta ? 'ver menos...' : 'ver mais...'}
+            </button>
+          </span>
         ) : (
-          <button
-            type="button"
-            className="icon-button time-detail__expand-button"
-            onClick={onExpand}
-            aria-label="Expandir"
-          >
-            <FrameCorners size={24} />
+          <button type="button" className="detalhe-valor-botao detalhe-valor-botao--vazio" onClick={() => abrirPainel('descricao')}>
+            Adicionar
           </button>
         )}
-    </>
+      </CampoDetalhe>
+    </div>
+  )
+
+  const secaoMetricas = (
+    <SecaoDetalhe titulo="Métricas">
+      <MetricasGrade>
+        <MetricaLinhas
+          linhas={[
+            { rotulo: 'Total de membros', valor: metricas.membros.length },
+            { rotulo: 'Tempo médio de casa', valor: formatarTempoDeCasa(metricas.mediaDeMeses) },
+          ]}
+        />
+        <MetricaValor rotulo="Custo total do time" valor={formatNumero(metricas.custo)} comOlho />
+        <MetricaLinhas linhas={metricas.cargos.map(([rotulo, valor]) => ({ rotulo, valor }))} />
+        <MetricaBarra
+          rotulo="Tipo de contratação"
+          segmentos={
+            metricas.membros.length
+              ? [
+                  { rotulo: 'CLT', porcentagem: metricas.contratacao.CLT, cor: 'var(--gp-contratacao-clt)' },
+                  { rotulo: 'PJ', porcentagem: metricas.contratacao.PJ, cor: 'var(--gp-contratacao-pj)' },
+                ]
+              : []
+          }
+        />
+      </MetricasGrade>
+    </SecaoDetalhe>
+  )
+
+  const secaoMembros = (
+    <SecaoDetalhe titulo="Membros" acao="Add membro" onAcao={() => abrirPainel('membros')}>
+      {metricas.membros.length > 0 && (
+        <ListaDetalhe>
+          {metricas.membros.map((pessoa) => (
+            <LinhaLista
+              key={pessoa.id}
+              inicio={<AvatarIniciais nome={pessoa.name} cor={dark} />}
+              textos={[{ texto: pessoa.name }, ...(pessoa.cargos?.[0] ? [{ texto: pessoa.cargos[0], cinza: true }] : [])]}
+              fim={
+                <button
+                  type="button"
+                  className="detalhe-lista__icone-botao"
+                  aria-label={`Remover ${pessoa.name} do time`}
+                  onClick={() => setRemovendo(pessoa)}
+                >
+                  <img src={xIcon} width={24} height={24} alt="" />
+                </button>
+              }
+            />
+          ))}
+        </ListaDetalhe>
+      )}
+    </SecaoDetalhe>
+  )
+
+  const secaoRecursos = metricas.recursos.length > 0 && (
+    <SecaoDetalhe titulo="Recursos">
+      <ListaDetalhe>
+        {metricas.recursos.map(({ recurso, faixa }) => {
+          const { tipo, nome } = tipoENomeDoRecurso(recurso)
+          return (
+            <LinhaLista
+              key={recurso.id}
+              onClick={() => onAbrirRecurso(recurso.id)}
+              inicio={<MarcaDoRecurso recurso={recurso} tamanho={32} />}
+              textos={[{ texto: tipo, cinza: true }, { texto: nome || '—' }]}
+              valor={faixa}
+              fim={<img src={arrowUpRightIcon} width={24} height={24} alt="" />}
+            />
+          )
+        })}
+      </ListaDetalhe>
+    </SecaoDetalhe>
   )
 
   return (
-    <PainelLateral
+    <DetalheShell
       aberto={aberto}
+      mode={mode}
       titulo="Time"
-      /* O foco inicial vem para o X, nunca para a lixeira. */
-      acaoEsquerda={<IconButton icon={closeIcon} alt="Fechar" data-foco-inicial onClick={onClose} />}
-      acaoDireita={cabecalhoDireita}
-      comRodape={false}
-      onFechar={onClose}
-      className={[
-        'gp-painel',
-        'time-detail',
-        mode === 'full' ? 'time-detail--full' : 'time-detail--panel',
-      ].join(' ')}
-      classNameVeu={`gp-painel ${mode === 'full' ? 'time-detail-overlay--oculto' : ''}`.trim()}
-    >
-      <div className="time-detail__scroll">
-        {mode === 'full' ? (
-          <div className="time-detail__columns">
-            <div className="time-detail__column time-detail__column--main">
-              {profileSection}
-              {infoList}
-              {metricsSection}
-              {membrosSection}
-              {beneficiosSection}
-            </div>
-            <div className="time-detail__column time-detail__column--notes">{notesSection}</div>
+      acoes={
+        <CabecalhoDetalhe mode={mode} onExcluir={() => setExcluindo(true)} onExpandir={onExpand} onRecolher={onCollapse} />
+      }
+      onClose={onClose}
+      painel={
+        <>
+          <div className="detalhe-bloco">
+            {perfil}
+            {campos}
+            <AdicionarNota onSalvar={adicionarNota} />
+            <LinhaDoTempo notas={time.notas} comAdicionar={false} divisoria={false} />
           </div>
-        ) : (
+          {secaoMetricas}
+          {secaoMembros}
+          {secaoRecursos}
+        </>
+      }
+      esquerda={
+        <>
+          <div className="detalhe-bloco">
+            {perfil}
+            {campos}
+          </div>
+          {secaoMembros}
+          {secaoRecursos}
+        </>
+      }
+      direita={
+        <>
+          {secaoMetricas}
+          <LinhaDoTempo notas={time.notas} onSalvar={adicionarNota} />
+        </>
+      }
+    >
+      <CamadaDetalhe>
+        {excluindo && <DeleteTimeModal name={time.name} onCancel={() => setExcluindo(false)} onConfirm={excluir} />}
+
+        {removendo && (
+          <RemoveMemberModal
+            name={removendo.name}
+            onCancel={() => setRemovendo(null)}
+            onConfirm={() => {
+              removerMembro(removendo.id)
+              setRemovendo(null)
+            }}
+          />
+        )}
+
+        {modal === 'cor' && (
+          <ColorPickerModal
+            usedColorIds={times.filter((outro) => outro.id !== time.id && outro.color).map((outro) => outro.color)}
+            onClose={() => setModal(null)}
+            onSelect={(cor) => {
+              atualizarTime({ color: cor })
+              setModal(null)
+            }}
+          />
+        )}
+
+        {modal === 'icone' && (
+          <IconPickerModal
+            value={time.icon}
+            onClose={() => setModal(null)}
+            onSelect={(icone) => {
+              atualizarTime({ icon: icone })
+              setModal(null)
+            }}
+          />
+        )}
+
+        {aberturas > 0 && (
           <>
-            {profileSection}
-            {infoList}
-            {notesSection}
-            {metricsSection}
-            {membrosSection}
-            {beneficiosSection}
+            <LiderPanel
+              key={`lider-${aberturas}`}
+              aberto={painel === 'lider'}
+              valor={time.leaderId ?? null}
+              membros={metricas.membros.filter(podeEntrar)}
+              candidatos={candidatos}
+              onFechar={() => setPainel(null)}
+              onSalvar={(liderId) => {
+                // Quem vira lider sem ser membro entra no time.
+                if (liderId && !idsMembros.has(liderId)) adicionarMembros([liderId])
+                atualizarTime({ leaderId: liderId })
+                setPainel(null)
+              }}
+            />
+            <LiderPanel
+              key={`membros-${aberturas}`}
+              multiplo
+              titulo="Adicionar membros"
+              vazio="Ninguém para adicionar."
+              aberto={painel === 'membros'}
+              valor={[]}
+              candidatos={candidatos.filter((pessoa) => !idsMembros.has(pessoa.id))}
+              onFechar={() => setPainel(null)}
+              onSalvar={(ids) => {
+                adicionarMembros(ids)
+                setPainel(null)
+              }}
+            />
+            <DescricaoPanel
+              key={`descricao-${aberturas}`}
+              aberto={painel === 'descricao'}
+              valor={time.descricao ?? ''}
+              onFechar={() => setPainel(null)}
+              onSalvar={(texto) => {
+                atualizarTime({ descricao: texto })
+                setPainel(null)
+              }}
+            />
           </>
         )}
-      </div>
-
-      {deleteModalOpen && (
-        <DeleteTimeModal
-          name={team.name}
-          onCancel={() => setDeleteModalOpen(false)}
-          onConfirm={handleDelete}
-        />
-      )}
-
-      {removeMemberTarget && (
-        <RemoveMemberModal
-          name={removeMemberTarget.name}
-          onCancel={() => setRemoveMemberTarget(null)}
-          onConfirm={() => {
-            handleRemoveMember(removeMemberTarget.id)
-            setRemoveMemberTarget(null)
-          }}
-        />
-      )}
-
-      {openFieldModal === 'lider' && (
-        <LiderModal
-          value={team.leaderId}
-          collaborators={members}
-          onClose={() => setOpenFieldModal(null)}
-          onSave={(selected) => {
-            updateTeamField('leaderId', selected)
-            setOpenFieldModal(null)
-          }}
-        />
-      )}
-
-      {openFieldModal === 'cor' && (
-        <ColorPickerModal
-          usedColorIds={times
-            .filter((otherTeam) => otherTeam.id !== team.id && otherTeam.color)
-            .map((otherTeam) => otherTeam.color)}
-          onClose={() => setOpenFieldModal(null)}
-          onSelect={(colorId) => {
-            updateTeamField('color', colorId)
-            setOpenFieldModal(null)
-          }}
-        />
-      )}
-
-      {openFieldModal === 'icone' && (
-        <IconPickerModal
-          value={team.icon}
-          onClose={() => setOpenFieldModal(null)}
-          onSelect={(iconName) => {
-            updateTeamField('icon', iconName)
-            setOpenFieldModal(null)
-          }}
-        />
-      )}
-
-      {openFieldModal === 'descricao' && (
-        <DescricaoModal
-          value={team.descricao}
-          onClose={() => setOpenFieldModal(null)}
-          onSave={(descricao) => {
-            updateTeamField('descricao', descricao)
-            setOpenFieldModal(null)
-          }}
-        />
-      )}
-
-      {openFieldModal === 'membros' && (
-        <MembrosModal
-          title="Adicionar membros"
-          collaborators={nonMemberCollaborators}
-          value={[]}
-          onClose={() => setOpenFieldModal(null)}
-          onSave={(newIds) => {
-            const newIdSet = new Set(newIds)
-            const updated = collaborators.map((collaborator) =>
-              newIdSet.has(collaborator.id) ? { ...collaborator, times: [team.name] } : collaborator,
-            )
-            persistCollaborators(updated)
-            setOpenFieldModal(null)
-          }}
-        />
-      )}
-    </PainelLateral>
+      </CamadaDetalhe>
+    </DetalheShell>
   )
 }
 

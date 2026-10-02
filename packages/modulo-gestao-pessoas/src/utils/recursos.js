@@ -11,9 +11,7 @@
 //   beneficiarios: { todaEmpresa, teamNames, colaboradorIds }
 //   valores:       [{ id, valor, aplicaATodos, colaboradorIds }]
 //   linkBeneficio, contatoFornecedor, emailFornecedor
-//
-// `tipo` e `name` sao campos legados, so para a pagina de detalhe de
-// beneficio continuar abrindo (ver camposLegados abaixo).
+//   notas:         [{ text, timestamp }]
 
 import { getStatus, isEncerrado } from './colaboradorStatus.js'
 import { resolveBeneficiaryIds } from './beneficiarios.js'
@@ -74,6 +72,25 @@ export function tituloDoRecurso(recurso) {
   }
 }
 
+// Tipo em cinza e nome do recurso nas linhas de lista (Figma 10355:3706) e
+// no perfil da pagina do recurso. Beneficio: a categoria e o fornecedor (ou
+// "Outro" e o nome). Verba: "Verba" e o nome. Licenca: "Licença" e o servico
+// (ou o nome de Outro).
+export function tipoENomeDoRecurso(recurso) {
+  switch (recurso.tipoRecurso) {
+    case 'beneficio':
+      return recurso.categoria === OUTRO
+        ? { tipo: OUTRO, nome: recurso.nome }
+        : { tipo: recurso.categoria, nome: recurso.fornecedor }
+    case 'verba':
+      return { tipo: TIPOS_RECURSO.verba, nome: recurso.nome }
+    case 'licenca':
+      return { tipo: TIPOS_RECURSO.licenca, nome: recurso.servico === OUTRO ? recurso.nome : recurso.servico }
+    default:
+      throw new Error(`Tipo de recurso desconhecido "${recurso.tipoRecurso}" no recurso ${recurso.id}`)
+  }
+}
+
 // O fornecedor que a busca tambem casa. Licenca: o proprio servico.
 export function fornecedorDoRecurso(recurso) {
   if (recurso.tipoRecurso === 'beneficio') return recurso.fornecedor ?? null
@@ -109,33 +126,4 @@ export function valorDoRecurso(recurso) {
   const maior = Math.max(...valores)
   if (menor === maior) return formatCurrencyBRL(menor)
   return `${formatCurrencyBRL(menor)}-${formatNumero(maior)}`
-}
-
-// Ponte ate a pagina de recurso existir (contexto, secao 9): a pagina de
-// detalhe de beneficio le `tipo` (a categoria com a grafia antiga, para o
-// icone e o rotulo) e `name` (titulo e fornecedor). Verba entra como o
-// "Outro > Verba" do fluxo antigo; Licenca como "Outro" sem subtipo.
-const CATEGORIA_LEGADA = {
-  'Plano de saúde': 'Plano de Saúde',
-  'Vale transporte': 'Vale Transporte',
-  'Vale alimentação': 'Vale Alimentação',
-  'Bem-estar': 'Bem-Estar',
-  'Plano odontológico': 'Plano Odontológico',
-  'Seguro de vida': 'Seguro de Vida',
-  [OUTRO]: OUTRO,
-}
-
-export function camposLegados(recurso) {
-  if (recurso.tipoRecurso === 'beneficio') {
-    exigir(CATEGORIA_LEGADA[recurso.categoria], `Categoria desconhecida "${recurso.categoria}"`)
-    return {
-      tipo: CATEGORIA_LEGADA[recurso.categoria],
-      name: recurso.categoria === OUTRO ? recurso.nome : recurso.fornecedor,
-      outroSubtipo: recurso.categoria === OUTRO ? 'Fixo' : null,
-    }
-  }
-  if (recurso.tipoRecurso === 'verba') {
-    return { tipo: OUTRO, name: recurso.nome, outroSubtipo: 'Verba' }
-  }
-  return { tipo: OUTRO, name: tituloDoRecurso(recurso), outroSubtipo: null }
 }

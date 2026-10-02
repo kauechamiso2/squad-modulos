@@ -1,5 +1,6 @@
 import { addDaysIso, buildEmailPrefix } from './formatters.js'
 import { generateId } from './storage.js'
+import { notaDoSeed } from './seedTimes.js'
 
 // Seed da aba Colaboradores, um colaborador para cada estado da home.
 // Nomes, cargos e times vem do Figma da home (10331:4871), sem os erros do
@@ -172,10 +173,22 @@ export function buildSeedColaboradores(hoje) {
       hoje, dias: -620, name: 'Bruno Vasconcelos', cargo: 'Product Designer Senior', time: 'Design',
       admissao: { feitos: TODOS_ADMISSAO_CLT },
       jornada: JORNADA_COMERCIAL,
+      // Linha do tempo da tela cheia (Figma 10355:2104), com datas relativas.
+      notas: [
+        notaDoSeed(hoje, -231, 'Período de experiência iniciado. Combinado avaliação em 45 e 90 dias com o gestor direto.'),
+        notaDoSeed(hoje, -187, 'Feedback de 45 dias: boa adaptação ao time, entrega consistente. Segue no período de experiência.'),
+        notaDoSeed(hoje, -139, 'Efetivado após os 90 dias. Aprovado por unanimidade no feedback do time.'),
+        notaDoSeed(hoje, -83, 'Solicitou ajuste de horário para 8h-17h por questão pessoal. Aprovado pelo gestor, sem impacto na jornada.'),
+        notaDoSeed(hoje, -29, 'Elogio registrado pelo cliente no projeto X. Compartilhado com o time em reunião mensal.'),
+      ],
     }),
     pj({
       hoje, dias: -210, name: 'Gabriel Luz', cargo: 'Consultor de UX', time: 'Design',
       admissao: { feitos: TODOS_ADMISSAO_PJ },
+      notas: [
+        notaDoSeed(hoje, -60, 'Contrato renovado por mais 12 meses, com o mesmo valor mensal.'),
+        notaDoSeed(hoje, -12, 'Assumiu a pesquisa com usuários do novo onboarding.'),
+      ],
     }),
     clt({
       hoje, dias: -480, name: 'Victoria Cardoso', cargo: 'Head de SocialMedia', time: 'Marketing',

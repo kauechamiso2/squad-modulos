@@ -12,7 +12,7 @@ import {
 
 const hoje = '2026-10-01'
 const colaboradores = buildSeedColaboradores(hoje)
-const recursos = buildSeedRecursos(colaboradores)
+const recursos = buildSeedRecursos(colaboradores, hoje)
 const pessoa = (nome) => colaboradores.find((item) => item.name === nome)
 const alerta = (nome) => mostraAlertaDeCadastro(pessoa(nome), recursos, colaboradores, hoje)
 

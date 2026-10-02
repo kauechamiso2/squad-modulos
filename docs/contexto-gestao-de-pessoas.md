@@ -58,10 +58,10 @@ Gestão de Pessoas is the module of the Pipo agent (people and knowledge) for cr
 | PJ fields | cnpj, razaoSocial, dataAdmissao, dataFimContrato (none means a fixed PJ, a date means a temporary PJ), pagamento (Mensal, Anual or Valor fixo), valorContrato |
 | envioContrato, contratoGerado | Where the contract was sent (channel and destination) and whether it was generated |
 | dadosBancarios | banco, agencia, tipoConta (Corrente or Poupança), numeroConta, titular, chavePix. Complete with a full account (banco, agência, número and titular) or a chave PIX |
-| admissao, rescisao | Checklists. Rescisão also stores the termination type, data, aviso prévio (CLT), motivo, multa (PJ), envio and whether the term was generated |
+| admissao, rescisao | Checklists. Rescisão stores the termination type for CLT |
 | ausencia | tipo (ferias, licenca_medica, licenca_maternidade, licenca_paternidade), inicio, fim. Mocked in the seed, with no screen to edit it |
 | notas | Notes with their date |
-| jornada | diasSemana, horario, almoco, cargaDiaria, cargaSemanal, regime, homeOffice. Mocked in the seed until Opy exists |
+| contractType, desligado | Legacy fields, kept only for the bridges (see Implementation status) |
 
 ### Status
 
@@ -136,26 +136,28 @@ A recurso counts unique people. A person reached by two links counts once. Desli
 
 ## Implementation status
 
-**Done** in branch `feat/gp-build-order`, parts 1 to 7 of the build order, each with a browser check at 1440 against Figma.
+**Done** in branch `feat/gp-build-order`, parts 1 to 8 of the build order, each checked in the browser at 1440 against Figma. Data version 7.
 
 - Parts 1 to 6: Times and Recursos tabs, Novo modal, create collaborator CLT and PJ, the collaborator page and the home alert, create team, create recurso.
-- Part 7: the "Desligar {Nome}?" modal from the page header and the row menu, the offboarding flow for CLT and PJ (type cards, Informações, the term panel with "Salvar sem termo" and "Gerar e enviar"), the Em desligamento state in the table, the grid and the page, "Marcar como feito" on every open termination item, the move to Desligado or Fim de contrato at zero, the Status filter with Em desligamento, and the filled Recursos, Jornada de trabalho and Dados bancários on the page. Data version 6.
-- The corrections of info-row labels (14px Medium), step titles (32px Semibold, line-height 1.1, letter-spacing -0.26px, 176px from the top, 532px wide) and the Flow shell background were already in the code. Checked in every step of every flow.
+- Part 7: the "Desligar {Nome}?" modal, the offboarding flow for CLT and PJ, the Em desligamento state in the table, the grid and the page, "Marcar como feito" on every open termination item, Desligado and Fim de contrato at zero, and the filled Recursos, Jornada de trabalho and Dados bancários on the page.
+- Part 8: the collaborator, team and recurso pages in panel and full screen, all built from shared components in `components/detalhe/` (shell and header, profile row, fields, section title, metric cards, list rows, notes timeline). Opening by link lands in full screen; expand and Back-to-Modal switch modes. The recurso page moved to the route `#/recurso/:id`. The seed has notes for Bruno Vasconcelos, Gabriel Luz, the Design team and the Alice plan.
 
-**Bridges removed in part 7:** the page's Desligar toggling `desligado`, Reativar, the `desligado` check in the field lock, and the absence of Desligar in the row menu. No bridge from the earlier table is left.
-
-**Bridges still open:** the recurso page is the old benefício page, fed by `camposLegados()` (`tipo`, `name`, `outroSubtipo`), and the team page reads `tipo` for the CLT and PJ bar. Both wait for the Figma of those pages.
+**Bridges:** none left. The old benefício page and the legacy recurso fields `tipo` and `name` (`camposLegados`) were removed with part 8, and the team page no longer reads its own cost formula.
 
 **Decisions where the spec is silent:**
 
-- Collaborator page: the 12px gaps of the header (Figma `10355:3599`) apply to every status, and the team pill in read mode follows `10355:3657` (32px, 12px dot, black CaretDown), losing the caret when locked.
-- Locked page: empty fields show "—", and the empty-state actions ("Adicionar", "Conectar") are hidden in Recursos, Jornada, Dados bancários and Documentos. Values stay black.
-- Term panel: "Gerar e enviar" needs a valid Enviar para. With Com justa causa the Aviso prévio row is left out of the panel.
-- Chave PIX type: Email (has @), Telefone (starts with +), CNPJ (14 digits), CPF (11 digits) or Aleatória (UUID). Anything else shows no type.
-- The Desligar item in the row menu uses the gray Power icon, as there is no Figma for the menu.
-- The Motivo panel placeholder is "Motivo do desligamento...".
+- Seed: Design is now a complete team (green, Palette, leader Bruno Vasconcelos, description and notes), because only complete teams open the team page. Marketing and Vendas stay pending.
+- Full-screen header: 32px side padding, as in Figma `10355:2086` (the shared pattern says 40px).
+- Recurso profile: the category in 20px Medium #798282, as in Figma `10355:2887` (section 9 says Regular).
+- Recurso full screen: Total de beneficiários as a row card above Custo total, as Figma `10355:2514` stacks them; side by side only in the panel.
+- Tempo de casa: "N meses" under a year ("1 mês" for one), "Xa Ym" from a year on.
+- Por time on the recurso page: each person counts in the team linked to the recurso, else their first team; people without a team form a gray "Sem time" segment, and pending teams are gray.
+- "Add time" offers complete teams that are not linked yet. With Toda a empresa linked, "Add time" and "Add membro" are hidden, since it is exclusive. The Toda a empresa row uses a gray badge with Buildings.
+- Removing a team or a person from a recurso has no confirmation (only team members have one, per section 8). Copy and PhoneOutgoing show only when there is a value; PhoneOutgoing is a `tel:` link.
+- Panels and modals opened from a detail page render above both modes.
+- Earlier decisions (part 7): locked pages show "—" on empty fields and hide empty-state actions; the term panel needs a valid Enviar para; the Chave PIX type is inferred from its format.
 
-**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners (fix with an opt-in prop), the tab height and the home header spacing do not match Figma, the "Ver mais..." button in the Filtros panel has no style, side panels sit 24px from the side instead of 20px and the veil has no blur, and the progress bar fills to the real step (Figma never moves it, a mock error).
+**Known differences, not done:** the table uses 16px padding from `Tabela` in `@squad/ui` while Figma uses 12px with 4px header corners, the tab height and the home header spacing do not match Figma, the "Ver mais..." button in the Filtros panel has no style, the side-panel veil has no blur, the progress bar fills to the real step (Figma never moves it, a mock error), and money is still stored as reais with decimals, not integer cents.
 
 ## Figma index
 
@@ -171,8 +173,9 @@ File `ZQZtZy7exqkUi5u33CUvuM` (Gestão de Pessoas 2.0).
 | Create recurso | `10343:13283` |
 | Offboarding CLT | `10355:3451` |
 | Offboarding PJ | `10355:5041` |
+| Collaborator, team and recurso pages (panel and full screen) | `10355:1553` |
 
-No Figma yet: the team page, the recurso page, and new states of the floating search.
+No Figma yet: new states of the floating search, and the edit states of the detail pages.
 
 ## Shared patterns
 
@@ -199,6 +202,13 @@ No Figma yet: the team page, the recurso page, and new states of the floating se
 | Toasts | Bottom right, 24px from the bottom and 20px from the right, radius 8px, padding 12px. They disappear after 5 seconds, stack vertically, slide in from the right and leave with a squash and fly-out in under 400ms. Positive: green #60c60c, circle #c8ff9b with a check, white text, and an X to close. Neutral: #f4f5f5, circle #e3e6e6 with a trash icon, black text |
 | Confirmation modal | Centered, 568px wide, a round X above the card, an icon badge of 40x40 in #fbedd0, title 32px, text 16px in #798282, and the buttons Cancelar and the confirm one (black) |
 | Floating bar | 24px from the bottom, 64px high |
+| Detail page shell | Panel: 540px wide, white, radius 8px, 24px padding, 20px from the top and from the right edge, over the overlay, sliding in from the right; the content scrolls inside it. Header row 40px: the X, the title (16px Medium, letter-spacing -0.26px) and, on the right, 12px apart, the red Trash, the Power (collaborator only) and the FrameCorners expand icon. Sections are 40px apart. Full screen (expand, or opened by link): a 64px header with the X, the title and, on the right, the red Trash, the Power (collaborator only) and the Back-to-Modal icon that returns to the panel; then two columns from 120px below the header: the left one 500px wide at 320px from the left (profile, fields and the list sections) and the right one 316px wide at 880px (Métricas stacked, a 1px #e3e6e6 divider, the notes timeline and "Adicionar nota") |
+| Profile row | A 40px round avatar (#f4f5f5 with a 20px icon, the team icon on the light team color, or the 40px logo), the name in 20px Medium with letter-spacing -0.26px, and the type in 14px Regular #798282, 16px apart. 14px below, the Pipo bar (collaborator only) |
+| Detail fields | 62px rows: a 20px icon, the label (14px Medium black, 158px wide) and the value (14px, 290px wide), 12px apart. An action icon (eye, copy, phone, plus) sits at the right edge. "Adicionar nota" is a 62px row with NotePencil below a 1px #e3e6e6 line |
+| Section title | 16px Medium, letter-spacing -0.26px, 20px above its content |
+| Metric cards | 1px #e3e6e6 border, radius 8px, 16px padding, 16px internal gap, 12px between cards. Label 14px Medium #798282. A single big value is 40px Medium (with a 24px Eye at the top right when it is a cost). Row values (count per cargo, per value, members and tenure) are 24px Medium, right-aligned. Bars are 8px high, fully rounded segments side by side, with a 14px #798282 caption such as "Design: 60% | Vendas 30% | Marketing 10%" |
+| List rows | 56px rows with a 1px #e3e6e6 border, radius 8px, 16px padding, 20px gaps, 12px apart. A 32px round avatar with white initials in the team's dark color, a 32px logo or icon badge, or a 32px file-type badge. Texts 14px Medium: name black, secondary gray. On the right: a value and a 24px ArrowUpRight, a 24px X, or "Download" and DownloadSimple. Section headers put the action ("Add membro", "Add time", a white 40px pill with a 24px Plus) on the right |
+| Notes timeline | Full screen only: a container with a 1px #e3e6e6 top border, 30px top, 16px side and bottom padding, 24px between notes. Each note has a 1px #798282 left border, 16px left padding and 16px between the date (12px Regular #798282, "02 Set 2026") and the text (14px Regular black). Oldest first. "Adicionar nota" closes the list, with a 20px NotePencil and 14px Regular text, 12px apart |
 
 ## 1. Home
 
@@ -295,7 +305,9 @@ Steps 1 to 3, the contract panel, the Enviar para sheet and the result work as i
 
 ## 5. Collaborator page
 
-The collaborator, team and recurso pages share one shell: a side panel with a slide, full screen through the expand icon, and full screen when opened by link.
+The collaborator, team and recurso pages share the detail page shell (Shared patterns).
+
+**Figma, Em atividade:** section `10355:1553`. Frames: home `10355:1557`, panel `10355:1699` (panel `10355:1842`, profile row `10355:1861`, Métricas `10355:1938`), full screen `10355:2085` (header `10355:2086`, Métricas `10355:2334`, notes timeline `10355:2104`).
 
 **Figma, CLT:** Pendente with nothing done `10338:9083` (panel `10338:9174`), Pendente with documents `10338:9323` (panel `10338:9414`), Em atividade with information missing `10338:9671`, Dados bancários panel `10338:9924` (panel `10338:10177`).
 
@@ -310,8 +322,8 @@ The collaborator, team and recurso pages share one shell: a side panel with a sl
 | Fields, PJ | Contato, Documento (the CNPJ followed by "CNPJ"), Cargo, Email, Time, Reporta para, Ativo desde and Salário, which shows the contract value with its suffix. Razão social, data de fim and pagamento are stored but not shown |
 | Empty fields | "Adicionar" and a plus on the right |
 | Editing | Gray hover and a click to edit. Email is text and Enter saves. Cargo is free text with suggestions. Time accepts several teams as pills with a search, and typing a team that does not exist creates a pending team. Reporta para searches among Pendente and Em atividade people. Contato uses Telefone or Email. Dates use the calendar. Salário bruto, Custo para empresa and Salário are hidden by default, each with its own eye |
-| Notes | "Adicionar nota" in the row. Enter saves with the date |
-| Métricas | Custo total (with an eye) and Tempo de casa ("—" before the admission date) |
+| Notes | "Adicionar nota" in the row. Enter saves with the date. Full screen shows the notes as the timeline in the right column (`10355:2104`). The panel has no Figma for the saved notes (assumption: the same timeline below the "Adicionar nota" row) |
+| Métricas | Two metric cards: Custo total (40px, with an eye, custo para empresa plus recursos) and Tempo de casa (40px, "8 meses", "1a 3m", "—" before the admission date). Side by side in the panel, stacked in the right column of the full screen |
 | Recursos | Filled (Figma `10355:3706`): one bordered 56px row per recurso, with the 32px logo or icon, the type in gray (the category for Benefício, "Verba" or "Licença") followed by the name, the person's value and an arrow that opens the recurso page. Empty: "Nenhum recurso adicionado" and "Adicionar". Adding from the profile has no Figma, so it has no action yet |
 | Jornada de trabalho | Filled (Figma `10355:3750`): a bordered card with 48px rows Dias da semana, Horário, Almoço, Carga diária, Carga semanal, Regime and Home Office, mocked in the seed until Opy exists. Empty: "Nenhuma escala conectada" and "Conectar", interface only |
 | Dados bancários | Empty: "Nenhum dado adicionado" and "Adicionar", which opens a second side panel with Banco ("Nome ou código do banco"), Agência, a Corrente or Poupança switch, Número da conta, Titular da conta and Chave PIX, plus Cancelar and Salvar. Salvar needs a full account or a chave PIX. Saved state (Figma `10355:3778`): a bordered card with 48px rows Banco, Agência, Tipo de conta, Número da conta, Titular and Chave PIX, with the key type in gray after the key (for example "CPF"). A click reopens the panel |
@@ -392,22 +404,40 @@ Header: "Novo recurso". The type, category and service steps have no footer.
 
 ## 8. Team page
 
-**No Figma.** Header: Close, Delete and Expand. Profile: the icon in the team color and the name. Only complete teams open.
+**Figma:** section `10355:1553`. Frames: Times tab `10355:3007`, panel `10355:3110` (panel `10355:3214`, fields `10355:3228`, Métricas `10355:3274`, members `10355:3309`, recursos `10355:3344`), full screen `10355:2346`. Only complete teams open.
 
-- Info: Líder, Cor, Ícone and Descrição (2 lines and "ver mais..."), plus "Adicionar nota". Cor and Ícone open the pickers.
-- Metrics: Total de membros, Tempo médio de casa, Custo total do time (with an eye), Cargos representados and Tipo de contratação (a bar with CLT and PJ).
-- Members: "Add membro" searches Pendente and Em atividade people not in the team. Rows have an avatar in the team color, the name, the cargo and an X with a confirmation. The list includes Pendente, Em atividade and Em desligamento. Adding adds this team to the person's teams, and removing takes out only this team.
-- Recursos: the aggregated list with the value range.
-- Delete: a confirmation, and the members lose only this team.
+| Element | Spec |
+| --- | --- |
+| Header | X and "Time", with the red Trash and the expand icon. No Power |
+| Profile | The 40px badge in the light team color with the team icon, and the name in 20px Medium |
+| Fields | Líder (Crown): a 24px avatar and the name. Cor (Eyedropper): a #f4f5f5 pill with the 12px dot in the team color and a caret, which opens the color picker. Ícone (Smiley): the same pill with the icon and a caret, which opens the icon picker. Descrição (FileText): the text in 14px, up to 3 lines, then "ver mais..." in #798282, which expands it. Then "Adicionar nota" |
+| Métricas | Four metric cards: Total de membros and Tempo médio de casa as two rows with 24px values; Custo total do time (40px, with an eye); Cargos representados, one row per cargo with its count in 24px; Tipo de contratação, a bar of CLT (#039300) and PJ (#2a79d7) with the caption "CLT: 60% \| PJ 40%" |
+| Membros | Section with "Add membro" on the right. List rows with the avatar initials in the team's dark color, the name, the cargo in gray and an X with a confirmation. The list includes Pendente, Em atividade and Em desligamento. "Add membro" offers only Pendente and Em atividade people not in the team (No Figma for the picker: the leader-panel pattern, with several choices). Adding adds this team to the person's teams, and removing takes out only this team |
+| Recursos | Section "Recursos" with list rows: the logo or icon, the type in gray, the name, the value range of the members and an arrow to the recurso page |
+| Full screen | Left: profile, fields, Membros and Recursos. Right: the four metric cards, the divider, the notes timeline and "Adicionar nota" |
+| Delete | A confirmation, and the members lose only this team |
+
+**Mock errors:** the section title "Beneficios" (Recursos), the bar caption "Fixo: 60% \| Freelancer 30% \| Consultor 10%" with a third segment, the Power icon in the full-screen header, and "Total: 3 times" above 4 cards.
 
 ## 9. Recurso page
 
-**No Figma.** Route `#/recurso/:id`.
+**Figma:** section `10355:1553`. Frames: Recursos tab `10355:2660`, panel `10355:2764` (panel `10355:2869`, fields `10355:2883`, Métricas `10355:2923`, times `10355:2950`, members `10355:2969`), full screen `10355:2514`. Figma shows a Benefício. Route `#/recurso/:id`.
 
-- Profile: the logo or icon, the name and the type in gray. Benefício: the supplier and the category. Verba: the name and "Verba". Licença: the service and "Licença".
-- Info, read-only, with "—" when empty: Fornecedor, Link, Contato and E-mail for Benefício, and Link, Contato and E-mail for Licença. Link and Contato have a copy icon. Verba has no info fields.
-- Metrics: Total de beneficiários, Custo total (with an eye), the list of Valores with a count, and Por time (a bar). The value is "por pessoa".
-- Links: "Add time" and "Add membro", each with a value, and rows with the icon or avatar, the name, the value and an X. The whole company has its own row when it is a link.
+| Element | Spec |
+| --- | --- |
+| Header | X and the type as title ("Benefício", "Verba" or "Licença"), with the red Trash and the expand icon. No Power |
+| Profile | The 40px logo or icon badge, the name in 20px Medium (the supplier for Benefício, the name for Verba, the service for Licença) and, for Benefício, the category in 20px Regular #798282 |
+| Fields, Benefício | Fornecedor (Buildings): the supplier name. Link (Link): the link, with a 24px Copy on the right. Contato (Phone): the phone, with a PhoneOutgoing on the right. Email (At). Read-only, with "—" when empty. Then "Adicionar nota" |
+| Fields, Licença | Link, Contato and Email, as above |
+| Fields, Verba | None. Only "Adicionar nota" |
+| Métricas | Total de beneficiários (40px) and Custo total (40px, with an eye) side by side; a card with one row per value ("R$450,00" in gray and the count in 24px); Por time, a bar with one segment per team in the team's dark color and the caption "Design: 60% \| Vendas 30% \| Marketing 10%". Values are "por pessoa" |
+| Times | Section with "Add time" on the right. List rows: the 32px badge in the light team color with the team icon, the name, "N pessoas" in gray, the value and an X. The whole company has its own row when it is a link (No Figma) |
+| Membros individuais | Section with "Add membro" on the right. List rows: the avatar initials, the name, the value and an X |
+| Full screen | Left: profile, fields, Times and Membros individuais. Right: the metric cards, the divider and "Adicionar nota" with the notes timeline |
+| Adding links | No Figma: "Add time" and "Add membro" open the leader-panel pattern with several choices, offering only Pendente and Em atividade people and existing teams. A new link takes the recurso's base value; variants are managed in the creation flow |
+| Who counts | Desligado and Fim de contrato stop counting from their exit date |
+
+**Mock errors:** "Beneficio" without the accent, "Alice LTDA." as the supplier (use the supplier name), "Total de membros 3" in the full-screen metrics (it is Total de beneficiários, the same number as the panel), the Power icon in the full-screen header, "Total: 5 beneficios", "Plano de Saude", "Auxilio" and "Vale Refeição" on the tab.
 
 ## 10. Offboarding
 
@@ -446,7 +476,7 @@ The term panel footer has "Salvar sem termo" (text button) and "Gerar e enviar" 
 - "Adicionar" on Motivo do desligamento opens a side panel "Adicionar motivo" with a text area, Cancelar and Salvar, like the team description.
 - Multa por rescisão antecipada shows for every PJ termination type.
 - Both buttons show the toast "Desligamento iniciado com sucesso". Figma shows no toast.
-- The termination checklist items that Figma draws without "Marcar como feito" (Exame demissional realizado and Termo de rescisão assinado e devolvido for CLT, Termo assinado e devolvido for PJ) also get it, so the checklist can reach zero.
+- The termination checklist items that Figma draws without "Marcar como feito" (Exame demissional realizado and Termo de rescisão assinado e devolvido for CLT, Termo assinado e devolvido for PJ) need a decision: see Open points.
 - The page of a Desligado or Fim de contrato person has no Figma: it keeps the locked fields and shows the final status pill in the header.
 
 **Mock errors:** "Assinar termo de recisão" (rescisão), "Salário Bruno", "Vale Refeição" in the Recursos list (Vale alimentação), "R400,00" (R$400,00), "Agencia" (Agência), "Home Office" with capitals in Jornada, Gustavo Lima shown as CLT in the PJ result table, the PJ page in Em desligamento still showing "Adicionar" and plus icons on empty fields (they are locked), the CPF written as "124 345 567 80" (use the 000.000.000-00 mask), and "Total: 6 colaboradores" above 5 rows.
@@ -486,8 +516,9 @@ Inline edits on the profile, saved filters and removing a member show no toast.
 | 5 | Create team | 6 |
 | 6 | Create recurso | 7 |
 | 7 | Offboarding CLT and PJ, the Em desligamento state on the home and the page, and the filled states of Recursos, Jornada and Dados bancários on the page | 10, 5, 1, 11 |
+| 8 | Detail pages from Figma: the collaborator page full screen with the notes timeline, the team page and the recurso page | 5, 8, 9 |
 
-Not in this round, because there is no Figma: the team page, the recurso page and the floating search. Keep the bridges they need working.
+Not in this round, because there is no Figma: the floating search. Keep the bridges they need working.
 
 ## Open points
 
@@ -497,6 +528,7 @@ Not in this round, because there is no Figma: the team page, the recurso page an
 - Create recurso: confirm the assumptions of section 7.
 - Termination checklist labels are provisional and need a labor-law review.
 - Floating search: should switching tabs clear the text, and how does the bar behave in the detail views?
-- Recurso page: should "Add time" and "Add membro" offer only Pendente and Em atividade?
+- Detail pages: no Figma for the pickers behind "Add membro" and "Add time", for the saved notes inside the panel, for the whole-company row on the recurso page, or for the Verba and Licença variants of the recurso page.
+- Offboarding: how do the items without "Marcar como feito" get done? Without it nobody reaches Desligado or Fim de contrato.
 - Should the admission checklist also get "Marcar como feito", so new collaborators can leave Pendente?
-- No Figma yet: adding a recurso from the profile, the edit state of the Informações rows, the loading state of "Gerar contrato", and logos for the other suppliers. The icon of Benefício "Outro" (Gift) is provisional.
+- No Figma yet: adding a recurso from the profile, the saved state of Dados bancários, the edit state of the Informações rows, the loading state of "Gerar contrato", and logos for the other suppliers. The icon of Benefício "Outro" (Gift) is provisional.

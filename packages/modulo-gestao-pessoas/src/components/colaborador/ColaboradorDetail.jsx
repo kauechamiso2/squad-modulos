@@ -1,24 +1,20 @@
-import { useEffect, useRef, useState } from 'react'
-import { NotePencil, FrameCorners } from '@phosphor-icons/react'
-import closeIcon from '../../assets/icons/Close.svg'
-import trashIcon from '../../assets/icons/Trash.svg'
-import backToModalIcon from '../../assets/icons/Back-to-Modal.svg'
-import powerIcon from '../../assets/icons/Power.svg'
-import { IconButton, PainelLateral } from '@squad/ui'
+import { useEffect, useState } from 'react'
+import DetalheShell, { CabecalhoDetalhe } from '../detalhe/DetalheShell.jsx'
+import CamadaDetalhe from '../detalhe/CamadaDetalhe.jsx'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
 import PerfilColaborador from './perfil/PerfilColaborador.jsx'
 import { perfilTravado } from '../../utils/cadastro.js'
 import { STATUS, getStatus, marcarItemDaRescisao, podeDesligar } from '../../utils/colaboradorStatus.js'
 import { COLLECTIONS, addItem, getCollection, setCollection } from '../../utils/storage.js'
-import { formatDateDMonthYear } from '../../utils/formatters.js'
+import { novaNota } from '../../utils/notas.js'
 import { useToast } from '../toast/ToastContext.jsx'
 import '../status/StatusPill.css'
 import './ColaboradorDetail.css'
 
 /*
- * Pagina do colaborador. Aqui fica a casca - painel, tela cheia, cabecalho,
- * barra do Pipo e notas -, e o conteudo do Figma (CLT e PJ) fica em
+ * Pagina do colaborador - Figma 10355:1842 (painel) e 10355:2085 (tela
+ * cheia). A casca e a do DetalheShell; o conteudo fica em
  * perfil/PerfilColaborador.
  */
 function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataChanged, onDesligar, onAbrirRecurso }) {
@@ -29,9 +25,6 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [desligarModalOpen, setDesligarModalOpen] = useState(false)
-  const [addingNota, setAddingNota] = useState(false)
-  const [notaText, setNotaText] = useState('')
-  const notaSavingRef = useRef(false)
 
   /*
    * O painel fica montado enquanto a saida anima (o PainelLateral so o tira
@@ -44,8 +37,6 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
     setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
     setDeleteModalOpen(false)
     setDesligarModalOpen(false)
-    setAddingNota(false)
-    setNotaText('')
   }, [aberto])
 
   const collaborator = collaborators.find((item) => item.id === id) ?? null
@@ -89,31 +80,7 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
     persist(collaborators.map((item) => (item.id === id ? marcarItemDaRescisao(item, itemId) : item)))
   }
 
-  const cancelAddNota = () => {
-    setAddingNota(false)
-    setNotaText('')
-  }
-
-  const saveNota = () => {
-    const trimmed = notaText.trim()
-    if (!trimmed) {
-      cancelAddNota()
-      return
-    }
-    notaSavingRef.current = true
-    const notas = [...(collaborator.notas ?? []), { text: trimmed, timestamp: new Date().toISOString() }]
-    updateField('notas', notas)
-    setAddingNota(false)
-    setNotaText('')
-  }
-
-  const handleNotaBlur = () => {
-    if (notaSavingRef.current) {
-      notaSavingRef.current = false
-      return
-    }
-    cancelAddNota()
-  }
+  const adicionarNota = (texto) => updateField('notas', [...(collaborator.notas ?? []), novaNota(texto)])
 
   const pipoBar = (
     <p className="colaborador-detail__pipo-bar">
@@ -125,112 +92,58 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
     </p>
   )
 
-  const notesSection = (
-    <div className="colaborador-detail__notes">
-      {(collaborator.notas ?? []).map((nota, index) => (
-        <div className="colaborador-detail__nota" key={index}>
-          <span className="colaborador-detail__nota-date">
-            {formatDateDMonthYear(nota.timestamp.slice(0, 10))}
-          </span>
-          <p className="colaborador-detail__nota-text">{nota.text}</p>
-        </div>
-      ))}
-
-      {addingNota ? (
-        <input
-          type="text"
-          autoFocus
-          className="colaborador-detail__add-nota-input"
-          placeholder="Escreva uma nota..."
-          value={notaText}
-          onChange={(event) => setNotaText(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              notaSavingRef.current = true
-              saveNota()
-            }
-            if (event.key === 'Escape') cancelAddNota()
-          }}
-          onBlur={handleNotaBlur}
-        />
-      ) : (
-        <button type="button" className="colaborador-detail__add-nota" onClick={() => setAddingNota(true)}>
-          <NotePencil size={20} color="var(--color-text-secondary)" />
-          Adicionar nota
-        </button>
-      )}
-    </div>
-  )
-
-  /*
-   * A casca (veu, painel de 540, deslize de 280ms) e o @squad/ui/PainelLateral.
-   * O modo tela cheia anima largura, posicao e padding no MESMO elemento do
-   * modo painel, entao entra como classe extra.
-   */
-  const cabecalhoDireita = (
-    <span className="colaborador-detail__acoes">
-      <IconButton icon={trashIcon} alt="Excluir" onClick={() => setDeleteModalOpen(true)} />
-      {/* Some depois do desligamento iniciado (Figma 10355:4133). */}
-      {podeDesligar(collaborator) && (
-        <IconButton icon={powerIcon} alt="Desligar" onClick={() => setDesligarModalOpen(true)} />
-      )}
-      {mode === 'full' ? (
-        <button type="button" className="icon-button colaborador-detail__expand-button" onClick={onCollapse} aria-label="Recolher">
-          <img src={backToModalIcon} alt="" width={24} height={24} />
-        </button>
-      ) : (
-        <button type="button" className="icon-button colaborador-detail__expand-button" onClick={onExpand} aria-label="Expandir">
-          <FrameCorners size={24} />
-        </button>
-      )}
-    </span>
+  const conteudo = (parte) => (
+    <PerfilColaborador
+      parte={parte}
+      colaborador={collaborator}
+      colaboradores={collaborators}
+      times={times}
+      recursos={recursos}
+      travado={perfilTravado(collaborator)}
+      pipoBar={pipoBar}
+      onAtualizar={updateField}
+      onAdicionarNota={adicionarNota}
+      onMarcarComoFeito={marcarComoFeito}
+      onAbrirRecurso={onAbrirRecurso}
+      onCriarTime={(nome) => addItem(COLLECTIONS.TIMES, { name: nome, pending: true })}
+    />
   )
 
   return (
-    <PainelLateral
+    <DetalheShell
       aberto={aberto}
+      mode={mode}
+      className="colaborador-detail"
       titulo={
-        <span className="colaborador-detail__titulo">
+        <>
           Colaborador
           {pilulaCabecalho && <span className={`status-pill status-pill--${pilulaCabecalho}`}>{status.rotulo}</span>}
-        </span>
+        </>
       }
-      /* O foco inicial vem para o X, nunca para a lixeira. */
-      acaoEsquerda={<IconButton icon={closeIcon} alt="Fechar" data-foco-inicial onClick={onClose} />}
-      acaoDireita={cabecalhoDireita}
-      comRodape={false}
-      onFechar={onClose}
-      className={[
-        'gp-painel',
-        'colaborador-detail',
-        mode === 'full' ? 'colaborador-detail--full' : 'colaborador-detail--panel',
-      ].join(' ')}
-      classNameVeu={`gp-painel ${mode === 'full' ? 'colaborador-detail-overlay--oculto' : ''}`.trim()}
-    >
-      <div className="colaborador-detail__scroll">
-        <PerfilColaborador
-          colaborador={collaborator}
-          colaboradores={collaborators}
-          times={times}
-          recursos={recursos}
-          travado={perfilTravado(collaborator)}
+      acoes={
+        <CabecalhoDetalhe
           mode={mode}
-          pipoBar={pipoBar}
-          notas={notesSection}
-          onAtualizar={updateField}
-          onMarcarComoFeito={marcarComoFeito}
-          onAbrirRecurso={onAbrirRecurso}
-          onCriarTime={(nome) => addItem(COLLECTIONS.TIMES, { name: nome, pending: true })}
+          onExcluir={() => setDeleteModalOpen(true)}
+          /* Some depois do desligamento iniciado (Figma 10355:4133). */
+          onDesligar={podeDesligar(collaborator) ? () => setDesligarModalOpen(true) : undefined}
+          onExpandir={onExpand}
+          onRecolher={onCollapse}
         />
-      </div>
-
-      {deleteModalOpen && (
-        <DeleteColaboradorModal
-          name={collaborator.name}
-          onCancel={() => setDeleteModalOpen(false)}
-          onConfirm={handleDelete}
-        />
-      )}
+      }
+      onClose={onClose}
+      painel={mode === 'full' ? null : conteudo('painel')}
+      esquerda={mode === 'full' ? conteudo('esquerda') : null}
+      direita={mode === 'full' ? conteudo('direita') : null}
+    >
+      <CamadaDetalhe>
+        {deleteModalOpen && (
+          <DeleteColaboradorModal
+            name={collaborator.name}
+            onCancel={() => setDeleteModalOpen(false)}
+            onConfirm={handleDelete}
+          />
+        )}
+      </CamadaDetalhe>
 
       {desligarModalOpen && (
         <DesligarColaboradorModal
@@ -239,7 +152,7 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
           onConfirm={handleConfirmDesligar}
         />
       )}
-    </PainelLateral>
+    </DetalheShell>
   )
 }
 

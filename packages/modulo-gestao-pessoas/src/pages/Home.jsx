@@ -24,7 +24,7 @@ import NovoRecursoFlow from '../components/addRecurso/NovoRecursoFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import DesligamentoFlow from '../components/desligamento/DesligamentoFlow.jsx'
 import TimeDetail from '../components/time/TimeDetail.jsx'
-import BeneficioDetail from '../components/beneficio/BeneficioDetail.jsx'
+import RecursoDetail from '../components/recurso/RecursoDetail.jsx'
 import {
   getCollection,
   setCollection,
@@ -59,7 +59,7 @@ const emRota = (nome) =>
 
 const loadedDirectlyOnColaboradorRoute = emRota('colaborador')
 const loadedDirectlyOnTimeRoute = emRota('time')
-const loadedDirectlyOnBeneficioRoute = emRota('beneficio')
+const loadedDirectlyOnBeneficioRoute = emRota('recurso')
 
 function createEmptyColumnFilters() {
   return {
@@ -93,7 +93,7 @@ function Home({ backTo }) {
   const navigate = useNavigate()
   const colaboradorMatch = useMatch(`${MODULE_BASE}/colaborador/:id`)
   const timeMatch = useMatch(`${MODULE_BASE}/time/:id`)
-  const beneficioMatch = useMatch(`${MODULE_BASE}/beneficio/:id`)
+  const beneficioMatch = useMatch(`${MODULE_BASE}/recurso/:id`)
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
   // a pasted link) already landed on the colaborador route - that always
@@ -131,7 +131,7 @@ function Home({ backTo }) {
   }
   const closeTime = () => navigate(MODULE_BASE)
 
-  // Mesma convencao, aplicada a /beneficio/:id.
+  // Mesma convencao, aplicada a /recurso/:id (contexto, secao 9).
   const forceFullScreenBeneficioRef = useRef(loadedDirectlyOnBeneficioRoute)
   const beneficioId = beneficioMatch?.params?.id ?? null
   const beneficioFullScreenRequested = searchParams.get('view') === 'full'
@@ -139,11 +139,11 @@ function Home({ backTo }) {
   const beneficioFullScreen =
     beneficioOverlayOpen && (beneficioFullScreenRequested || forceFullScreenBeneficioRef.current)
 
-  const openBeneficio = (id) => navigate(`${MODULE_BASE}/beneficio/${id}`)
-  const expandBeneficio = () => navigate(`${MODULE_BASE}/beneficio/${beneficioId}?view=full`)
+  const openBeneficio = (id) => navigate(`${MODULE_BASE}/recurso/${id}`)
+  const expandBeneficio = () => navigate(`${MODULE_BASE}/recurso/${beneficioId}?view=full`)
   const collapseBeneficio = () => {
     forceFullScreenBeneficioRef.current = false
-    navigate(`${MODULE_BASE}/beneficio/${beneficioId}`)
+    navigate(`${MODULE_BASE}/recurso/${beneficioId}`)
   }
   const closeBeneficio = () => navigate(MODULE_BASE)
 
@@ -651,17 +651,19 @@ function Home({ backTo }) {
           onExpand={expandTime}
           onCollapse={collapseTime}
           onDataChanged={setCollaborators}
+          onAbrirRecurso={openBeneficio}
         />
       )}
 
       {ultimoBeneficioId && (beneficioOverlayOpen || beneficioModo === 'panel') && (
-        <BeneficioDetail
+        <RecursoDetail
           id={beneficioId ?? ultimoBeneficioId}
           aberto={beneficioOverlayOpen}
           mode={beneficioModo ?? 'panel'}
           onClose={closeBeneficio}
           onExpand={expandBeneficio}
           onCollapse={collapseBeneficio}
+          onDataChanged={setBeneficios}
         />
       )}
 

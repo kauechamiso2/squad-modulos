@@ -48,7 +48,14 @@
   background: var(--gp-ausencia-fundo);
 }
 
-/* Na pagina do colaborador - Figma 10355:3710: 32px, raio 5.914. */
+/* Perfil da pagina do recurso - Figma 10355:2885: 40px, raio 8. */
+.recurso-card__marca--perfil {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+/* Linhas de lista - Figma 10355:3710: 32px, raio 5.914. */
 .recurso-card__marca--pequena {
   width: 32px;
   height: 32px;
