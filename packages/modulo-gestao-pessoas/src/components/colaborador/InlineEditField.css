@@ -1,13 +1,17 @@
+/* Mesma caixa do CampoInline no modulo (Shared patterns, Inline edit input):
+   290x40, raio 8, o X de 24px. */
 .inline-edit-field {
-  flex: 1;
+  flex: 0 0 auto;
+  width: 290px;
+  height: 40px;
   min-width: 0;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--color-overlay);
-  border-radius: 4px;
-  padding: 10px;
+  border-radius: 8px;
+  padding: 0 8px 0 12px;
 }
 
 .inline-edit-field__input {
@@ -34,8 +38,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   border: none;
   background: none;
   padding: 0;

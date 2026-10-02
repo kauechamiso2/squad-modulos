@@ -364,3 +364,12 @@ export function guessTeamIconName(name) {
   )
   return match ? match.iconName : DEFAULT_ICON_NAME
 }
+
+// Nomes de time sao unicos (contexto, secao 6): a comparacao ignora
+// maiusculas e os espacos nas pontas. `ignorarId` deixa de fora o proprio
+// time (um pendente sendo completado).
+export function timeComNome(times, nome, ignorarId = null) {
+  const alvo = String(nome ?? '').trim().toLowerCase()
+  if (!alvo) return null
+  return times.find((time) => time.id !== ignorarId && time.name.trim().toLowerCase() === alvo) ?? null
+}

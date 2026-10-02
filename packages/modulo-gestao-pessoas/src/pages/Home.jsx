@@ -30,7 +30,6 @@ import {
   setCollection,
   getCollaboratorActiveSince,
   removeItems,
-  duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear, todayIso } from '../utils/formatters.js'
@@ -420,13 +419,6 @@ function Home({ backTo }) {
     clearSelection()
   }
 
-  const handleDuplicate = () => {
-    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
-    setCollaborators(updated)
-    showToast('success', 'Colaborador duplicado com sucesso')
-    clearSelection()
-  }
-
   const handleAddEmTime = (teamNames) => {
     const updated = collaborators.map((collaborator) => {
       if (!selectedIds.has(collaborator.id)) return collaborator
@@ -679,7 +671,6 @@ function Home({ backTo }) {
         <BulkActionBar
           count={selectedIds.size}
           onAddEmTime={() => setAddEmTimeModalOpen(true)}
-          onDuplicate={handleDuplicate}
           onDelete={handleDelete}
           onClose={clearSelection}
         />

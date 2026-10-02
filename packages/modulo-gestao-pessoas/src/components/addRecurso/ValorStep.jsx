@@ -47,7 +47,9 @@ function AtribuirPanel({ aberto, pessoas, marcados, emOutras, onFechar, onSalvar
       }
     >
       <div className="recurso-atribuir">
-        {pessoas.map((pessoa) => {
+        {/* Quem ja esta em outra variante vai para o fim, com o check verde
+            (contexto, secao 7). */}
+        {[...pessoas.filter((pessoa) => !emOutras.has(pessoa.id)), ...pessoas.filter((pessoa) => emOutras.has(pessoa.id))].map((pessoa) => {
           const bloqueado = emOutras.has(pessoa.id)
           const marcado = selecao.has(pessoa.id)
           return (
@@ -61,7 +63,8 @@ function AtribuirPanel({ aberto, pessoas, marcados, emOutras, onFechar, onSalvar
               onClick={() => alternar(pessoa.id)}
             >
               <img src={bloqueado ? checkIcon : marcado ? checkSquareIcon : squareIcon} width={24} height={24} alt="" />
-              {pessoa.name}
+              <span className="recurso-atribuir__nome">{pessoa.name}</span>
+              {pessoa.cargos?.[0] && <span className="recurso-atribuir__cargo">{pessoa.cargos[0]}</span>}
             </button>
           )
         })}

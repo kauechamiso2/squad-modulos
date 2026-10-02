@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import closeIcon from '../assets/icons/Close.svg'
-import closeIconWhite from '../assets/icons/CloseWhite.svg'
 import calendarBlankIcon from '../assets/icons/CalendarBlank.svg'
-import { IconButton, PainelLateral, PilulaFiltro } from '@squad/ui'
+import { IconButton, PainelLateral } from '@squad/ui'
 import { formatDateDMonthYear } from '../utils/formatters.js'
+import FilterPill from './FilterPill.jsx'
 import './FiltrosPanel.css'
 
 const TEAM_COLOR_PALETTE = [
@@ -27,20 +27,6 @@ function getTeamColor(name) {
     hash = (hash * 31 + char.charCodeAt(0)) >>> 0
   }
   return TEAM_COLOR_PALETTE[hash % TEAM_COLOR_PALETTE.length]
-}
-
-/* A casca da pilula virou @squad/ui/PilulaFiltro quando o Fluxo de Caixa
-   passou a usar a mesma; aqui fica so o icone local. */
-function FilterPill({ selected, onClick, children }) {
-  return (
-    <PilulaFiltro
-      selecionada={selected}
-      iconeLimpar={<img src={closeIconWhite} width={20} height={20} alt="" />}
-      onClick={onClick}
-    >
-      {children}
-    </PilulaFiltro>
-  )
 }
 
 function DatePillInput({ value, onChange }) {
@@ -193,13 +179,7 @@ function FiltrosPanel({
                 </FilterPill>
               ))}
               {hasMoreCargos && (
-                <button
-                  type="button"
-                  className="filtros-panel__pill"
-                  onClick={() => setVisibleCargoCount((count) => count + 5)}
-                >
-                  Ver mais...
-                </button>
+                <FilterPill onClick={() => setVisibleCargoCount((count) => count + 5)}>Ver mais...</FilterPill>
               )}
             </div>
           </section>

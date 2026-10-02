@@ -1,7 +1,9 @@
 .confirm-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(227, 230, 230, 0.6);
+  background: var(--gp-veu);
+  -webkit-backdrop-filter: var(--gp-veu-filtro);
+  backdrop-filter: var(--gp-veu-filtro);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -8,6 +8,11 @@ import s from './CampoInline.module.css'
  * limpar. Enter salva, Esc cancela, clicar fora salva.
  *
  * `--campo-inline-peso`  400 no GP · 500 no Fluxo de Caixa
+ *
+ * Medidas da caixa de edicao, todas com o default de hoje (a do Fluxo de
+ * Caixa): `--campo-inline-flex` (1), `--campo-inline-largura` (auto),
+ * `--campo-inline-altura` (auto), `--campo-inline-raio` (4px),
+ * `--campo-inline-padding` (10px) e `--campo-inline-limpar` (16px, o X).
  */
 function CampoInline({
   value,
@@ -29,6 +34,8 @@ function CampoInline({
      "Adicionar nota" e nao tem estado de leitura proprio. */
   iniciarEditando = false,
   onCancelar,
+  /* O X cancela a edicao em vez de limpar o texto. Default = limpar. */
+  limparCancela = false,
 }) {
   const [editing, setEditing] = useState(iniciarEditando)
   const [draft, setDraft] = useState(value)
@@ -114,9 +121,9 @@ function CampoInline({
       <button
         type="button"
         className={s.limpar}
-        aria-label="Limpar"
+        aria-label={limparCancela ? 'Cancelar' : 'Limpar'}
         onMouseDown={(event) => event.preventDefault()}
-        onClick={() => setDraft('')}
+        onClick={limparCancela ? cancel : () => setDraft('')}
       >
         {iconeLimpar}
       </button>

@@ -317,3 +317,16 @@
   flex-direction: column;
   gap: 40px;
 }
+
+/* Atribuir: o nome e o cargo em cinza ao lado, como nas outras listas. */
+.recurso-atribuir__nome {
+  white-space: nowrap;
+}
+
+.recurso-atribuir__cargo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}

@@ -1,27 +1,10 @@
 import { useEffect, useState } from 'react'
 import closeIcon from '../assets/icons/Close.svg'
-import closeIconWhite from '../assets/icons/CloseWhite.svg'
 import { IconButton, PainelLateral } from '@squad/ui'
+import FilterPill from './FilterPill.jsx'
 import './FiltrosPanel.css'
 
 const STATUS_OPTIONS = ['Pendente', 'Completo']
-
-function FilterPill({ selected, onClick, children }) {
-  return (
-    <button
-      type="button"
-      className={
-        selected
-          ? 'filtros-panel__pill filtros-panel__pill--selected'
-          : 'filtros-panel__pill'
-      }
-      onClick={onClick}
-    >
-      {children}
-      {selected && <img src={closeIconWhite} width={20} height={20} alt="" />}
-    </button>
-  )
-}
 
 function NumberPillInput({ value, onChange, placeholder }) {
   return (

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import closeIcon from '../../../assets/icons/Close.svg'
 import caretDownIcon from '../../../assets/icons/CaretDownBlack.svg'
 import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
-import { getTeamColorTones } from '../../../utils/teamOptions.js'
+import { getTeamColorTones, timeComNome } from '../../../utils/teamOptions.js'
 import '@squad/ui/styles/SelectListModal.css'
 import '../InlineEditField.css'
 import '../ColaboradorDetail.css'
@@ -42,16 +42,19 @@ function TimesField({ value, times, disabled, onSave, onCriarTime }) {
   const disponiveis = times.filter(
     (time) => !value.includes(time.name) && time.name.toLowerCase().includes(termo.toLowerCase()),
   )
-  const existe = times.some((time) => time.name.toLowerCase() === termo.toLowerCase())
+  const existe = Boolean(timeComNome(times, termo))
 
   const adicionar = (nome) => {
     onSave([...value, nome])
     setBusca('')
   }
 
+  // Quem cria devolve o nome gravado: o do time existente, se o nome ja
+  // estiver em uso, ou o novo.
   const criar = () => {
-    onCriarTime(termo)
-    adicionar(termo)
+    const nome = onCriarTime(termo)
+    if (!value.includes(nome)) adicionar(nome)
+    else setBusca('')
   }
 
   const remover = (nome) => onSave(value.filter((item) => item !== nome))
@@ -107,7 +110,7 @@ function TimesField({ value, times, disabled, onSave, onCriarTime }) {
               setEditando(false)
             }
             if (event.key === 'Enter' && termo) {
-              const igual = times.find((time) => time.name.toLowerCase() === termo.toLowerCase())
+              const igual = timeComNome(times, termo)
               if (igual && !value.includes(igual.name)) adicionar(igual.name)
               else if (!igual) criar()
             }

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Square } from '@phosphor-icons/react'
-import closeIcon from '../../assets/icons/Close.svg'
+import xIcon from '../../assets/icons/X.svg'
 import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import Calendar from './Calendar.jsx'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
@@ -60,7 +60,7 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
             onMouseDown={(event) => event.preventDefault()}
             onClick={cancelEdit}
           >
-            <img src={closeIcon} alt="Cancelar" width={16} height={16} />
+            <img src={xIcon} alt="Cancelar" width={24} height={24} />
           </button>
         </div>
       ) : (

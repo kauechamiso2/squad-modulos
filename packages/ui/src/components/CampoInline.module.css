@@ -20,15 +20,17 @@
 }
 
 .campo {
-  flex: 1;
+  flex: var(--campo-inline-flex, 1);
+  width: var(--campo-inline-largura, auto);
+  height: var(--campo-inline-altura, auto);
   min-width: 0;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 8px;
   background: var(--color-overlay);
-  border-radius: 4px;
-  padding: 10px;
+  border-radius: var(--campo-inline-raio, 4px);
+  padding: var(--campo-inline-padding, 10px);
 }
 
 .entrada {
@@ -55,8 +57,8 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: var(--campo-inline-limpar, 16px);
+  height: var(--campo-inline-limpar, 16px);
   border: none;
   background: none;
   padding: 0;

@@ -33,7 +33,21 @@
   --gp-destaque: #e9a716;
   --gp-check: #60c60c;
   --gp-badge-amarelo: #fbedd0;
+  /* Veu de toda camada que abre por cima de outra (Shared patterns, Overlay e
+     Stacked layers): a cor e o desfoque. */
   --gp-veu: rgba(227, 230, 230, 0.6);
+  --gp-veu-filtro: blur(20px);
+
+  /* Caixa de edicao dos campos (Shared patterns, Inline edit input): 290x40,
+     #f4f5f5, raio 8, encostada a direita, com o X de 24px que cancela. Sao as
+     variaveis do @squad/ui/CampoInline, que mantem o default nos outros
+     modulos. */
+  --campo-inline-flex: 0 0 auto;
+  --campo-inline-largura: 290px;
+  --campo-inline-altura: 40px;
+  --campo-inline-raio: 8px;
+  --campo-inline-padding: 0 8px 0 12px;
+  --campo-inline-limpar: 24px;
   --gp-titulo-folha: #0c0d0d;
   --gp-borda-forte: #d3d7d7;
   --gp-icone-amarelo: #5d4309;
@@ -42,4 +56,14 @@
   /* Barra "Tipo de contratacao" da pagina do time (Figma 10355:3305). */
   --gp-contratacao-clt: #039300;
   --gp-contratacao-pj: #2a79d7;
+}
+
+/*
+ * O ModalOverlay do @squad/ui tem o veu escuro rgba(0,0,0,0.2) por padrao,
+ * que continua valendo nos outros modulos. Aqui ele segue o veu do modulo.
+ */
+.gp-modulo .modal-overlay {
+  background: var(--gp-veu);
+  -webkit-backdrop-filter: var(--gp-veu-filtro);
+  backdrop-filter: var(--gp-veu-filtro);
 }

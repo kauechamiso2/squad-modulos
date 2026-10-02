@@ -5,7 +5,7 @@ import TimeMembrosStep from './TimeMembrosStep.jsx'
 import TimeInfoStep from './TimeInfoStep.jsx'
 import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, generateId } from '../../../utils/storage.js'
-import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOptions.js'
+import { pickDefaultColorId, guessTeamIconName, timeComNome } from '../../../utils/teamOptions.js'
 import { useToast } from '../../toast/ToastContext.jsx'
 import { STATUS, getStatus } from '../../../utils/colaboradorStatus.js'
 
@@ -148,6 +148,7 @@ function NovoTimeStepFlow({ teamId, onExit }) {
       {step === 'nome' && (
         <TimeNomeStep
           name={name}
+          repetido={Boolean(timeComNome(times, name, teamId))}
           onNameChange={handleNameChange}
           onBack={onExit}
           onClose={openDiscardConfirm}

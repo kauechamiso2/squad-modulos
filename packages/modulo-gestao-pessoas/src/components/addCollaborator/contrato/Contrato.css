@@ -72,6 +72,8 @@
   inset: 0;
   z-index: 160;
   background: var(--gp-veu);
+  -webkit-backdrop-filter: var(--gp-veu-filtro);
+  backdrop-filter: var(--gp-veu-filtro);
 }
 
 .enviar-para {

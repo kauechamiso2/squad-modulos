@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import calendarPlusIcon from '../../assets/icons/CalendarPlus.svg'
 import squareIcon from '../../assets/icons/Square.svg'
+import xIcon from '../../assets/icons/X.svg'
 import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import InlineEditField from '../colaborador/InlineEditField.jsx'
 import Calendar from '../colaborador/Calendar.jsx'
@@ -68,7 +69,9 @@ export function CampoMoeda({ valor, onSalvar }) {
 }
 
 // Contato: Telefone ou Email com o mesmo seletor da folha "Enviar para".
-// Grava { tipo, valor }; telefone so com digitos.
+// Grava { tipo, valor }; telefone so com digitos. Em edicao, a caixa tem os
+// 290px do campo, com o seletor a esquerda (Inline edit input). Sair do
+// campo salva o valor valido e descarta o invalido; o X cancela.
 export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = false }) {
   const [editando, setEditando] = useState(false)
   const [rascunho, setRascunho] = useState(valor ?? { tipo: 'telefone', valor: '' })
@@ -104,7 +107,10 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
       className="campo-contato"
       ref={caixaRef}
       onBlur={(event) => {
-        if (!caixaRef.current.contains(event.relatedTarget)) setEditando(false)
+        if (caixaRef.current.contains(event.relatedTarget)) return
+        if (rascunho.valor === '') onSalvar(null)
+        else if (contatoValido(rascunho)) onSalvar(rascunho)
+        setEditando(false)
       }}
     >
       <SeletorSegmentado
@@ -113,6 +119,7 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
         valor={rascunho.tipo}
         onChange={(tipo) => setRascunho({ tipo, valor: '' })}
       />
+      <span className="campo-contato__caixa">
       <input
         ref={entradaRef}
         className="campo-contato__entrada"
@@ -137,6 +144,16 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
           }
         }}
       />
+      <button
+        type="button"
+        className="campo-contato__cancelar"
+        aria-label="Cancelar"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => setEditando(false)}
+      >
+        <img src={xIcon} width={24} height={24} alt="" />
+      </button>
+      </span>
     </div>
   )
 }
