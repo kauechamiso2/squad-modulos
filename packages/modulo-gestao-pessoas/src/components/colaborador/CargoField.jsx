@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import closeIcon from '../../assets/icons/Close.svg'
+import xIcon from '../../assets/icons/X.svg'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
 import '@squad/ui/styles/SelectListModal.css'
 import './InlineEditField.css'
@@ -89,7 +89,7 @@ function CargoField({ value, cargoOptions, disabled, onSave }) {
           onMouseDown={(event) => event.preventDefault()}
           onClick={cancelEdit}
         >
-          <img src={closeIcon} alt="Cancelar" width={16} height={16} />
+          <img src={xIcon} alt="Cancelar" width={24} height={24} />
         </button>
       </div>
 

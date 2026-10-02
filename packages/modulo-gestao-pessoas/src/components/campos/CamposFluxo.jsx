@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import calendarPlusIcon from '../../assets/icons/CalendarPlus.svg'
 import squareIcon from '../../assets/icons/Square.svg'
+import xIcon from '../../assets/icons/X.svg'
 import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import InlineEditField from '../colaborador/InlineEditField.jsx'
 import Calendar from '../colaborador/Calendar.jsx'
@@ -113,6 +114,7 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
         valor={rascunho.tipo}
         onChange={(tipo) => setRascunho({ tipo, valor: '' })}
       />
+      <span className="campo-contato__caixa">
       <input
         ref={entradaRef}
         className="campo-contato__entrada"
@@ -137,6 +139,16 @@ export function CampoContato({ valor, onSalvar, vazio = 'Adicionar', disabled = 
           }
         }}
       />
+      <button
+        type="button"
+        className="campo-contato__cancelar"
+        aria-label="Cancelar"
+        onMouseDown={(event) => event.preventDefault()}
+        onClick={() => setEditando(false)}
+      >
+        <img src={xIcon} width={24} height={24} alt="" />
+      </button>
+      </span>
     </div>
   )
 }

@@ -812,3 +812,31 @@
   position: relative;
   z-index: 300;
 }
+
+/* Campo em edicao: a caixa tem sempre 290px (Shared patterns, Inline edit
+   input). Nas linhas com olho ou com o mais, a coluna cresce e o icone some
+   enquanto a edicao dura. */
+.detalhe-campo:has(.detalhe-campo__valor input) .detalhe-campo__valor {
+  width: 290px;
+}
+
+.detalhe-campo:has(.detalhe-campo__valor input) > .detalhe-olho,
+.detalhe-campo:has(.detalhe-campo__valor input) > .detalhe-campo__mais {
+  display: none;
+}
+
+/* Contato em edicao na pagina: a coluna de 290px nao cabe o seletor e a
+   caixa, entao a coluna do rotulo encolhe e a caixa usa o que sobra. */
+.detalhe-campo:has(.campo-contato) .detalhe-campo__rotulo {
+  flex: 0 0 auto;
+}
+
+.detalhe-campo:has(.campo-contato) .detalhe-campo__valor {
+  flex: 1;
+  width: auto;
+}
+
+.detalhe-campo .campo-contato__caixa {
+  flex: 1 1 auto;
+  width: auto;
+}

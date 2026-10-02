@@ -110,25 +110,47 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
-  justify-content: flex-end;
+  margin-left: auto;
+}
+
+/* A caixa tem os 290px de todo campo; o seletor Telefone/Email fica a
+   esquerda dela. */
+.campo-contato__caixa {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 1 290px;
+  width: 290px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  height: 40px;
+  padding: 0 8px 0 12px;
+  border-radius: 8px;
+  background: var(--color-overlay);
 }
 
 .campo-contato__entrada {
   flex: 1;
   min-width: 0;
-  box-sizing: border-box;
-  height: 40px;
-  padding: 10px;
+  padding: 0;
   border: none;
-  border-radius: 4px;
   outline: none;
-  background: var(--color-overlay);
+  background: transparent;
   font-family: inherit;
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
+}
+
+.campo-contato__cancelar {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 /* Pagamento: 12px entre as pilulas (Figma 10338:11646). */

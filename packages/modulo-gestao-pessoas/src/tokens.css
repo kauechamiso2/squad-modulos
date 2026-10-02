@@ -37,6 +37,17 @@
      Stacked layers): a cor e o desfoque. */
   --gp-veu: rgba(227, 230, 230, 0.6);
   --gp-veu-filtro: blur(20px);
+
+  /* Caixa de edicao dos campos (Shared patterns, Inline edit input): 290x40,
+     #f4f5f5, raio 8, encostada a direita, com o X de 24px que cancela. Sao as
+     variaveis do @squad/ui/CampoInline, que mantem o default nos outros
+     modulos. */
+  --campo-inline-flex: 0 0 auto;
+  --campo-inline-largura: 290px;
+  --campo-inline-altura: 40px;
+  --campo-inline-raio: 8px;
+  --campo-inline-padding: 0 8px 0 12px;
+  --campo-inline-limpar: 24px;
   --gp-titulo-folha: #0c0d0d;
   --gp-borda-forte: #d3d7d7;
   --gp-icone-amarelo: #5d4309;
