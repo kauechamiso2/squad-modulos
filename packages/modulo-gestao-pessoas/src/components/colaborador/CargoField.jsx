@@ -14,11 +14,20 @@ function CargoField({ value, cargoOptions, disabled, onSave }) {
   const [query, setQuery] = useState('')
   const anchorRef = useRef(null)
   const rect = useDropdownPosition(editing, anchorRef)
+  const queryRef = useRef('')
+  const onSaveRef = useRef(onSave)
+  useEffect(() => {
+    queryRef.current = query
+    onSaveRef.current = onSave
+  })
 
   useEffect(() => {
     if (!editing) return
+    // Clicar fora salva o texto digitado (cargo e texto livre); vazio so
+    // fecha. Assim so um campo fica em edicao.
     function handleClickOutside(event) {
       if (anchorRef.current && !anchorRef.current.contains(event.target)) {
+        if (queryRef.current.trim()) onSaveRef.current([queryRef.current.trim()])
         setEditing(false)
         setQuery('')
       }
