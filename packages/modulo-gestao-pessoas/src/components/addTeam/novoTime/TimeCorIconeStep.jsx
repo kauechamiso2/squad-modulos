@@ -3,8 +3,7 @@ import { CaretDown } from '@phosphor-icons/react'
 import eyedropperIcon from '../../../assets/icons/Eyedropper.svg'
 import smileyIcon from '../../../assets/icons/Smiley.svg'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
-import ColorPickerModal from '../ColorPickerModal.jsx'
-import IconPickerModal from '../IconPickerModal.jsx'
+import { CorPanel, IconePanel } from './TimePaineis.jsx'
 import { getTeamColorTones, getTeamIconComponent } from '../../../utils/teamOptions.js'
 import '../../campos/Botoes.css'
 import '../../addCollaborator/clt/CltShell.css'
@@ -27,8 +26,14 @@ function TimeCorIconeStep({
   onClose,
   onContinue,
 }) {
-  const [colorModalOpen, setColorModalOpen] = useState(false)
-  const [iconModalOpen, setIconModalOpen] = useState(false)
+  // Os paineis ficam montados para animar a saida; a chave nova a cada
+  // abertura zera a escolha.
+  const [painel, setPainel] = useState(null)
+  const [aberturas, setAberturas] = useState(0)
+  const abrir = (qual) => {
+    setAberturas((total) => total + 1)
+    setPainel(qual)
+  }
   const { light, dark } = getTeamColorTones(colorId)
   const IconComponent = getTeamIconComponent(iconName)
 
@@ -65,7 +70,7 @@ function TimeCorIconeStep({
               <button
                 type="button"
                 className="time-step__color-dots"
-                onClick={() => setColorModalOpen(true)}
+                onClick={() => abrir('cor')}
                 aria-label="Escolher cor do time"
               >
                 <span className="time-step__color-dot" style={{ background: light }} />
@@ -79,7 +84,7 @@ function TimeCorIconeStep({
               <button
                 type="button"
                 className="time-step__icon-pill"
-                onClick={() => setIconModalOpen(true)}
+                onClick={() => abrir('icone')}
                 aria-label="Escolher ícone do time"
               >
                 <IconComponent size={24} color={dark} />
@@ -90,26 +95,31 @@ function TimeCorIconeStep({
         </div>
       </CltShell>
 
-      {colorModalOpen && (
-        <ColorPickerModal
-          usedColorIds={usedColors}
-          onSelect={(newColorId) => {
-            onColorChange(newColorId)
-            setColorModalOpen(false)
-          }}
-          onClose={() => setColorModalOpen(false)}
-        />
-      )}
-
-      {iconModalOpen && (
-        <IconPickerModal
-          value={iconName}
-          onSelect={(newIconName) => {
-            onIconChange(newIconName)
-            setIconModalOpen(false)
-          }}
-          onClose={() => setIconModalOpen(false)}
-        />
+      {aberturas > 0 && (
+        <>
+          <CorPanel
+            key={`cor-${aberturas}`}
+            aberto={painel === 'cor'}
+            valor={colorId}
+            usadas={usedColors}
+            onFechar={() => setPainel(null)}
+            onSalvar={(cor) => {
+              onColorChange(cor)
+              setPainel(null)
+            }}
+          />
+          <IconePanel
+            key={`icone-${aberturas}`}
+            aberto={painel === 'icone'}
+            valor={iconName}
+            cor={dark}
+            onFechar={() => setPainel(null)}
+            onSalvar={(icone) => {
+              onIconChange(icone)
+              setPainel(null)
+            }}
+          />
+        </>
       )}
     </>
   )

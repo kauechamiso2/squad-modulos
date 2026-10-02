@@ -25,9 +25,7 @@ import {
 } from '../detalhe/Blocos.jsx'
 import { iconeCampo } from '../detalhe/iconeCampo.jsx'
 import { MarcaDoRecurso } from '../RecursosGrid.jsx'
-import { DescricaoPanel, LiderPanel } from '../addTeam/novoTime/TimePaineis.jsx'
-import ColorPickerModal from '../addTeam/ColorPickerModal.jsx'
-import IconPickerModal from '../addTeam/IconPickerModal.jsx'
+import { CorPanel, DescricaoPanel, IconePanel, LiderPanel } from '../addTeam/novoTime/TimePaineis.jsx'
 import DeleteTimeModal from './DeleteTimeModal.jsx'
 import RemoveMemberModal from './RemoveMemberModal.jsx'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
@@ -60,7 +58,6 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
 
   const [excluindo, setExcluindo] = useState(false)
   const [removendo, setRemovendo] = useState(null)
-  const [modal, setModal] = useState(null)
   const [painel, setPainel] = useState(null)
   // Os paineis ficam montados para animar a saida; a chave nova a cada
   // abertura zera o rascunho deles.
@@ -77,7 +74,6 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
     setColaboradores(getCollection(COLLECTIONS.COLABORADORES))
     setExcluindo(false)
     setRemovendo(null)
-    setModal(null)
     setPainel(null)
     setDescricaoAberta(false)
   }, [aberto])
@@ -169,13 +165,13 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
         </button>
       </CampoDetalhe>
       <CampoDetalhe icone={iconeCampo(eyedropperIcon)} rotulo="Cor">
-        <button type="button" className="detalhe-pilula" aria-label="Escolher cor do time" onClick={() => setModal('cor')}>
+        <button type="button" className="detalhe-pilula" aria-label="Escolher cor do time" onClick={() => abrirPainel('cor')}>
           <span className="detalhe-pilula__ponto" style={{ background: dark }} />
           <img src={caretDownIcon} width={16} height={16} alt="" />
         </button>
       </CampoDetalhe>
       <CampoDetalhe icone={iconeCampo(smileyIcon)} rotulo="Ícone">
-        <button type="button" className="detalhe-pilula detalhe-pilula--icone" aria-label="Escolher ícone do time" onClick={() => setModal('icone')}>
+        <button type="button" className="detalhe-pilula detalhe-pilula--icone" aria-label="Escolher ícone do time" onClick={() => abrirPainel('icone')}>
           {createElement(IconeTime, { size: 24, color: dark })}
           <img src={caretDownIcon} width={16} height={16} alt="" />
         </button>
@@ -328,28 +324,6 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
           />
         )}
 
-        {modal === 'cor' && (
-          <ColorPickerModal
-            usedColorIds={times.filter((outro) => outro.id !== time.id && outro.color).map((outro) => outro.color)}
-            onClose={() => setModal(null)}
-            onSelect={(cor) => {
-              atualizarTime({ color: cor })
-              setModal(null)
-            }}
-          />
-        )}
-
-        {modal === 'icone' && (
-          <IconPickerModal
-            value={time.icon}
-            onClose={() => setModal(null)}
-            onSelect={(icone) => {
-              atualizarTime({ icon: icone })
-              setModal(null)
-            }}
-          />
-        )}
-
         {aberturas > 0 && (
           <>
             <LiderPanel
@@ -377,6 +351,28 @@ function TimeDetail({ id, mode, aberto, onClose, onExpand, onCollapse, onDataCha
               onFechar={() => setPainel(null)}
               onSalvar={(ids) => {
                 adicionarMembros(ids)
+                setPainel(null)
+              }}
+            />
+            <CorPanel
+              key={`cor-${aberturas}`}
+              aberto={painel === 'cor'}
+              valor={time.color}
+              usadas={times.filter((outro) => outro.id !== time.id && outro.color).map((outro) => outro.color)}
+              onFechar={() => setPainel(null)}
+              onSalvar={(cor) => {
+                atualizarTime({ color: cor })
+                setPainel(null)
+              }}
+            />
+            <IconePanel
+              key={`icone-${aberturas}`}
+              aberto={painel === 'icone'}
+              valor={time.icon}
+              cor={dark}
+              onFechar={() => setPainel(null)}
+              onSalvar={(icone) => {
+                atualizarTime({ icon: icone })
                 setPainel(null)
               }}
             />

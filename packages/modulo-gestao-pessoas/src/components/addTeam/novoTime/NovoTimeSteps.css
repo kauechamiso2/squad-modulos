@@ -352,3 +352,76 @@
 .time-painel__descricao:focus-visible {
   border-color: var(--color-text);
 }
+
+/* Seletores de cor e de icone em painel lateral (Shared patterns, Pickers). */
+.time-painel__cores {
+  display: grid;
+  grid-template-columns: repeat(6, 40px);
+  gap: 16px;
+  padding: 4px;
+}
+
+.time-painel__cor {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 360px;
+  cursor: pointer;
+}
+
+.time-painel__cor:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-border);
+}
+
+.time-painel__cor--escolhida,
+.time-painel__cor--escolhida:focus-visible {
+  box-shadow: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-text);
+}
+
+.time-painel__categoria {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.time-painel__categoria-rotulo {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.time-painel__icones {
+  display: grid;
+  grid-template-columns: repeat(8, 40px);
+  gap: 8px;
+}
+
+.time-painel__icone {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.time-painel__icone:hover,
+.time-painel__icone:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.time-painel__icone--escolhido {
+  border-color: var(--color-text);
+  background: var(--color-overlay);
+}
