@@ -34,6 +34,10 @@
   color: var(--color-text);
 }
 
+.beneficios-toolbar__filtros:hover {
+  background: var(--color-overlay);
+}
+
 .beneficios-toolbar__filters-summary {
   display: flex;
   align-items: center;

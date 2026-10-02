@@ -5,7 +5,7 @@ import './BeneficiosToolbar.css'
 function BeneficiosToolbar({ total, onFiltrosClick, filtersSummary, onClearAllFilters }) {
   return (
     <div className="beneficios-toolbar">
-      <span className="beneficios-toolbar__total">Total: {total} beneficios</span>
+      <span className="beneficios-toolbar__total">Total: {total} recursos</span>
 
       <div className="beneficios-toolbar__actions">
         {filtersSummary && (

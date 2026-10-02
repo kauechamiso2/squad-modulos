@@ -7,7 +7,6 @@ export { default as WizardShell } from './components/WizardShell.jsx'
 export { default as ModalOverlay } from './components/ModalOverlay.jsx'
 export { default as FieldModalShell } from './components/FieldModalShell.jsx'
 export { default as Checkbox } from './components/Checkbox.jsx'
-export { default as DiscardConfirmModal } from './components/DiscardConfirmModal.jsx'
 
 // Componente novo, do monorepo.
 export { default as ModuleCard } from './components/ModuleCard.jsx'

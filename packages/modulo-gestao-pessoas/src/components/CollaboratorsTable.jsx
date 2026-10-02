@@ -5,11 +5,21 @@ import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/CloseGray.svg'
 import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
-import ActivityTag from './ActivityTag.jsx'
+import StatusPill from './status/StatusPill.jsx'
+import AusenciaBadge from './status/AusenciaBadge.jsx'
+import DesligamentoBadge from './status/DesligamentoBadge.jsx'
+import AlertaCadastro from './status/AlertaCadastro.jsx'
 import CollaboratorRowMenu from './colaborador/CollaboratorRowMenu.jsx'
-import { formatShortDatePt } from '../utils/formatters.js'
-import { getCollaboratorActiveSince } from '../utils/storage.js'
+import { STATUS, getAusenciaAtiva, getStatus, isEncerrado } from '../utils/colaboradorStatus.js'
+import { todayIso } from '../utils/formatters.js'
 import './CollaboratorsTable.css'
+
+// Valor vazio da plataforma (contexto, Topico 1).
+const VAZIO = '—'
+
+function joinOrEmpty(values) {
+  return values.length > 0 ? values.join(', ') : VAZIO
+}
 
 function SortableHeaderCell({ label, active, onClick }) {
   return (
@@ -69,9 +79,12 @@ function CollaboratorsTable({
   onClearFilter,
   timeOptions,
   cargoOptions,
-  atividadeOptions,
+  tipoOptions,
+  statusOptions,
   onRowClick,
   onDataChanged,
+  onDesligar,
+  alertas,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -120,19 +133,16 @@ function CollaboratorsTable({
     sortedCollaborators = [...collaborators].sort((a, b) =>
       a.name.localeCompare(b.name, 'pt-BR'),
     )
-  } else if (sortColumn === 'ativo-desde') {
-    sortedCollaborators = [...collaborators].sort((a, b) => {
-      const dateA = getCollaboratorActiveSince(a)
-      const dateB = getCollaboratorActiveSince(b)
-      if (dateA === null && dateB === null) return 0
-      if (dateA === null) return 1
-      if (dateB === null) return -1
-      return dateA.localeCompare(dateB)
-    })
   }
 
+  const hoje = todayIso()
+
+  // Colunas do Figma 10331:3109: checkbox, Nome 198, Time 160, Cargo 240,
+  // Tipo 140, Status ocupa o resto, slot de icones e menu. O slot e `auto`
+  // e cada linha e um grid proprio: sem icone ele fecha e o Status, alinhado
+  // a esquerda, so ganha folga a direita.
   return (
-    <Tabela colunas={'24px minmax(0, 1fr) 160px 240px 160px 120px 40px'}>
+    <Tabela colunas={'24px 198px 160px 240px 140px minmax(0, 1fr) auto 40px'}>
       <CabecalhoTabela>
         <button
           type="button"
@@ -173,31 +183,42 @@ function CollaboratorsTable({
             containerRefs.current.cargo = el
           }}
         />
-        <SortableHeaderCell
-          label="Ativo desde"
-          active={sortColumn === 'ativo-desde'}
-          onClick={() => toggleSort('ativo-desde')}
-        />
         <FilterHeaderCell
-          label="Atividade"
-          options={atividadeOptions}
-          selected={columnFilters.atividade}
-          isOpen={openColumn === 'atividade'}
-          onHeaderClick={() => handleHeaderClick('atividade')}
-          onToggleOption={(option) => onToggleFilterOption('atividade', option)}
+          label="Tipo"
+          options={tipoOptions}
+          selected={columnFilters.tipo}
+          isOpen={openColumn === 'tipo'}
+          onHeaderClick={() => handleHeaderClick('tipo')}
+          onToggleOption={(option) => onToggleFilterOption('tipo', option)}
           containerRef={(el) => {
-            containerRefs.current.atividade = el
+            containerRefs.current.tipo = el
           }}
         />
-        <div className="collaborators-table__header-spacer" />
+        <FilterHeaderCell
+          label="Status"
+          options={statusOptions}
+          selected={columnFilters.status}
+          isOpen={openColumn === 'status'}
+          onHeaderClick={() => handleHeaderClick('status')}
+          onToggleOption={(option) => onToggleFilterOption('status', option)}
+          containerRef={(el) => {
+            containerRefs.current.status = el
+          }}
+        />
+        <div />
+        <div />
       </CabecalhoTabela>
 
       {sortedCollaborators.map((collaborator) => {
-          const activeSince = getCollaboratorActiveSince(collaborator)
           const isSelected = selectedIds.has(collaborator.id)
+          const status = getStatus(collaborator)
+          const ausencia = getAusenciaAtiva(collaborator, hoje)
           return (
             <LinhaTabela
               selecionada={isSelected}
+              className={
+                isEncerrado(status) ? 'collaborators-table__row--esmaecida' : ''
+              }
               key={collaborator.id}
               onClick={() => onRowClick?.(collaborator.id)}
             >
@@ -216,28 +237,34 @@ function CollaboratorsTable({
                   alt=""
                 />
               </button>
-              <div className={classesCelula.principal}>
+              <div className={`${classesCelula.principal} collaborators-table__texto`}>
                 {collaborator.name}
               </div>
-              <div className={classesCelula.secundaria}>
-                {collaborator.times.join(', ')}
+              <div className={`${classesCelula.secundaria} collaborators-table__texto`}>
+                {joinOrEmpty(collaborator.times)}
               </div>
-              <div className={classesCelula.secundaria}>
-                {collaborator.cargos.join(', ')}
+              <div className={`${classesCelula.secundaria} collaborators-table__texto`}>
+                {joinOrEmpty(collaborator.cargos)}
               </div>
-              <div className={classesCelula.secundaria}>
-                {activeSince ? formatShortDatePt(activeSince) : ''}
+              <div className={`${classesCelula.secundaria} collaborators-table__texto`}>
+                {collaborator.tipo}
               </div>
-              <div className={classesCelula.celula}>
-                <ActivityTag
-                  contractType={collaborator.contractType}
-                  desligado={Boolean(collaborator.desligado)}
-                />
+              {/* Sem overflow: hidden, para o popover do pill poder sair da celula. */}
+              <div className="collaborators-table__status">
+                <StatusPill status={status} />
+              </div>
+              <div className="collaborators-table__icones">
+                {status.id === STATUS.EM_DESLIGAMENTO && <DesligamentoBadge />}
+                {ausencia && <AusenciaBadge ausencia={ausencia} />}
+                {alertas.has(collaborator.id) && (
+                  <AlertaCadastro onAbrir={() => onRowClick(collaborator.id)} />
+                )}
               </div>
               <CollaboratorRowMenu
                 collaborator={collaborator}
                 onView={onRowClick}
                 onDataChanged={onDataChanged}
+                onDesligar={onDesligar}
               />
             </LinhaTabela>
           )

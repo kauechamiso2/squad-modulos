@@ -8,8 +8,7 @@ import pipoAvatarImage from '../assets/illustrations/Pipo.png'
 const PLACEHOLDERS = {
   colaboradores: 'Buscar uma pessoa...',
   times: 'Buscar um time...',
-  cargos: 'Buscar um cargo...',
-  beneficios: 'Buscar um benefício...',
+  beneficios: 'Buscar um recurso...',
 }
 
 /*

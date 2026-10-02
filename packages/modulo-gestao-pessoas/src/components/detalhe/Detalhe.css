@@ -1,0 +1,814 @@
+/*
+ * Paginas de detalhe (colaborador, time e recurso) - "Shared patterns" do
+ * contexto e Figma 10355:1553.
+ */
+
+/* Casca. A caixa (veu, deslize, borda, raio e padding de 24) e do
+   PainelLateral; aqui ficam as medidas e o modo tela cheia. */
+.detalhe {
+  --painel-largura: 540px;
+  --painel-margem-direita: 20px;
+  --painel-altura: calc(100vh - 40px);
+  --painel-padding-baixo: 24px;
+  --painel-espaco-rodape: 0;
+  --painel-rolagem-padding-direita: 0;
+
+  transition:
+    top 280ms ease-out,
+    right 280ms ease-out,
+    width 280ms ease-out,
+    height 280ms ease-out,
+    padding 280ms ease-out,
+    border-radius 280ms ease-out,
+    border-color 280ms ease-out,
+    transform 280ms ease-out;
+}
+
+.detalhe__veu--oculto {
+  display: none;
+}
+
+/* Painel: a barra de rolagem perto da borda (avanco de 21px no padding) e o
+   conteudo de volta no lugar com 13px. */
+.detalhe.detalhe--panel {
+  --painel-rolagem-margem-direita: -21px;
+}
+
+.detalhe__painel {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-right: 13px;
+}
+
+/* Tela cheia - Figma 10355:2085: cabecalho de 64px com 32px dos lados e a
+   divisoria, colunas a 120px do topo. */
+.detalhe.detalhe--full {
+  --painel-largura: 100vw;
+  --painel-altura: 100vh;
+  --painel-altura-maxima: 100vh;
+  --painel-margem-direita: 0;
+  --painel-padding-baixo: 0;
+  --painel-gap: 0;
+  --painel-cabecalho-altura: 64px;
+  --painel-cabecalho-padding: 0 32px;
+
+  top: 0;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 0;
+  z-index: 200;
+  transform: none;
+}
+
+.detalhe.detalhe--full > :first-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.detalhe__colunas {
+  display: flex;
+  align-items: flex-start;
+  gap: 60px;
+  /* A coluna esquerda comeca em 320px numa tela de 1440 (720 - 400). */
+  padding: 56px 40px 80px max(40px, calc(50% - 400px));
+}
+
+.detalhe__coluna {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  min-width: 0;
+}
+
+.detalhe__coluna--esquerda {
+  width: 500px;
+  flex-shrink: 0;
+}
+
+.detalhe__coluna--direita {
+  width: 316px;
+  flex-shrink: 0;
+}
+
+/* Cabecalho: titulo 16px Medium e 12px entre X, titulo e acoes (o
+   PainelLateral poe 8px). */
+.detalhe__titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 4px;
+  letter-spacing: -0.26px;
+}
+
+.detalhe__titulo .status-pill {
+  letter-spacing: 0;
+}
+
+.detalhe__acoes {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 4px;
+}
+
+/* Bloco do perfil: linha de perfil, barra do Pipo, campos e a nota, 16px. */
+.detalhe-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Na tela cheia os campos ficam 4px para dentro da coluna (Figma 10355:2125). */
+.detalhe--full .detalhe-bloco {
+  padding: 0 4px;
+}
+
+/* Linha de perfil - 10355:1861. */
+.detalhe-perfil {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.detalhe-perfil__nome {
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.detalhe-perfil__tipo {
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* Recurso - 10355:2887: a categoria em 20px Medium cinza. */
+.detalhe-perfil__tipo--grande {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+}
+
+.detalhe-avatar-perfil {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+}
+
+/* Time - 10355:3230: o badge e quadrado, raio 8. */
+.detalhe-avatar-perfil--time {
+  border-radius: 8px;
+}
+
+/* Campos - 62px, icone 20, valor numa coluna de 290px. */
+.detalhe-campos {
+  display: flex;
+  flex-direction: column;
+}
+
+.detalhe-campo {
+  --campo-inline-peso: var(--font-weight-regular);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 62px;
+  padding: 16px 0;
+  font-size: 14px;
+  line-height: 1.2;
+}
+
+.detalhe-campo--topo {
+  align-items: flex-start;
+}
+
+.detalhe-campo__icone {
+  display: flex;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.detalhe-campo__rotulo {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.detalhe-campo__valor {
+  display: flex;
+  align-items: center;
+  width: 290px;
+  min-width: 0;
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.detalhe-campo--vazia .detalhe-campo__valor,
+.detalhe-campo:has(> .detalhe-olho) .detalhe-campo__valor,
+.detalhe-campo:has(> .detalhe-campo__acao) .detalhe-campo__valor {
+  width: 254px;
+}
+
+.detalhe-campo--vazia {
+  --campo-inline-peso: var(--font-weight-medium);
+}
+
+.detalhe-campo--vazia .detalhe-campo__valor button {
+  font-weight: var(--font-weight-medium);
+}
+
+.detalhe-campo__valor .colaborador-detail__value-button,
+.detalhe-campo__valor .linha-fluxo__botao {
+  font-weight: inherit;
+}
+
+.detalhe-campo:not(.detalhe-campo--vazia) .detalhe-campo__valor .linha-fluxo__botao {
+  font-weight: var(--font-weight-regular);
+}
+
+.detalhe-campo__mais {
+  flex-shrink: 0;
+}
+
+.detalhe-campo__vazio {
+  color: var(--color-text);
+}
+
+.detalhe-campo__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Acao a direita do campo (Copy, PhoneOutgoing): 20px, com a area do
+   botao (Figma 10355:2901). */
+.detalhe-campo__acao {
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 2px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.detalhe-campo__acao:hover,
+.detalhe-campo__acao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.detalhe-campo__documento {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detalhe-campo__documento--perto {
+  gap: 8px;
+}
+
+.detalhe-campo__sufixo {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.detalhe-campo__sufixo--regular {
+  font-weight: var(--font-weight-regular);
+}
+
+.detalhe-olho {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.detalhe-olho:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+/* Botao de valor dos campos (lider, descricao): gray hover e clique. */
+.detalhe-valor-botao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 100%;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: inherit;
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+}
+
+.detalhe-valor-botao:hover,
+.detalhe-valor-botao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.detalhe-valor-botao--vazio {
+  font-weight: var(--font-weight-medium);
+}
+
+/* Avatar de 24px do lider e do reporta para (10355:3240). */
+.detalhe-avatar-pequeno {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 216px;
+  background: var(--color-overlay);
+}
+
+/* Pilulas de Cor e Icone - 10355:3249 e 10355:3258: #f4f5f5, 32px, o ponto
+   de 12 ou o icone de 24 e a seta. */
+.detalhe-pilula {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.detalhe-pilula--icone {
+  padding: 0 12px 0 8px;
+}
+
+.detalhe-pilula:hover,
+.detalhe-pilula:focus-visible {
+  outline: none;
+  background: var(--color-border);
+}
+
+.detalhe-pilula__ponto {
+  width: 12px;
+  height: 12px;
+  border-radius: 360px;
+}
+
+/* Descricao - 10355:3267: 3 linhas e "ver mais..." cinza, 4px abaixo. */
+.detalhe-descricao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  width: 100%;
+}
+
+.detalhe-descricao__texto {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  text-align: left;
+  white-space: pre-wrap;
+  cursor: pointer;
+}
+
+.detalhe-descricao__texto--aberto {
+  display: block;
+}
+
+.detalhe-descricao__ver-mais {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+/* "Adicionar nota" - 10355:3270: 62px, divisoria em cima, 30px ate o texto. */
+.detalhe-nota-nova {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  padding: 30px 0 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.detalhe-nota-nova--fim {
+  height: auto;
+  padding: 0;
+  border-top: none;
+}
+
+.detalhe-nota-nova__botao {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.detalhe-nota-nova__botao:hover,
+.detalhe-nota-nova__botao:focus-visible {
+  outline: none;
+  text-decoration: underline;
+}
+
+.detalhe-nota-nova__entrada {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border: none;
+  border-radius: 4px;
+  outline: none;
+  background: var(--color-overlay);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+/* Linha do tempo - 10355:2104. */
+.detalhe-tempo {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 30px 16px 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+/* No painel ela vem logo abaixo da linha "Adicionar nota", sem outra
+   divisoria e sem os 30px. */
+.detalhe-tempo--sem-divisoria {
+  padding-top: 0;
+  border-top: none;
+}
+
+.detalhe-tempo__nota {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 16px;
+  border-left: 1px solid var(--color-text-secondary);
+}
+
+.detalhe-tempo__data {
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+}
+
+.detalhe-tempo__texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Secao - 16px Medium e 20px ate o conteudo. */
+.detalhe-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detalhe-secao__topo {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 19px;
+}
+
+.detalhe-secao__titulo {
+  flex: 1;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* "Add membro" / "Add time" - 10355:3312: pilula branca de 40px. O titulo
+   fica alinhado ao centro dela, sem empurrar o conteudo. */
+.detalhe-secao__acao {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin: -10.5px 0;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 360px;
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.detalhe-secao__acao:hover,
+.detalhe-secao__acao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+/* Cards de metrica. */
+.detalhe-metricas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detalhe-metricas__lado {
+  display: flex;
+  gap: 12px;
+}
+
+.detalhe-metricas__lado > .detalhe-metrica {
+  flex: 1;
+}
+
+.detalhe-metrica {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  letter-spacing: -0.26px;
+}
+
+.detalhe-metrica__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 24px;
+}
+
+.detalhe-metrica__rotulo {
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.detalhe-metrica__rotulo--flex {
+  flex: 1;
+  min-width: 0;
+}
+
+.detalhe-metrica__valor {
+  overflow: hidden;
+  font-size: 40px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.detalhe-metrica__linha {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.detalhe-metrica__valor-linha {
+  flex-shrink: 0;
+  font-size: 24px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.detalhe-metrica__barra {
+  display: flex;
+  height: 8px;
+}
+
+.detalhe-metrica__barra > span {
+  flex-basis: 0;
+  min-width: 8px;
+  height: 8px;
+  border-radius: 360px;
+}
+
+/* Linhas de lista - 56px, borda, raio 8, 20px entre as partes, 12px entre
+   as linhas. */
+.detalhe-listas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detalhe-lista {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  height: 56px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+}
+
+.detalhe-lista--botao {
+  cursor: pointer;
+}
+
+.detalhe-lista--botao:hover,
+.detalhe-lista--botao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.detalhe-lista__textos {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 20px;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.detalhe-lista__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text);
+}
+
+.detalhe-lista__texto--cinza {
+  color: var(--color-text-secondary);
+}
+
+.detalhe-lista__valor {
+  flex-shrink: 0;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.detalhe-lista__icone-botao {
+  display: flex;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  cursor: pointer;
+}
+
+.detalhe-lista__icone-botao:hover,
+.detalhe-lista__icone-botao:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}
+
+.detalhe-lista__download {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: var(--color-text);
+}
+
+/* Avatar de iniciais - 10355:3319: 32px, redondo, texto branco 14px. */
+.detalhe-avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 360px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-bg);
+}
+
+/* Badges de 32px: time (10355:2960, raio 6.4), arquivo (10355:2303). */
+.detalhe-badge {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6.4px;
+}
+
+.detalhe-badge--arquivo {
+  border-radius: 5.914px;
+  background: var(--gp-ausencia-fundo);
+}
+
+/* Secao vazia - 10338:9537. */
+.detalhe-vazio {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  padding: 16px 0;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+}
+
+.detalhe-vazio__texto {
+  flex: 1;
+  color: var(--color-text-secondary);
+}
+
+.detalhe-vazio__botao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.detalhe-vazio__botao--inerte {
+  cursor: default;
+}
+
+.detalhe-vazio__botao:not(.detalhe-vazio__botao--inerte):focus-visible {
+  outline: none;
+  border-radius: 4px;
+  background: var(--color-overlay);
+}
+
+/* Camada dos paineis e modais abertos de dentro do detalhe. */
+.detalhe-camada {
+  position: relative;
+  z-index: 300;
+}

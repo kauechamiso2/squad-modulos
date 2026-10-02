@@ -1,3 +1,8 @@
+import { todayIso } from './formatters.js'
+import { buildSeedColaboradores } from './seedColaboradores.js'
+import { buildSeedTimes } from './seedTimes.js'
+import { buildSeedRecursos } from './seedRecursos.js'
+
 // Todas as chaves deste modulo vivem sob um prefixo proprio. No monorepo
 // varios modulos dividem a mesma origem, entao chaves cruas como "times" ou
 // "cargos" colidiriam com as de outro modulo. Ver migrateLegacyKeys() abaixo
@@ -5,7 +10,6 @@
 const KEY_PREFIX = 'squad:gestao-pessoas:'
 
 export const COLLECTIONS = {
-  CARGOS: 'cargos',
   TIMES: 'times',
   COLABORADORES: 'colaboradores',
   BENEFICIOS: 'beneficios',
@@ -97,68 +101,59 @@ export function duplicateItems(name, ids) {
   return updated
 }
 
-function ensureSeeded(name, seedFactory) {
-  if (readCollection(name) !== null) return
-  writeCollection(name, seedFactory())
+// Versao dos dados deste modulo. Subir a versao apaga os dados antigos do
+// modulo - colaboradores, recursos e times - e grava o seed de novo. Dado do
+// modelo anterior e apagado, nao convertido.
+//   2: colaboradores com tipo, checklists, rescisao e ausencia.
+//   3: recursos (Beneficio, Verba, Licenca) no lugar dos beneficios antigos.
+//   4: campos da pagina CLT (CPF, contato, custo, dados bancarios, documentos).
+//   5: campos da pagina PJ (CNPJ, razao social, pagamento, valor do contrato);
+//      sem os campos antigos `contractType` e `desligado`.
+//   6: checklist de desligamento do Figma (10355:3986, 10355:7067), tipos de
+//      rescisao PJ, dados do desligamento e jornada de trabalho mockada.
+//   7: paginas de detalhe - o time Design completo, notas de exemplo e os
+//      dados de contato da Alice; recursos sem os campos legados `tipo` e `name`.
+//
+// So mexe em chaves deste modulo: o localStorage e dividido com os outros
+// modulos do apps/web. Nao roda quando a versao gravada e mais nova que a
+// deste codigo, para nunca apagar dado mais novo.
+export const DATA_VERSION = 7
+const DATA_VERSION_KEY = storageKey('versao-dados')
+
+export function resetDataIfOutdated() {
+  const stored = Number(localStorage.getItem(DATA_VERSION_KEY) ?? 0)
+  if (stored >= DATA_VERSION) return
+
+  const colaboradores = buildSeedColaboradores(todayIso())
+  writeCollection(COLLECTIONS.COLABORADORES, colaboradores)
+  writeCollection(COLLECTIONS.BENEFICIOS, buildSeedRecursos(colaboradores, todayIso()))
+  writeCollection(COLLECTIONS.TIMES, buildSeedTimes(colaboradores, todayIso()))
+  ensurePendingTimes(colaboradores.flatMap((colaborador) => colaborador.times))
+  localStorage.setItem(DATA_VERSION_KEY, String(DATA_VERSION))
 }
 
-export function seedInitialData() {
-  ensureSeeded(COLLECTIONS.CARGOS, () =>
-    [
-      'Designer de Produto Senior',
-      'Designer de Produto Pleno',
-      'Designer de Produto Junior',
-      'Designer Gráfico',
-      'Head de Produto',
-      'Head de Marketing',
-    ].map((name) => ({ id: generateId(), name, pending: false })),
-  )
-
-  ensureSeeded(COLLECTIONS.BENEFICIOS, () => [
-    {
-      id: generateId(),
-      name: 'Plano de Saude',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'alice',
-    },
-    {
-      id: generateId(),
-      name: 'Vale Refeição',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'caju',
-    },
-    {
-      id: generateId(),
-      name: 'Auxilio Home Office',
-      memberCount: 12,
-      iconType: 'badge',
-      icon: 'desktop',
-    },
-    {
-      id: generateId(),
-      name: 'Gympass',
-      memberCount: 12,
-      iconType: 'image',
-      image: 'gympass',
-    },
-    {
-      id: generateId(),
-      name: 'Vale Transporte',
-      memberCount: 12,
-      iconType: 'badge',
-      icon: 'van',
-    },
+// Os times citados pelo seed entram como times pendentes - o mesmo registro
+// que o app cria quando alguem digita um time novo - e so se ainda nao
+// existir um time com o mesmo nome.
+function ensurePendingTimes(names) {
+  const times = readCollection(COLLECTIONS.TIMES) ?? []
+  const existing = new Set(times.map((time) => time.name))
+  const missing = [...new Set(names)].filter((name) => !existing.has(name))
+  if (missing.length === 0) return
+  writeCollection(COLLECTIONS.TIMES, [
+    ...times,
+    ...missing.map((name) => ({ id: generateId(), name, pending: true })),
   ])
 }
 
 // One-time cleanup for browsers whose "times" collection was seeded by an
-// earlier version of seedInitialData with example data ("Design", "Vendas",
-// "Marketing", all pending: false). That seed has been removed; this undoes
-// its effects wherever it already ran, without touching times created for
-// real. Naturally a no-op once a given browser's storage no longer matches
-// the old seed signature, so it's safe to run on every load.
+// earlier version of seedInitialData with example data ("Vendas",
+// "Marketing", both pending: false and no real members). That seed has been
+// removed; this undoes its effects wherever it already ran, without
+// touching times created for real - a legacy seed record is only ever
+// removed, never mutated, and only when nobody actually belongs to it.
+// Naturally a no-op once a given browser's storage no longer matches the
+// old seed signature, so it's safe to run on every load.
 const LEGACY_SEEDED_TIME_NAMES = ['Vendas', 'Marketing']
 
 export function cleanupLegacySeedTimes() {
@@ -186,37 +181,39 @@ export function cleanupLegacySeedTimes() {
     return true
   })
 
-  const withDesignPendingFixed = withoutLegacySeeds.map((time) => {
-    if (time.name === 'Design' && !time.pending) {
-      changed = true
-      return { ...time, pending: true }
-    }
-    return time
-  })
-
   if (changed) {
-    writeCollection(COLLECTIONS.TIMES, withDesignPendingFixed)
+    writeCollection(COLLECTIONS.TIMES, withoutLegacySeeds)
   }
 }
 
-// One-time cleanup: a colaborador's "times" array should hold at most one
-// team, but records saved before that rule was enforced may still carry
-// more than one. Keep only the first and drop the rest. Naturally a no-op
-// once every record already has 0 or 1 team, so safe to run on every load.
-export function cleanupMultiTeamColaboradores() {
-  const colaboradores = readCollection(COLLECTIONS.COLABORADORES)
-  if (colaboradores === null) return
+// One-time migration: cargo is no longer a valid beneficiary source for
+// Benefícios (only colaboradores, times, and "Toda a empresa" are). Strips
+// any leftover cargoNames reference from records saved under the old Step 3,
+// without deleting the benefit record itself - if that leaves it with no
+// beneficiary source at all, it's left as an empty selection rather than
+// removed. Logged to the console since this silently changes saved data.
+// Naturally a no-op once a given browser's storage no longer has any
+// cargoNames left, so it's safe to run on every load.
+export function cleanupCargoBeneficiarios() {
+  const beneficios = readCollection(COLLECTIONS.BENEFICIOS)
+  if (beneficios === null) return
 
-  let changed = false
-  const fixed = colaboradores.map((colaborador) => {
-    if (Array.isArray(colaborador.times) && colaborador.times.length > 1) {
-      changed = true
-      return { ...colaborador, times: [colaborador.times[0]] }
-    }
-    return colaborador
+  const affected = []
+
+  const fixed = beneficios.map((benefit) => {
+    const cargoNames = benefit.beneficiarios?.cargoNames
+    if (!Array.isArray(cargoNames) || cargoNames.length === 0) return benefit
+    affected.push({ id: benefit.id, name: benefit.name })
+    return { ...benefit, beneficiarios: { ...benefit.beneficiarios, cargoNames: [] } }
   })
 
-  if (changed) {
-    writeCollection(COLLECTIONS.COLABORADORES, fixed)
+  if (affected.length > 0) {
+    writeCollection(COLLECTIONS.BENEFICIOS, fixed)
+    console.log(
+      'cleanupCargoBeneficiarios: removed stale cargo beneficiary references from',
+      affected.length,
+      'benefit record(s):',
+      affected,
+    )
   }
 }

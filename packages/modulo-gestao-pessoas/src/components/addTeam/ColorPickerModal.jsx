@@ -1,10 +1,12 @@
 import closeIcon from '../../assets/icons/Close.svg'
 import { IconButton, ModalOverlay } from '@squad/ui'
-import { TEAM_COLOR_PALETTE } from '../../utils/teamOptions.js'
+import { getAvailableColorOptions } from '../../utils/teamOptions.js'
 import '@squad/ui/styles/FieldModalShell.css'
 import './ColorPickerModal.css'
 
-function ColorPickerModal({ onSelect, onClose }) {
+function ColorPickerModal({ onSelect, onClose, usedColorIds = [] }) {
+  const availableColors = getAvailableColorOptions(usedColorIds)
+
   return (
     <ModalOverlay width={360} className="field-modal">
       <div className="field-modal__header">
@@ -14,7 +16,7 @@ function ColorPickerModal({ onSelect, onClose }) {
 
       <div className="field-modal__body">
         <div className="color-picker__grid">
-          {TEAM_COLOR_PALETTE.map((entry) => (
+          {availableColors.map((entry) => (
             <button
               type="button"
               key={entry.id}

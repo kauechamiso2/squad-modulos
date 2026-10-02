@@ -1,125 +1,6 @@
-/*
- * A casca deste painel - veu, caixa de 540, deslize de 280ms - vem do
- * @squad/ui/PainelLateral desde que o Fluxo de Caixa passou a usar a mesma no
- * resumo de transacao. Aqui ficam as medidas deste painel e o modo tela cheia.
- *
- * O modo tela cheia continua sendo classe extra no MESMO elemento do modo
- * painel: os dois animam largura, posicao e padding um para o outro, e separar
- * em dois componentes quebraria esse morph.
- */
-.colaborador-detail {
-  --painel-largura: 540px;
-  --painel-margem-direita: 24px;
-  --painel-altura: calc(100vh - 40px);
-  --painel-padding-baixo: 24px;
-  --painel-espaco-rodape: 0;
-
-  transition:
-    top 280ms ease-out,
-    right 280ms ease-out,
-    width 280ms ease-out,
-    height 280ms ease-out,
-    padding 280ms ease-out,
-    border-radius 280ms ease-out,
-    border-color 280ms ease-out,
-    transform 280ms ease-out;
-}
-
-/* Em tela cheia nao ha veu. */
-.colaborador-detail-overlay--oculto { display: none; }
-
-
-
-
-
-
-
-
-
-/* Em tela cheia tudo vem pelas variaveis do PainelLateral: elas e as regras
-   dele tem a mesma especificidade, e disputar na ordem do arquivo seria
-   fragil - foi assim que a altura ficou presa no max-height do modo painel. */
-.colaborador-detail--full {
-  --painel-largura: 100vw;
-  --painel-altura: 100vh;
-  --painel-altura-maxima: 100vh;
-  --painel-margem-direita: 0;
-  --painel-padding-baixo: 0;
-  --painel-gap: 0;
-
-  top: 0;
-  border: 1px solid transparent;
-  border-radius: 0;
-  padding: 0;
-  z-index: 200;
-  transform: none;
-}
-
-
-
-/* O cabecalho base (h40, gap 8, titulo 16/500) vem do PainelLateral; em tela
-   cheia ele cresce e ganha margem lateral, pelas variaveis dele. */
-.colaborador-detail--full {
-  --painel-cabecalho-altura: 64px;
-  --painel-cabecalho-padding: 0 40px;
-}
-
-
-
-.colaborador-detail__power-button,
-.colaborador-detail__expand-button {
-  width: 40px;
-  height: 40px;
-  color: var(--color-text-secondary);
-}
-
-.colaborador-detail__power-button--active {
-  color: #ff2633;
-}
-
-.colaborador-detail__scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
 
 .colaborador-detail--full .colaborador-detail__scroll {
   overflow: visible;
-}
-
-/* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
-   independently of each other and of the header, so each is capped to the
-   viewport height below the fixed 64px header with its own overflow-y. */
-.colaborador-detail--full .colaborador-detail__columns {
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  column-gap: 20px;
-  padding: 0 40px;
-  height: calc(100vh - 64px);
-}
-
-.colaborador-detail__column {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-
-.colaborador-detail--full .colaborador-detail__column {
-  height: calc(100vh - 64px);
-  overflow-y: auto;
-}
-
-.colaborador-detail--full .colaborador-detail__column--main {
-  grid-column: 3 / 7;
-}
-
-.colaborador-detail--full .colaborador-detail__column--notes {
-  grid-column: 7 / 9;
 }
 
 /* Profile header */
@@ -302,62 +183,85 @@
   background: var(--color-overlay);
 }
 
-/* Notes */
+/* Metricas */
 
-.colaborador-detail__notes {
+.colaborador-detail__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.colaborador-detail__stats-row {
+  display: flex;
+  gap: 16px;
+}
+
+.colaborador-detail__stat-card {
+  box-sizing: border-box;
+  flex: 1;
+  /* Without this, a flex item's default min-width:auto lets long content
+     (e.g. a big Custo total number) force the card wider than its equal
+     flex share instead of respecting it - the value's own font-size
+     shrinks to fit instead (see useFitStatFontSize). */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-top: 30px;
-  padding-bottom: 16px;
-  border-top: 1px solid var(--color-border);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
 }
 
-.colaborador-detail__nota {
-  box-sizing: border-box;
+.colaborador-detail__stat-header {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
-  border-left: 1px solid var(--color-text-secondary);
-  padding-left: 16px;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.colaborador-detail__nota-date {
+.colaborador-detail__stat-label {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
-.colaborador-detail__nota-text {
-  font-size: 16px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text);
+.colaborador-detail__stat-label--medium {
+  font-weight: var(--font-weight-medium);
 }
 
-.colaborador-detail__add-nota {
+.colaborador-detail__stat-toggle {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   border: none;
   background: none;
   padding: 0;
-  font-size: 14px;
-  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__stat-value {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 40px;
+  font-weight: var(--font-weight-medium);
   color: var(--color-text);
 }
 
-.colaborador-detail__add-nota-input {
-  width: 100%;
-  box-sizing: border-box;
+/* Mask toggle (Salario row) */
+
+.colaborador-detail__mask-toggle {
+  flex-shrink: 0;
+  /* Pushes the icon to the row's far right edge regardless of the
+     Salário value's length, instead of sitting flush against it. */
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
-  outline: none;
-  background: var(--color-overlay);
-  border-radius: 4px;
-  padding: 10px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: var(--font-weight-regular);
-  color: var(--color-text);
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
 }
 
 /* Beneficios */
@@ -386,7 +290,7 @@
 }
 
 .colaborador-detail__beneficio-row:hover {
-  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+  background: var(--color-overlay);
 }
 
 .colaborador-detail__beneficio-icon {

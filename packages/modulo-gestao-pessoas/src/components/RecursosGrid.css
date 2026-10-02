@@ -1,0 +1,111 @@
+/* Aba Recursos - Figma 10334:5539, cards 266x180 com 12px entre eles. */
+.recursos-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.recurso-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  height: 180px;
+  padding: 24px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  cursor: pointer;
+}
+
+.recurso-card:hover {
+  background: var(--color-overlay);
+}
+
+.recurso-card__topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.recurso-card__marca {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 10.349px;
+  overflow: hidden;
+}
+
+.recurso-card__marca--logo {
+  background: var(--color-overlay);
+}
+
+.recurso-card__marca--icone {
+  background: var(--gp-ausencia-fundo);
+}
+
+/* Perfil da pagina do recurso - Figma 10355:2885: 40px, raio 8. */
+.recurso-card__marca--perfil {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+}
+
+/* Linhas de lista - Figma 10355:3710: 32px, raio 5.914. */
+.recurso-card__marca--pequena {
+  width: 32px;
+  height: 32px;
+  border-radius: 5.914px;
+}
+
+.recurso-card__logo {
+  position: absolute;
+  object-fit: cover;
+}
+
+.recurso-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.recurso-card__titulo {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.recurso-card__base {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
+  color: var(--color-text-secondary);
+}
+
+.recurso-card__valor {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recurso-card__contagem {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}

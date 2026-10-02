@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -8,11 +8,10 @@ import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
-import CargosToolbar from '../components/CargosToolbar.jsx'
-import CargosTable from '../components/CargosTable.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
-import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
+import RecursosGrid from '../components/RecursosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
+import { useToast } from '../components/toast/ToastContext.jsx'
 import AddEmTimeModal from '../components/AddEmTimeModal.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
@@ -20,31 +19,33 @@ import TimesFiltrosPanel from '../components/TimesFiltrosPanel.jsx'
 import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
-import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
-import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
-import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
+import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
+import NovoRecursoFlow from '../components/addRecurso/NovoRecursoFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
+import DesligamentoFlow from '../components/desligamento/DesligamentoFlow.jsx'
+import TimeDetail from '../components/time/TimeDetail.jsx'
+import RecursoDetail from '../components/recurso/RecursoDetail.jsx'
 import {
   getCollection,
   setCollection,
   getCollaboratorActiveSince,
   removeItems,
+  duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
-import { formatDateDMonthYear } from '../utils/formatters.js'
-import { getBenefitMemberCount } from '../utils/beneficiarios.js'
-import { getBenefitFilterTipo } from '../utils/beneficioOptions.js'
+import { formatDateDMonthYear, todayIso } from '../utils/formatters.js'
+import { STATUS_OPCOES, TIPOS, getStatus, isEncerrado, isPendente } from '../utils/colaboradorStatus.js'
+import { mostraAlertaDeCadastro } from '../utils/cadastro.js'
+import { fornecedorDoRecurso, pessoasDoRecurso, tituloDoRecurso, TIPOS_RECURSO } from '../utils/recursos.js'
 import { MODULE_BASE } from '../routes.js'
 import './Home.css'
 
 const TABS = [
   { id: 'colaboradores', label: 'Colaboradores' },
   { id: 'times', label: 'Times' },
-  { id: 'cargos', label: 'Cargos' },
-  { id: 'beneficios', label: 'Benefícios' },
+  { id: 'beneficios', label: 'Recursos' },
 ]
 
-const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 
 // Read once when this module first evaluates - i.e. exactly once per real
 // page load (a hard navigation/refresh reloads the whole bundle, so this
@@ -53,15 +54,19 @@ const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 // useMatch() has already caught up to the real initial URL by the time
 // Home's first render runs.
 const initialHashPath = window.location.hash.replace(/^#/, '')
-const loadedDirectlyOnColaboradorRoute = new RegExp(`^${MODULE_BASE}/colaborador/[^/]+`).test(
-  initialHashPath,
-)
+const emRota = (nome) =>
+  new RegExp(`^${MODULE_BASE}/${nome}/[^/]+`).test(initialHashPath)
+
+const loadedDirectlyOnColaboradorRoute = emRota('colaborador')
+const loadedDirectlyOnTimeRoute = emRota('time')
+const loadedDirectlyOnBeneficioRoute = emRota('recurso')
 
 function createEmptyColumnFilters() {
   return {
     time: new Set(),
     cargo: new Set(),
-    atividade: new Set(),
+    tipo: new Set(),
+    status: new Set(),
     periodo: { start: null, end: null },
   }
 }
@@ -74,9 +79,21 @@ function createEmptyBeneficiosFilters() {
   return { tipo: new Set(), pessoas: { min: null, max: null } }
 }
 
+// Guarda o ultimo valor nao nulo. Serve para os paineis de detalhe, que
+// continuam no DOM durante a animacao de saida, depois de a rota ja ter
+// mudado.
+function useUltimo(valor) {
+  const guardado = useRef(valor)
+  if (valor) guardado.current = valor
+  return valor ?? guardado.current
+}
+
 function Home({ backTo }) {
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const colaboradorMatch = useMatch(`${MODULE_BASE}/colaborador/:id`)
+  const timeMatch = useMatch(`${MODULE_BASE}/time/:id`)
+  const beneficioMatch = useMatch(`${MODULE_BASE}/recurso/:id`)
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
   // a pasted link) already landed on the colaborador route - that always
@@ -98,14 +115,68 @@ function Home({ backTo }) {
   }
   const closeColaborador = () => navigate(MODULE_BASE)
 
+  // Mesma convencao da rota de colaborador, aplicada a /time/:id.
+  const forceFullScreenTimeRef = useRef(loadedDirectlyOnTimeRoute)
+  const timeId = timeMatch?.params?.id ?? null
+  const timeFullScreenRequested = searchParams.get('view') === 'full'
+  const timeOverlayOpen = Boolean(timeId)
+  const timeFullScreen =
+    timeOverlayOpen && (timeFullScreenRequested || forceFullScreenTimeRef.current)
+
+  const openTime = (id) => navigate(`${MODULE_BASE}/time/${id}`)
+  const expandTime = () => navigate(`${MODULE_BASE}/time/${timeId}?view=full`)
+  const collapseTime = () => {
+    forceFullScreenTimeRef.current = false
+    navigate(`${MODULE_BASE}/time/${timeId}`)
+  }
+  const closeTime = () => navigate(MODULE_BASE)
+
+  // Mesma convencao, aplicada a /recurso/:id (contexto, secao 9).
+  const forceFullScreenBeneficioRef = useRef(loadedDirectlyOnBeneficioRoute)
+  const beneficioId = beneficioMatch?.params?.id ?? null
+  const beneficioFullScreenRequested = searchParams.get('view') === 'full'
+  const beneficioOverlayOpen = Boolean(beneficioId)
+  const beneficioFullScreen =
+    beneficioOverlayOpen && (beneficioFullScreenRequested || forceFullScreenBeneficioRef.current)
+
+  const openBeneficio = (id) => navigate(`${MODULE_BASE}/recurso/${id}`)
+  const expandBeneficio = () => navigate(`${MODULE_BASE}/recurso/${beneficioId}?view=full`)
+  const collapseBeneficio = () => {
+    forceFullScreenBeneficioRef.current = false
+    navigate(`${MODULE_BASE}/recurso/${beneficioId}`)
+  }
+  const closeBeneficio = () => navigate(MODULE_BASE)
+
+  /*
+   * O ultimo id de cada painel. Enquanto a saida anima a rota ja voltou para a
+   * lista, entao `colaboradorMatch` e companhia ja sao nulos - sem lembrar o
+   * ultimo, o painel esvaziaria no meio da transicao.
+   */
+  const ultimoColaboradorId = useUltimo(colaboradorId)
+  const ultimoTimeId = useUltimo(timeId)
+  const ultimoBeneficioId = useUltimo(beneficioId)
+
+  /*
+   * O modo tambem precisa ser lembrado, pelo mesmo motivo: sem isso o painel
+   * encolheria de tela cheia para painel no meio da saida.
+   *
+   * E em tela cheia nao ha para onde deslizar - o original fecha na hora, e e
+   * o que fazemos, deixando de montar. Nao e uma segunda animacao: e a
+   * ausencia dela.
+   */
+  const modo = (aberto, cheio) => (aberto ? (cheio ? 'full' : 'panel') : null)
+  const colaboradorModo = useUltimo(modo(colaboradorOverlayOpen, colaboradorFullScreen))
+  const timeModo = useUltimo(modo(timeOverlayOpen, timeFullScreen))
+  const beneficioModo = useUltimo(modo(beneficioOverlayOpen, beneficioFullScreen))
+
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
-  const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
-  const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
-  const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
-  const [novoCargoId, setNovoCargoId] = useState(null)
+  const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
+  const [novoTimeStepFlowTeamId, setNovoTimeStepFlowTeamId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
+  // Quem esta sendo desligado; o fluxo abre por cima de tudo, como os outros.
+  const [desligandoId, setDesligandoId] = useState(null)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
     getCollection(COLLECTIONS.COLABORADORES),
@@ -122,25 +193,47 @@ function Home({ backTo }) {
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
-  // already mounted.
+  // already mounted. Deleting a time elsewhere on this page always triggers
+  // a collaborators state update too (even a no-op cascade still produces a
+  // new array reference), which re-renders Home and so re-reads these
+  // fresh - so they don't need their own state for that to work.
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
-  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
-  const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
+  // Benefícios nao tem o efeito colateral que Times tem no estado de
+  // colaboradores ao deletar, entao precisa de estado proprio para reagir ao
+  // menu do card.
+  const [beneficios, setBeneficios] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
 
-  const filteredBeneficios = useMemo(() => {
-    return beneficios.filter((benefit) => {
-      if (beneficiosFilters.tipo.size > 0) {
-        const filterTipo = getBenefitFilterTipo(benefit)
-        if (!filterTipo || !beneficiosFilters.tipo.has(filterTipo)) return false
-      }
-      const count = getBenefitMemberCount(benefit, collaborators)
-      const { min, max } = beneficiosFilters.pessoas
-      if (min != null && count < min) return false
-      if (max != null && count > max) return false
-      return true
-    })
-  }, [beneficios, beneficiosFilters, collaborators])
+  // O painel de detalhe grava direto no storage, sem callback para ca -
+  // re-sincroniza no momento em que ele fecha.
+  useEffect(() => {
+    if (beneficioOverlayOpen) return
+    setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+  }, [beneficioOverlayOpen])
+
+  // A busca casa o titulo do card e o fornecedor: "Alice" acha o Plano de
+  // saude. A contagem e de pessoas unicas, sem quem ja saiu.
+  const filteredRecursos = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    const hoje = todayIso()
+    return beneficios
+      .map((recurso) => ({ recurso, pessoas: pessoasDoRecurso(recurso, collaborators, hoje).length }))
+      .filter(({ recurso, pessoas }) => {
+        if (query) {
+          const textos = [tituloDoRecurso(recurso), fornecedorDoRecurso(recurso)].filter(Boolean)
+          if (!textos.some((texto) => texto.toLowerCase().includes(query))) return false
+        }
+        if (
+          beneficiosFilters.tipo.size > 0 &&
+          !beneficiosFilters.tipo.has(TIPOS_RECURSO[recurso.tipoRecurso])
+        ) {
+          return false
+        }
+        const { min, max } = beneficiosFilters.pessoas
+        if (min != null && pessoas < min) return false
+        if (max != null && pessoas > max) return false
+        return true
+      })
+  }, [beneficios, beneficiosFilters, collaborators, searchQuery])
 
   const beneficiosFiltersSummary = useMemo(() => {
     const parts = [...beneficiosFilters.tipo]
@@ -186,9 +279,19 @@ function Home({ backTo }) {
     setColumnFilters((prev) => ({ ...prev, [column]: new Set() }))
   }
 
+  // Quem esta Em atividade com o "Completar cadastro" incompleto.
+  const alertasDeCadastro = useMemo(() => {
+    const hoje = todayIso()
+    return new Set(
+      collaborators
+        .filter((collaborator) => mostraAlertaDeCadastro(collaborator, beneficios, collaborators, hoje))
+        .map((collaborator) => collaborator.id),
+    )
+  }, [collaborators, beneficios])
+
   const filteredCollaborators = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    return collaborators.filter((collaborator) => {
+    const filtered = collaborators.filter((collaborator) => {
       if (query && !collaborator.name.toLowerCase().includes(query)) {
         return false
       }
@@ -204,9 +307,13 @@ function Home({ backTo }) {
       ) {
         return false
       }
+      if (columnFilters.tipo.size > 0 && !columnFilters.tipo.has(collaborator.tipo)) {
+        return false
+      }
+      // O filtro guarda o rotulo sem contador: "Pendente" casa 3/3, 2/3 e 1/1.
       if (
-        columnFilters.atividade.size > 0 &&
-        !columnFilters.atividade.has(collaborator.contractType)
+        columnFilters.status.size > 0 &&
+        !columnFilters.status.has(getStatus(collaborator).rotulo)
       ) {
         return false
       }
@@ -219,13 +326,24 @@ function Home({ backTo }) {
       }
       return true
     })
+    // Sem ordenacao ativa, Pendente e Em desligamento vem primeiro, e
+    // Desligado e Fim de contrato por ultimo (Figma 10355:6926). O sort e
+    // estavel, entao o resto mantem a ordem de cadastro. A ordenacao por Nome
+    // da tabela parte desta lista e passa por cima.
+    const prioridade = (collaborator) => {
+      const status = getStatus(collaborator)
+      if (isPendente(status)) return 0
+      return isEncerrado(status) ? 2 : 1
+    }
+    return filtered.sort((a, b) => prioridade(a) - prioridade(b))
   }, [collaborators, searchQuery, columnFilters])
 
   const filtersSummary = useMemo(() => {
     const parts = [
       ...columnFilters.time,
       ...columnFilters.cargo,
-      ...columnFilters.atividade,
+      ...columnFilters.tipo,
+      ...columnFilters.status,
     ]
     if (columnFilters.periodo.start) {
       parts.push(formatDateDMonthYear(columnFilters.periodo.start))
@@ -238,12 +356,13 @@ function Home({ backTo }) {
 
   const clearAllFilters = () => setColumnFilters(createEmptyColumnFilters())
 
+  // Contam Pendente, Em atividade e Em desligamento; quem esta em dois
+  // times conta nos dois. Desligado e Fim de contrato nao contam.
   const teamsWithCounts = useMemo(() => {
+    const ativos = collaborators.filter((collaborator) => !isEncerrado(getStatus(collaborator)))
     return times.map((team) => ({
       ...team,
-      memberCount: collaborators.filter((collaborator) =>
-        collaborator.times.includes(team.name),
-      ).length,
+      memberCount: ativos.filter((collaborator) => collaborator.times.includes(team.name)).length,
     }))
   }, [times, collaborators])
 
@@ -271,116 +390,6 @@ function Home({ backTo }) {
 
   const clearTimesFilters = () => setTimesFilters(createEmptyTimesFilters())
 
-  // Every Cargos row is derived from real collaborators - group them by
-  // (cargo name, contract type). A cargo still marked pending (the only kind
-  // the quick-create flow produces today) collapses all its contract types
-  // into a single aggregated row; once a cargo has pending: false, each
-  // contract type in use for that cargo becomes its own row.
-  const cargoRows = useMemo(() => {
-    const cargoRecordByName = new Map(cargos.map((cargo) => [cargo.name, cargo]))
-    const membersByCargoName = new Map()
-    collaborators.forEach((collaborator) => {
-      collaborator.cargos.forEach((cargoName) => {
-        if (!membersByCargoName.has(cargoName)) {
-          membersByCargoName.set(cargoName, [])
-        }
-        membersByCargoName.get(cargoName).push(collaborator)
-      })
-    })
-
-    const rows = []
-    membersByCargoName.forEach((members, cargoName) => {
-      const cargoRecord = cargoRecordByName.get(cargoName)
-      const isPending = cargoRecord ? cargoRecord.pending !== false : true
-
-      if (isPending) {
-        rows.push({
-          id: `${cargoName}::pending`,
-          cargoName,
-          isPendingCargo: true,
-          contractType: null,
-          count: members.length,
-          teamNames: [],
-          salaryMin: null,
-          salaryMax: null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-        return
-      }
-
-      const membersByContractType = new Map()
-      members.forEach((member) => {
-        const contractType = member.contractType || 'Fixo'
-        if (!membersByContractType.has(contractType)) {
-          membersByContractType.set(contractType, [])
-        }
-        membersByContractType.get(contractType).push(member)
-      })
-
-      membersByContractType.forEach((groupMembers, contractType) => {
-        const teamNameSet = new Set()
-        groupMembers.forEach((member) =>
-          member.times.forEach((name) => teamNameSet.add(name)),
-        )
-        const fixoSalaries =
-          contractType === 'Fixo'
-            ? groupMembers.filter((member) => member.salario != null).map((member) => member.salario)
-            : []
-        rows.push({
-          id: `${cargoName}::${contractType}`,
-          cargoName,
-          isPendingCargo: false,
-          contractType,
-          count: groupMembers.length,
-          teamNames: Array.from(teamNameSet),
-          salaryMin: fixoSalaries.length ? Math.min(...fixoSalaries) : null,
-          salaryMax: fixoSalaries.length ? Math.max(...fixoSalaries) : null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-      })
-    })
-
-    return rows
-  }, [collaborators, cargos])
-
-  const filteredCargoRows = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
-    return cargoRows.filter((row) => {
-      if (query && !row.cargoName.toLowerCase().includes(query)) {
-        return false
-      }
-      if (
-        columnFilters.atividade.size > 0 &&
-        !columnFilters.atividade.has(row.contractType)
-      ) {
-        return false
-      }
-      if (
-        columnFilters.time.size > 0 &&
-        !row.teamNames.some((name) => columnFilters.time.has(name))
-      ) {
-        return false
-      }
-      return true
-    })
-  }, [cargoRows, searchQuery, columnFilters])
-
-  const toggleCargoSelect = (id) => {
-    setCargoSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const clearCargoSelection = () => setCargoSelectedIds(new Set())
-
-  const selectAllCargos = (ids) => setCargoSelectedIds(new Set(ids))
-
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -397,9 +406,24 @@ function Home({ backTo }) {
 
   const selectAll = (ids) => setSelectedIds(new Set(ids))
 
+  // Do modal "Desligar {Nome}?", na pagina ou no menu da linha. A pagina
+  // fecha: os dois botoes do fluxo voltam para a tabela.
+  const iniciarDesligamento = (id) => {
+    if (colaboradorOverlayOpen) closeColaborador()
+    setDesligandoId(id)
+  }
+
   const handleDelete = () => {
     const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
     setCollaborators(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
+    clearSelection()
+  }
+
+  const handleDuplicate = () => {
+    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+    setCollaborators(updated)
+    showToast('success', 'Colaborador duplicado com sucesso')
     clearSelection()
   }
 
@@ -427,27 +451,27 @@ function Home({ backTo }) {
     )
   }
 
-  if (novoTimeFlowOpen) {
+  if (desligandoId) {
     return (
-      <NovoTimeFlow
-        teamId={novoTimeTeamId}
+      <DesligamentoFlow
+        colaboradorId={desligandoId}
         onExit={() => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoTimeFlowOpen(false)
-          setNovoTimeTeamId(null)
+          setDesligandoId(null)
         }}
       />
     )
   }
 
-  if (novoCargoFlowOpen) {
+  if (novoTimeStepFlowOpen) {
     return (
-      <NovoCargoFlow
-        cargoId={novoCargoId}
-        onExit={() => {
+      <NovoTimeStepFlow
+        teamId={novoTimeStepFlowTeamId}
+        onExit={(resultado) => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoCargoFlowOpen(false)
-          setNovoCargoId(null)
+          setNovoTimeStepFlowOpen(false)
+          setNovoTimeStepFlowTeamId(null)
+          if (resultado?.criado) setActiveTab('times')
         }}
       />
     )
@@ -455,8 +479,13 @@ function Home({ backTo }) {
 
   if (novoBeneficioFlowOpen) {
     return (
-      <NovoBeneficioFlow
-        onExit={() => setNovoBeneficioFlowOpen(false)}
+      <NovoRecursoFlow
+        onExit={(resultado) => {
+          setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+          setNovoBeneficioFlowOpen(false)
+          // Volta para a aba Recursos com o card novo (contexto, secao 7).
+          if (resultado?.criado) setActiveTab('beneficios')
+        }}
       />
     )
   }
@@ -494,9 +523,12 @@ function Home({ backTo }) {
                   onClearFilter={clearFilter}
                   timeOptions={timeOptions}
                   cargoOptions={cargoOptions}
-                  atividadeOptions={ATIVIDADE_OPTIONS}
+                  tipoOptions={TIPOS}
+                  statusOptions={STATUS_OPCOES}
                   onRowClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  onDesligar={iniciarDesligamento}
+                  alertas={alertasDeCadastro}
                 />
               ) : (
                 <CollaboratorsGrid
@@ -505,13 +537,15 @@ function Home({ backTo }) {
                   onToggleSelect={toggleSelect}
                   onCardClick={openColaborador}
                   onDataChanged={setCollaborators}
+                  onDesligar={iniciarDesligamento}
+                  alertas={alertasDeCadastro}
                 />
               )}
             </div>
           ) : activeTab === 'times' ? (
             <div className="home__panel">
               <TimesToolbar
-                total={times.length}
+                total={times.filter((team) => !team.pending).length}
                 onFiltrosClick={() => setTimesFiltrosOpen(true)}
                 filtersSummary={timesFiltersSummary}
                 onClearAllFilters={clearTimesFilters}
@@ -519,34 +553,10 @@ function Home({ backTo }) {
               <TimesGrid
                 teams={filteredTeams}
                 onCriarTime={(teamId) => {
-                  setNovoTimeTeamId(teamId)
-                  setNovoTimeFlowOpen(true)
+                  setNovoTimeStepFlowTeamId(teamId)
+                  setNovoTimeStepFlowOpen(true)
                 }}
-              />
-            </div>
-          ) : activeTab === 'cargos' ? (
-            <div className="home__panel">
-              <CargosToolbar
-                total={cargoRows.length}
-                onFiltrosClick={() => setFiltrosPanelOpen(true)}
-                filtersSummary={filtersSummary}
-                onClearAllFilters={clearAllFilters}
-              />
-              <CargosTable
-                rows={filteredCargoRows}
-                selectedIds={cargoSelectedIds}
-                onToggleSelect={toggleCargoSelect}
-                onSelectAll={selectAllCargos}
-                onDeselectAll={clearCargoSelection}
-                columnFilters={columnFilters}
-                onToggleFilterOption={toggleFilterOption}
-                onClearFilter={clearFilter}
-                timeOptions={timeOptions}
-                atividadeOptions={ATIVIDADE_OPTIONS}
-                onCriarCargo={(recordId) => {
-                  setNovoCargoId(recordId)
-                  setNovoCargoFlowOpen(true)
-                }}
+                onCardClick={openTime}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -557,7 +567,7 @@ function Home({ backTo }) {
                 filtersSummary={beneficiosFiltersSummary}
                 onClearAllFilters={clearBeneficiosFilters}
               />
-              <BeneficiosGrid benefits={filteredBeneficios} collaborators={collaborators} />
+              <RecursosGrid recursos={filteredRecursos} onCardClick={openBeneficio} />
             </div>
           ) : (
             <div className="home__panel" />
@@ -574,13 +584,8 @@ function Home({ backTo }) {
           }}
           onSelectTime={() => {
             setNovoModalOpen(false)
-            setNovoTimeTeamId(null)
-            setNovoTimeFlowOpen(true)
-          }}
-          onSelectCargo={() => {
-            setNovoModalOpen(false)
-            setNovoCargoId(null)
-            setNovoCargoFlowOpen(true)
+            setNovoTimeStepFlowTeamId(null)
+            setNovoTimeStepFlowOpen(true)
           }}
           onSelectBeneficio={() => {
             setNovoModalOpen(false)
@@ -596,7 +601,8 @@ function Home({ backTo }) {
         onSave={setColumnFilters}
         timeOptions={timeOptions}
         cargoOptions={cargoOptions}
-        atividadeOptions={ATIVIDADE_OPTIONS}
+        tipoOptions={TIPOS}
+        statusOptions={STATUS_OPCOES}
       />
 
       <TimesFiltrosPanel
@@ -613,18 +619,52 @@ function Home({ backTo }) {
         onSave={setBeneficiosFilters}
       />
 
-      {colaboradorOverlayOpen && (
-        <>
-          {/* O veu vem do PainelLateral dentro do ColaboradorDetail. */}
-          <ColaboradorDetail
-            id={colaboradorId}
-            mode={colaboradorFullScreen ? 'full' : 'panel'}
-            onClose={closeColaborador}
-            onExpand={expandColaborador}
-            onCollapse={collapseColaborador}
-            onDataChanged={setCollaborators}
-          />
-        </>
+      {/*
+        * Os tres paineis de detalhe ficam montados: o PainelLateral do
+        * @squad/ui so os tira do DOM quando a transicao de saida termina, e e
+        * ele quem desenha o veu. Desmontar aqui, como o original faz com um
+        * setTimeout proprio, seria uma segunda animacao fazendo o mesmo.
+        *
+        * Enquanto a saida roda a rota ja nao casa mais, entao o id vem do
+        * ultimo que esteve aberto.
+        */}
+      {ultimoColaboradorId && (colaboradorOverlayOpen || colaboradorModo === 'panel') && (
+        <ColaboradorDetail
+          id={colaboradorId ?? ultimoColaboradorId}
+          aberto={colaboradorOverlayOpen}
+          mode={colaboradorModo ?? 'panel'}
+          onClose={closeColaborador}
+          onExpand={expandColaborador}
+          onCollapse={collapseColaborador}
+          onDataChanged={setCollaborators}
+          onDesligar={iniciarDesligamento}
+          onAbrirRecurso={openBeneficio}
+        />
+      )}
+
+      {ultimoTimeId && (timeOverlayOpen || timeModo === 'panel') && (
+        <TimeDetail
+          id={timeId ?? ultimoTimeId}
+          aberto={timeOverlayOpen}
+          mode={timeModo ?? 'panel'}
+          onClose={closeTime}
+          onExpand={expandTime}
+          onCollapse={collapseTime}
+          onDataChanged={setCollaborators}
+          onAbrirRecurso={openBeneficio}
+        />
+      )}
+
+      {ultimoBeneficioId && (beneficioOverlayOpen || beneficioModo === 'panel') && (
+        <RecursoDetail
+          id={beneficioId ?? ultimoBeneficioId}
+          aberto={beneficioOverlayOpen}
+          mode={beneficioModo ?? 'panel'}
+          onClose={closeBeneficio}
+          onExpand={expandBeneficio}
+          onCollapse={collapseBeneficio}
+          onDataChanged={setBeneficios}
+        />
       )}
 
       {addEmTimeModalOpen && (
@@ -639,6 +679,7 @@ function Home({ backTo }) {
         <BulkActionBar
           count={selectedIds.size}
           onAddEmTime={() => setAddEmTimeModalOpen(true)}
+          onDuplicate={handleDuplicate}
           onDelete={handleDelete}
           onClose={clearSelection}
         />

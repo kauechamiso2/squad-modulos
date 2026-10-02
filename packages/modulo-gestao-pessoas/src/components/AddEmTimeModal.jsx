@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Checkbox, FieldModalShell } from '@squad/ui'
 import '@squad/ui/styles/SelectListModal.css'
+import checkSquareIcon from '../assets/icons/CheckSquare.svg'
 
 function AddEmTimeModal({ teams, onSave, onClose }) {
   const [selected, setSelected] = useState(() => new Set())
@@ -33,7 +34,7 @@ function AddEmTimeModal({ teams, onSave, onClose }) {
               className="select-list__item"
               onClick={() => toggle(team.name)}
             >
-              <Checkbox checked={checked} />
+              <Checkbox checked={checked} iconeMarcado={checkSquareIcon} />
               <span className="select-list__item-label">{team.name}</span>
             </button>
           )

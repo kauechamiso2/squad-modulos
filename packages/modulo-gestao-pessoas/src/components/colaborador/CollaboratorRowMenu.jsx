@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
-import { Eye, Power } from '@phosphor-icons/react'
+import { Eye } from '@phosphor-icons/react'
 import dotsThreeIcon from '../../assets/icons/DotsThree.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
+import powerIcon from '../../assets/icons/Power.svg'
 import { IconButton } from '@squad/ui'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
+import { podeDesligar } from '../../utils/colaboradorStatus.js'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './CollaboratorRowMenu.css'
 
-function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
+function CollaboratorRowMenu({ collaborator, onView, onDataChanged, onDesligar }) {
+  const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [desligarModalOpen, setDesligarModalOpen] = useState(false)
@@ -25,16 +29,6 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  const desligado = Boolean(collaborator.desligado)
-
-  const updateCollaborator = (updater) => {
-    const updated = getCollection(COLLECTIONS.COLABORADORES).map((item) =>
-      item.id === collaborator.id ? updater(item) : item,
-    )
-    setCollection(COLLECTIONS.COLABORADORES, updated)
-    onDataChanged?.(updated)
-  }
-
   const handleView = () => {
     setOpen(false)
     onView?.(collaborator.id)
@@ -46,21 +40,8 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
     )
     setCollection(COLLECTIONS.COLABORADORES, updated)
     onDataChanged?.(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
     setDeleteModalOpen(false)
-  }
-
-  const handlePowerClick = () => {
-    setOpen(false)
-    if (desligado) {
-      updateCollaborator((item) => ({ ...item, desligado: false }))
-      return
-    }
-    setDesligarModalOpen(true)
-  }
-
-  const handleDesligarConfirm = () => {
-    updateCollaborator((item) => ({ ...item, desligado: true }))
-    setDesligarModalOpen(false)
   }
 
   return (
@@ -93,11 +74,33 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
             <img src={trashIcon} width={20} height={20} alt="" />
             Excluir
           </button>
-          <button type="button" className="collaborator-row-menu__item" onClick={handlePowerClick}>
-            <Power size={20} color="var(--color-text-secondary)" />
-            {desligado ? 'Reativar' : 'Desligar'}
-          </button>
+          {/* Desligar abre "Desligar {Nome}?" e, confirmado, o fluxo. So
+              antes do desligamento; Reativar nao existe. */}
+          {podeDesligar(collaborator) && (
+            <button
+              type="button"
+              className="collaborator-row-menu__item"
+              onClick={() => {
+                setOpen(false)
+                setDesligarModalOpen(true)
+              }}
+            >
+              <img src={powerIcon} width={20} height={20} alt="" />
+              Desligar
+            </button>
+          )}
         </div>
+      )}
+
+      {desligarModalOpen && (
+        <DesligarColaboradorModal
+          name={collaborator.name}
+          onCancel={() => setDesligarModalOpen(false)}
+          onConfirm={() => {
+            setDesligarModalOpen(false)
+            onDesligar(collaborator.id)
+          }}
+        />
       )}
 
       {deleteModalOpen && (
@@ -105,14 +108,6 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
           name={collaborator.name}
           onCancel={() => setDeleteModalOpen(false)}
           onConfirm={handleDeleteConfirm}
-        />
-      )}
-
-      {desligarModalOpen && (
-        <DesligarColaboradorModal
-          name={collaborator.name}
-          onCancel={() => setDesligarModalOpen(false)}
-          onConfirm={handleDesligarConfirm}
         />
       )}
     </div>

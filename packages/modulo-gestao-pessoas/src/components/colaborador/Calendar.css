@@ -75,3 +75,11 @@
   background: #000000;
   color: #ffffff;
 }
+
+/* Dia antes do `minDate`. */
+.calendar__cell:disabled,
+.calendar__cell:disabled:hover {
+  background: none;
+  color: var(--gp-texto-esmaecido);
+  cursor: not-allowed;
+}

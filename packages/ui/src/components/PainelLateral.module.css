@@ -128,6 +128,14 @@
    * util dos paineis do Fluxo de Caixa, que foi medida contra o Figma.
    */
   padding-right: var(--painel-rolagem-padding-direita, 0);
+  /*
+   * Avanco para dentro do padding do painel. Nasce em 0; os paineis de detalhe
+   * do Gestao de Pessoas usam -21px para que a barra de rolagem deles fique
+   * junto da borda, como no original. Sem isso esta area recortaria os ultimos
+   * pixels do conteudo, porque `overflow: hidden` corta na caixa de padding -
+   * que aqui, sem padding, coincide com a de conteudo.
+   */
+  margin-right: var(--painel-rolagem-margem-direita, 0);
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 

@@ -1,0 +1,18 @@
+/* Badge de ausencia - Figma 10331:3226: 32px, redondo, fundo azul claro. */
+.ausencia-badge {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 34px;
+  background: var(--gp-ausencia-fundo);
+  outline: none;
+  cursor: default;
+}
+
+.ausencia-badge--desligamento {
+  background: var(--gp-badge-vermelho);
+}

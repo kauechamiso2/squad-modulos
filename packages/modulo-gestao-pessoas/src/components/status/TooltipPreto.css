@@ -1,0 +1,54 @@
+/*
+ * Tooltip preto - Figma 10331:4344 e 10338:9667. Centrado sobre o icone, com a base da seta 2px
+ * acima dele (10331:4148). A seta e o "Polygon 1" do Figma girado 60 graus
+ * dentro de uma caixa de 12.155px, que fica numa de 16.604px sobreposta 8px
+ * a caixa do texto - a mesma montagem do Figma.
+ */
+.tooltip-preto {
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tooltip-preto__caixa {
+  margin-bottom: -8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--gp-tooltip-fundo);
+  color: var(--gp-tooltip-texto);
+  font-size: 14px;
+  line-height: 1.1;
+  letter-spacing: -0.26px;
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+}
+
+.tooltip-preto__seta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16.604px;
+  height: 16.604px;
+}
+
+.tooltip-preto__seta-giro {
+  position: relative;
+  width: 12.155px;
+  height: 12.155px;
+  transform: rotate(60deg);
+}
+
+.tooltip-preto__seta-giro img {
+  position: absolute;
+  top: 0;
+  right: 6.7%;
+  bottom: 25%;
+  left: 6.7%;
+  display: block;
+}

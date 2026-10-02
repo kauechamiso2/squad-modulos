@@ -1,0 +1,19 @@
+.alerta-cadastro {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 34px;
+  background: none;
+  cursor: pointer;
+}
+
+.alerta-cadastro:focus-visible {
+  outline: none;
+  background: var(--color-overlay);
+}

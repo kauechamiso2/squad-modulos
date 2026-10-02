@@ -41,10 +41,41 @@
   }
 }
 
+/*
+ * Variaveis do @squad/ui para este modulo. Ficam aqui, e nao em :root, porque
+ * o Gestao de Pessoas nao tem wrapper de escopo - em :root elas vazariam para
+ * o Fluxo de Caixa e o Pesquisa de Clima, que usam os defaults.
+ *
+ * Hover da linha da tabela: fundo cinza em vez da sombra.
+ */
+.home__panel {
+  --tabela-linha-hover-fundo: var(--color-overlay);
+  --tabela-linha-hover-sombra: none;
+}
+
 .home__panel {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding-bottom: 120px;
+}
+
+/*
+ * Os paineis laterais deste modulo: veu mais escuro, altura sempre cheia e a
+ * barra de rolagem afastada 8px do texto. Os defaults do @squad/ui continuam
+ * valendo para os outros modulos.
+ */
+.gp-painel {
+  --painel-veu-cor: rgba(227, 230, 230, 0.6);
+  --painel-altura: calc(100vh - 40px);
+}
+
+/*
+ * So os paineis de filtro afastam a barra de rolagem por aqui. Os de detalhe
+ * rolam num elemento proprio, que ja tem o seu afastamento - somar os dois
+ * estreitaria o conteudo em 8px.
+ */
+.gp-painel--rolagem-afastada {
+  --painel-rolagem-padding-direita: 8px;
 }

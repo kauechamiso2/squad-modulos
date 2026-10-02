@@ -25,3 +25,7 @@
   color: var(--color-text);
   border-bottom-color: var(--color-text);
 }
+
+.tabs__item:not(.tabs__item--active):hover {
+  color: var(--color-text);
+}

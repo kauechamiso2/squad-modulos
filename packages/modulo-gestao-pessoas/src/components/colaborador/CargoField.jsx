@@ -1,13 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import plusIcon from '../../assets/icons/Plus.svg'
 import closeIcon from '../../assets/icons/Close.svg'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
-import { addItem, COLLECTIONS } from '../../utils/storage.js'
 import '@squad/ui/styles/SelectListModal.css'
 import './InlineEditField.css'
 import './ColaboradorDetail.css'
 
-function CargoField({ value, cargos, disabled, onSave }) {
+// Plain autocomplete, no quick-create: cargo suggestions come from the
+// distinct Cargo values already assigned to other colaboradores, and the
+// typed text itself - matching a suggestion or not - becomes the value
+// directly. There's no separate cargo record to create anywhere.
+function CargoField({ value, cargoOptions, disabled, onSave }) {
   const [editing, setEditing] = useState(false)
   const [query, setQuery] = useState('')
   const anchorRef = useRef(null)
@@ -28,12 +30,8 @@ function CargoField({ value, cargos, disabled, onSave }) {
   const displayValue = value.length ? value.join(', ') : 'Adicionar'
   const trimmedQuery = query.trim()
   const filtered = trimmedQuery
-    ? cargos.filter((cargo) => cargo.name.toLowerCase().includes(trimmedQuery.toLowerCase()))
-    : cargos
-  const exactMatch = cargos.some(
-    (cargo) => cargo.name.toLowerCase() === trimmedQuery.toLowerCase(),
-  )
-  const showCreate = trimmedQuery.length > 0 && !exactMatch
+    ? cargoOptions.filter((name) => name.toLowerCase().includes(trimmedQuery.toLowerCase()))
+    : cargoOptions
 
   const select = (name) => {
     onSave([name])
@@ -41,9 +39,9 @@ function CargoField({ value, cargos, disabled, onSave }) {
     setQuery('')
   }
 
-  const handleCreate = () => {
-    const newCargo = addItem(COLLECTIONS.CARGOS, { name: trimmedQuery, pending: true })
-    select(newCargo.name)
+  const confirmTyped = () => {
+    if (!trimmedQuery) return
+    select(trimmedQuery)
   }
 
   const startEdit = () => {
@@ -81,6 +79,7 @@ function CargoField({ value, cargos, disabled, onSave }) {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onKeyDown={(event) => {
+            if (event.key === 'Enter') confirmTyped()
             if (event.key === 'Escape') cancelEdit()
           }}
         />
@@ -100,27 +99,18 @@ function CargoField({ value, cargos, disabled, onSave }) {
           style={{ top: rect.top, left: rect.left }}
         >
           <div className="select-list__list">
-            {filtered.map((cargo) => (
+            {filtered.map((name) => (
               <button
                 type="button"
-                key={cargo.id}
+                key={name}
                 className="select-list__item"
-                onClick={() => select(cargo.name)}
+                onClick={() => select(name)}
               >
-                <span className="select-list__item-label">{cargo.name}</span>
+                <span className="select-list__item-label">{name}</span>
               </button>
             ))}
 
-            {showCreate && (
-              <button type="button" className="select-list__create" onClick={handleCreate}>
-                <span className="select-list__create-label">
-                  Criar cargo: &quot;{trimmedQuery}&quot;
-                </span>
-                <img src={plusIcon} alt="" width={24} height={24} />
-              </button>
-            )}
-
-            {!showCreate && filtered.length === 0 && (
+            {filtered.length === 0 && (
               <p className="select-list__empty">Nenhum cargo encontrado.</p>
             )}
           </div>

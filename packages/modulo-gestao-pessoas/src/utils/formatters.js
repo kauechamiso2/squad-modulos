@@ -21,6 +21,24 @@ export function todayIso() {
   return `${yyyy}-${mm}-${dd}`
 }
 
+// Soma (ou subtrai) dias de uma data ISO, no fuso local.
+export function addDaysIso(isoDate, days) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  const date = new Date(year, month - 1, day + days)
+  const yyyy = date.getFullYear()
+  const mm = String(date.getMonth() + 1).padStart(2, '0')
+  const dd = String(date.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
+// A proxima segunda-feira a partir de hoje (nunca hoje).
+export function proximaSegundaIso() {
+  const hoje = todayIso()
+  const [ano, mes, dia] = hoje.split('-').map(Number)
+  const diaDaSemana = new Date(ano, mes - 1, dia).getDay()
+  return addDaysIso(hoje, (8 - diaDaSemana) % 7 || 7)
+}
+
 export function formatDatePt(isoDate) {
   const [year, month, day] = isoDate.split('-').map(Number)
   return `${day} ${MONTHS_PT[month - 1]} ${year}`
@@ -90,4 +108,24 @@ export function formatPaymentValue(value, tipoPagamento) {
   if (tipoPagamento === 'Mensal') return `${base} / mês`
   if (tipoPagamento === 'Anual') return `${base} / ano`
   return base
+}
+
+function slugifyNamePart(word) {
+  return word
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '')
+}
+
+// "José da Silva Santos" -> "jose.santos@" - first and last word, lowercase,
+// accents and spaces stripped. Used to pre-fill the Email field in the Novo
+// Colaborador CLT flow.
+export function buildEmailPrefix(name) {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return ''
+  const first = slugifyNamePart(parts[0])
+  if (parts.length === 1) return `${first}@`
+  const last = slugifyNamePart(parts[parts.length - 1])
+  return `${first}.${last}@`
 }

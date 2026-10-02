@@ -1,0 +1,141 @@
+/* Painel "Informações para contrato" - Figma 10338:10720. */
+.contrato-painel__linhas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contrato-painel__linha {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 56px;
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--color-overlay);
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+}
+
+.contrato-painel__rotulo {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.contrato-painel__valor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.contrato-painel__linha--editavel .contrato-painel__valor {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.contrato-painel__valor--perto {
+  gap: 8px;
+}
+
+.contrato-painel__sufixo {
+  color: var(--color-text-secondary);
+}
+
+.contrato-painel__editar {
+  flex-shrink: 0;
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.contrato-painel__editar:focus-visible {
+  outline: none;
+  border-radius: 4px;
+  background: var(--color-border);
+}
+
+/* Folha "Enviar para" - Figma 10338:10970: cartao de 428px no canto, por
+   cima do painel e do veu. */
+.enviar-para__veu {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  background: var(--gp-veu);
+}
+
+.enviar-para {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 161;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  width: 428px;
+  padding: 24px;
+  border-radius: 16px;
+  background: var(--color-bg);
+}
+
+.enviar-para__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.enviar-para__titulo {
+  font-size: 20px;
+  line-height: 25px;
+  letter-spacing: -0.45px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--gp-titulo-folha);
+}
+
+.enviar-para__fechar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 360px;
+  background: none;
+  cursor: pointer;
+}
+
+.enviar-para__fechar:hover,
+.enviar-para__fechar:focus-visible {
+  background: var(--color-overlay);
+  outline: none;
+}
+
+.enviar-para__campos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.enviar-para__campos .clt-large-input-wrap {
+  width: 100%;
+  height: auto;
+}
+
+.enviar-para__rodape {
+  display: flex;
+  justify-content: flex-end;
+}

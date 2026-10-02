@@ -1,0 +1,145 @@
+.clt-shell {
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.85) 100%),
+    linear-gradient(179.32deg, rgb(238, 246, 251) 0.89%, rgb(255, 255, 255) 99.1%);
+  display: flex;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.clt-shell__header {
+  box-sizing: border-box;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.clt-shell__header-title {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-shell__body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.clt-shell__footer {
+  box-sizing: border-box;
+  height: 80px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+.clt-shell__progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--color-overlay);
+}
+
+.clt-shell__progress-fill {
+  height: 100%;
+  border-radius: 360px;
+  background: var(--color-text);
+  transition: width 0.2s ease;
+}
+
+.clt-shell__footer-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 40px;
+}
+
+.clt-shell__footer-row-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Titulo do passo - Figma 10338:10472: 32px Semibold, -0.26px, altura 1.1. */
+.clt-shell__title {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 32px;
+  line-height: 1.1;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.26px;
+  color: var(--color-text);
+}
+
+/* Destaque do titulo (o nome no passo de cargo) - #e9a716. */
+.clt-shell__destaque {
+  color: var(--gp-destaque);
+}
+
+/* Shared large bottom-border input, used for Tela 2's name field and
+   Tela 3's cargo/time fields - black border when focused or filled, gray
+   otherwise, with a green check once there's a value. */
+/* Large input - Figma 10338:10517: 61px, 16px em cima e embaixo, borda
+   cinza vazio e preta com foco ou preenchido. */
+.clt-large-input-wrap {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 61px;
+  border-bottom: 1px solid var(--color-border);
+  padding: 16px 16px 16px 0;
+}
+
+.clt-large-input-wrap:focus-within,
+.clt-large-input-wrap--filled {
+  border-bottom-color: var(--color-text);
+}
+
+.clt-large-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 24px;
+  letter-spacing: -0.4px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-large-input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.clt-large-input-check {
+  flex-shrink: 0;
+}
+
+.clt-large-input-wrap--filled {
+  padding-right: 0;
+}
+
+/* Shared content positioning for every CLT tela's title + fields. */
+.clt-shell__content {
+  box-sizing: border-box;
+  width: 532px;
+  max-width: calc(100% - 48px);
+  margin-left: calc(30% + 22px);
+  /* Titulo a 176px do topo da tela (64 de cabecalho + 112) e o campo 56px
+     abaixo do titulo - Figma 10338:10510. */
+  padding: 112px 0 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}

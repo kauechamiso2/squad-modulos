@@ -1,0 +1,105 @@
+.toast-stack {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  box-sizing: border-box;
+  max-width: 380px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  border-radius: 8px;
+  padding: 12px;
+  pointer-events: auto;
+  animation: toast-slide-in 280ms ease-out both;
+}
+
+.toast--exiting {
+  animation: toast-fly-out 350ms ease-in both;
+  pointer-events: none;
+}
+
+.toast--success {
+  background: #60c60c;
+}
+
+.toast--danger {
+  background: #f4f5f5;
+}
+
+.toast__badge {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+}
+
+.toast--success .toast__badge {
+  background: #c8ff9b;
+}
+
+.toast--danger .toast__badge {
+  background: var(--color-border);
+}
+
+.toast__message {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+}
+
+.toast--success .toast__message {
+  color: #ffffff;
+}
+
+.toast--danger .toast__message {
+  color: var(--color-text);
+}
+
+.toast__close-button {
+  flex-shrink: 0;
+}
+
+@keyframes toast-slide-in {
+  from {
+    transform: translateX(calc(100% + 20px));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* A quick "flick away": squash on the vertical axis first, as if
+   pressed, then release into the fly-out - translating right, fading,
+   and rotating a few degrees. ~350ms total, comfortably under the 400ms
+   budget. */
+@keyframes toast-fly-out {
+  0% {
+    transform: scaleY(1) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  43% {
+    transform: scaleY(0.85) translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1) translateX(120px) rotate(6deg);
+    opacity: 0;
+  }
+}

@@ -38,6 +38,10 @@
   box-sizing: border-box;
 }
 
+.icon-picker__option:hover {
+  background: var(--color-overlay);
+}
+
 .icon-picker__option--selected {
   border-color: var(--color-text);
   background: var(--color-overlay);

@@ -1,5 +1,14 @@
 # Dívida técnica — squad-modulos
 
+> **Gestão de Pessoas: parte deste registro está superada** pelo
+> [`contexto-gestao-de-pessoas.md`](contexto-gestao-de-pessoas.md), que é a
+> especificação atual do módulo. Não valem mais: a coleção e o fluxo de Cargos
+> (a aba saiu; cargo é texto livre), o "Novo Benefício" (hoje "Recurso", com
+> Benefício, Verba e Licença), a "ausência total de testes" (o módulo tem testes
+> de `utils/` com `npm test`) e os nomes de arquivo com espaço em
+> `assets/images` (hoje nomeados por fornecedor). Os demais itens continuam
+> abertos.
+
 Registro do que ficou pendente na montagem do monorepo. Itens marcados
 **[herdado]** já existiam no projeto original e foram preservados de propósito,
 porque esta etapa exigia fidelidade visual e comportamental. **[novo]** é dívida
@@ -436,3 +445,68 @@ com qualquer uma delas.
 
 Se algum dia "agendada" virar um estado de verdade no dado, esta regra sai do
 filtro e vira campo.
+
+## Colecao orfa `squad:gestao-pessoas:cargos`
+
+A aba Cargo saiu do produto (upstream `f0a5d55`), mas quem ja usou o modulo
+tem a colecao `squad:gestao-pessoas:cargos` gravada no navegador. O original
+nao apaga a chave: so limpa as referencias a cargo dentro dos beneficiarios
+(`cleanupCargoBeneficiarios`). Trouxemos a migration como esta.
+
+Consequencia: os cargos que o usuario ja tinha criado deixam de alimentar as
+sugestoes do campo Cargo do colaborador - o original semeia essas sugestoes de
+uma lista fixa, nao da colecao. Decidido em 29 Set 2026 nao semear a partir da
+colecao orfa, para nao divergir do original.
+
+A decidir: apagar a chave numa migration futura ou deixar como lixo inerte.
+
+## Dois sistemas de toast
+
+O Gestao de Pessoas trouxe do original o seu proprio sistema de toast
+(`components/toast/`: `ToastContext`, `ToastStack`, `Toast.css`), com
+`showToast('success' | 'danger', mensagem)`, auto-dispensa em 5s e animacao de
+saida de 350ms. O Fluxo de Caixa tem o dele. Sao dois desenhos e duas APIs.
+
+Por ora o `ToastProvider` fica no `GestaoPessoasRoutes`, e nao no `apps/web`:
+assim cada modulo continua com o seu, sem um decidir pelo outro.
+
+A decidir com o Bruno: qual desenho vira o padrao, e promover um so para o
+`@squad/ui`.
+
+## `ConfirmModal` (GP) x `ModalConfirmar` (ui)
+
+O original criou um `ConfirmModal` proprio (icone do Phosphor, titulo,
+mensagem, rotulo do confirmar) e passou a montar o `DiscardConfirmModal` em
+cima dele. O `@squad/ui` ja tem um `ModalConfirmar`, vindo do Pesquisa de
+Clima, com outra API (titulo, texto, rotulo, modo `soAviso`, X) e outro
+desenho.
+
+Como o `DiscardConfirmModal` ficou sem nenhum consumidor fora do Gestao de
+Pessoas, ele saiu do `@squad/ui` e voltou para o modulo, junto com o
+`ConfirmModal`. Enquanto os dois nao forem unificados, o modulo tem os dois
+caminhos: `ConfirmModal` nos fluxos novos e o `ModalOverlay` +
+`DiscardConfirmModal.css` nos modais de deletar/desligar que o PR seguinte
+ainda vai converter.
+
+A decidir com o Bruno: qual API e qual desenho ficam, e promover um so.
+
+## Variaveis do @squad/ui e ordem dos arquivos CSS
+
+Os paineis do Gestao de Pessoas recebem duas classes que definem as mesmas
+custom properties do `PainelLateral`: a `.gp-painel` (do `pages/Home.css`, com
+o que vale para todos os paineis do modulo) e a do proprio painel (por exemplo
+`.colaborador-detail--full`). As duas tem a mesma especificidade, entao quem
+ganha e a que aparece depois no CSS empacotado - e isso depende da ordem dos
+imports, nao de nada visivel no arquivo.
+
+Ja mordeu duas vezes: o painel de detalhe herdou o afastamento de 8px da barra
+de rolagem dos paineis de filtro e ficou 8px mais estreito, e o modo tela cheia
+ficou preso na altura `calc(100vh - 40px)` em vez de `100vh`.
+
+Contornado dobrando a classe onde precisa vencer
+(`.colaborador-detail.colaborador-detail--full`) e tirando do `.gp-painel` o
+que so servia aos paineis de filtro.
+
+A decidir: dar um escopo de verdade ao modulo (um wrapper com uma classe so,
+como o Fluxo de Caixa tem) e declarar as variaveis nele, para a disputa deixar
+de existir.

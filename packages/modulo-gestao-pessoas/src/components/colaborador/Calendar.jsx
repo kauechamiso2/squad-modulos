@@ -31,7 +31,9 @@ function parseIso(value) {
   return { year, month: month - 1, day }
 }
 
-function Calendar({ value, onSelect }) {
+// `minDate` (ISO, opcional) desabilita os dias antes dela - a data de fim do
+// contrato PJ nao pode vir antes da admissao.
+function Calendar({ value, onSelect, minDate = null }) {
   const initial = value ? parseIso(value) : parseIso(toIso(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()))
   const [viewYear, setViewYear] = useState(initial.year)
   const [viewMonth, setViewMonth] = useState(initial.month)
@@ -90,10 +92,12 @@ function Calendar({ value, onSelect }) {
           }
           const iso = toIso(viewYear, viewMonth, day)
           const selected = iso === value
+          const bloqueado = Boolean(minDate) && iso < minDate
           return (
             <button
               type="button"
               key={index}
+              disabled={bloqueado}
               className={
                 selected ? 'calendar__cell calendar__cell--selected' : 'calendar__cell'
               }

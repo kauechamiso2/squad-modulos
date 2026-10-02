@@ -1,5 +1,11 @@
 # Análise — módulo `gestao-de-pessoa`
 
+> **Substituído.** Este documento descreve o módulo como ele era antes do
+> Figma 2.0 (tipos Fixo, Freelancer e Consultor, aba Cargos, aba Benefícios,
+> desligamento por um booleano). O modelo, as telas e as regras atuais estão em
+> [`contexto-gestao-de-pessoas.md`](contexto-gestao-de-pessoas.md). Fica aqui só
+> como registro histórico.
+
 > Análise de leitura do projeto `~/Documents/gestao-de-pessoa`, feita para planejar a absorção
 > dele pelo monorepo `squad-modulos`. Nenhum arquivo do projeto original foi alterado.
 >

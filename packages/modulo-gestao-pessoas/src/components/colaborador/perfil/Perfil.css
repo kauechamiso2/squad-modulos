@@ -1,0 +1,245 @@
+/* Pagina do colaborador - Figma 10338:9414 (CLT) e 10338:12202 (PJ). */
+.perfil-colaborador {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Status do processo - 10338:9432. */
+.perfil-status {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--color-overlay);
+}
+
+.perfil-status__topo,
+.perfil-status__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.perfil-status__topo > :first-child {
+  flex: 1;
+}
+
+.perfil-status__contador {
+  color: var(--color-text-secondary);
+}
+
+.perfil-status__rotulo {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* "Marcar como feito" - Figma 10355:4156: 14px Medium preto, a direita. */
+.perfil-status__marcar {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.perfil-status__marcar:hover,
+.perfil-status__marcar:focus-visible {
+  outline: none;
+  background: var(--color-border);
+}
+
+/* Times em pilulas. */
+.perfil-times__leitura {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.perfil-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.perfil-time__ponto {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+  border-radius: 360px;
+}
+
+/* Pilula em leitura - Figma 10355:3657: 32px, 12px dos lados, ponto de 12,
+   Medium e a seta. */
+.perfil-times__leitura .perfil-time {
+  box-sizing: border-box;
+  height: 32px;
+  gap: 8px;
+  padding: 0 12px;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-times__leitura .perfil-time__ponto {
+  width: 12px;
+  height: 12px;
+}
+
+.perfil-time__remover {
+  display: flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.perfil-times__edicao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--color-overlay);
+}
+
+.perfil-times__edicao .perfil-time {
+  background: var(--color-bg);
+}
+
+.perfil-times__busca {
+  flex: 1;
+  min-width: 80px;
+  padding: 4px 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+}
+
+/* Painel de dados bancarios - Figma 10338:10177. */
+.dados-bancarios {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dados-bancarios__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dados-bancarios__conta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.dados-bancarios__conta .campo-painel {
+  width: 100%;
+}
+
+.dados-bancarios__pix {
+  margin-top: 24px;
+}
+
+/* Campos travados - Figma 10355:4132: o valor continua preto (o disabled do
+   @squad/ui e do value-button pinta de cinza) e nada indica clique. */
+.perfil-bloco--travado button:disabled {
+  color: var(--color-text);
+  cursor: default;
+}
+
+/* Jornada e dados bancarios salvos - Figma 10355:3752 e 10355:3780: borda,
+   raio 8, 16px por 20px, linhas de 48px, valor numa coluna de 290px. */
+.perfil-cartao {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 16px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+}
+
+.perfil-cartao__linha {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 48px;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.perfil-cartao__rotulo {
+  flex: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-medium);
+}
+
+.perfil-cartao__valor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 290px;
+  flex-shrink: 1;
+  min-width: 0;
+  font-weight: var(--font-weight-regular);
+  white-space: nowrap;
+}
+
+.perfil-cartao__sufixo {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.perfil-cartao-botao {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.perfil-cartao-botao:hover:not(:disabled) .perfil-cartao,
+.perfil-cartao-botao:focus-visible .perfil-cartao {
+  background: var(--color-overlay);
+}
+
+.perfil-cartao-botao:focus-visible {
+  outline: none;
+}
+
+.perfil-cartao-botao:disabled {
+  cursor: default;
+}

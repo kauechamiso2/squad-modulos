@@ -1,6 +1,6 @@
 .times-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
@@ -12,7 +12,7 @@
   height: 180px;
   padding: 24px;
   background: var(--color-bg);
-  border: 1px solid #d9d9d9;
+  border: 1px solid var(--color-border);
   border-radius: 16px;
 }
 
@@ -20,8 +20,16 @@
   border-style: dashed;
 }
 
-.time-card:hover {
-  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+.time-card {
+  cursor: pointer;
+}
+
+.time-card--pending {
+  cursor: default;
+}
+
+.time-card:not(.time-card--pending):hover {
+  background: var(--color-overlay);
 }
 
 .time-card__top-row {
@@ -64,25 +72,30 @@
   z-index: 2;
 }
 
+/* "Criar time" com contorno - Figma 10334:5473. */
 .time-card__criar-time-button {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-self: end;
-  gap: 4px;
-  border: none;
-  background: none;
-  padding: 0;
+  height: 40px;
+  padding: 12px 16px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 360px;
+  background: var(--color-bg);
+  font-family: inherit;
   font-size: 14px;
+  line-height: 1.2;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
   white-space: nowrap;
+  cursor: pointer;
 }
 
-.time-card__bottom-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+.time-card__criar-time-button:hover,
+.time-card__criar-time-button:focus-visible {
+  background: var(--color-overlay);
+  outline: none;
 }
 
 .time-card__info {
@@ -91,28 +104,27 @@
   gap: 8px;
 }
 
-.time-card__menu-button {
-  flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.time-card:hover .time-card__menu-button {
-  opacity: 1;
-}
-
-.time-card__menu-button img {
-  transform: rotate(-90deg);
-}
-
 .time-card__name {
   font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.26px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
 
+/* Contagem de pessoas - Figma 10334:5476: User 16px, 4px, numero 14px. */
 .time-card__count {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
   font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: -0.08px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
+}
+
+/* No pendente os stickers avancam 14.467px por baixo do botao (10334:5466). */
+.time-card--pending .time-card__icon-cluster {
+  margin-right: -14.467px;
 }

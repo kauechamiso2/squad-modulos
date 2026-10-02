@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { Square } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import Calendar from './Calendar.jsx'
-import { Checkbox } from '@squad/ui'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
 import './InlineEditField.css'
 import './ColaboradorDetail.css'
@@ -88,7 +89,11 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
               className="colaborador-date-field__no-end-toggle"
               onClick={toggleNoEnd}
             >
-              <Checkbox checked={noEndDate} />
+              {noEndDate ? (
+                <img src={checkSquareIcon} alt="" width={24} height={24} />
+              ) : (
+                <Square size={24} color="#000000" />
+              )}
               <span className="colaborador-date-field__no-end-label">
                 Não especificar data de fim
               </span>

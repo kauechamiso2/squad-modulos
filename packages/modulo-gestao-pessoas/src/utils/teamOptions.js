@@ -69,6 +69,7 @@ import {
   Storefront,
   ShoppingBag,
   ShoppingCart,
+  Tag,
   Bank,
   Wallet,
   CreditCard,
@@ -103,27 +104,83 @@ import {
   BookOpen,
 } from '@phosphor-icons/react'
 
-export const TEAM_COLOR_PALETTE = [
-  { id: 'amber', light: '#FBEDD0', dark: '#D39A00' },
-  { id: 'blue', light: '#E5F4FF', dark: '#0091FF' },
-  { id: 'red', light: '#FDE2E2', dark: '#E5484D' },
-  { id: 'green', light: '#E3F5E1', dark: '#2F9E44' },
-  { id: 'purple', light: '#EDE3FB', dark: '#8B5CF6' },
-  { id: 'orange', light: '#FFE8D6', dark: '#F76B15' },
-  { id: 'teal', light: '#D9F2F0', dark: '#12B5A5' },
-  { id: 'magenta', light: '#FBE0F0', dark: '#E64980' },
-  { id: 'indigo', light: '#E0E7FF', dark: '#4C6EF5' },
-  { id: 'brown', light: '#F0E6D9', dark: '#A16207' },
+// 6 hue families of 6 shades each, in this exact order within a family -
+// the canonical team color palette. A few shades (#726ce2, #1fb96e,
+// #e9a716) double as anchors already used elsewhere in the app.
+const TEAM_COLOR_FAMILIES = [
+  {
+    family: 'vermelho',
+    shades: ['#f24c4c', '#e6393f', '#d62839', '#c11530', '#a5102b', '#8a0d24'],
+  },
+  {
+    family: 'rosa',
+    shades: ['#f26fb0', '#e94f9b', '#d93384', '#c11d70', '#a4145e', '#870f4c'],
+  },
+  {
+    family: 'roxo',
+    shades: ['#9b7ff0', '#8465e3', '#726ce2', '#5f4fc7', '#4c3fae', '#3a3095'],
+  },
+  {
+    family: 'verde',
+    shades: ['#4fd88a', '#2fc474', '#1fb96e', '#17a05c', '#0f8a4c', '#08733d'],
+  },
+  {
+    family: 'azul',
+    shades: ['#4fa8f0', '#2f8fe0', '#1f7cd0', '#0f68bd', '#0a5aa3', '#084a88'],
+  },
+  {
+    family: 'amareloLaranja',
+    shades: ['#ffd668', '#f5c144', '#e9a716', '#e08f14', '#c67810', '#a8630d'],
+  },
 ]
+
+// Blends a hex color toward white to derive a pale background tone to pair
+// with it - the palette above only defines the accent/dark shade per
+// swatch, but badges/chips throughout the app render a light+dark pair.
+function lightenHex(hex, amount = 0.82) {
+  const value = parseInt(hex.slice(1), 16)
+  const channels = [(value >> 16) & 255, (value >> 8) & 255, value & 255]
+  return `#${channels
+    .map((channel) => Math.round(channel + (255 - channel) * amount).toString(16).padStart(2, '0'))
+    .join('')}`
+}
+
+export const TEAM_COLOR_PALETTE = TEAM_COLOR_FAMILIES.flatMap(({ family, shades }) =>
+  shades.map((hex, index) => ({
+    id: `${family}-${index + 1}`,
+    family,
+    dark: hex,
+    light: lightenHex(hex),
+  })),
+)
 
 export function getTeamColorTones(colorId) {
   return TEAM_COLOR_PALETTE.find((entry) => entry.id === colorId) ?? TEAM_COLOR_PALETTE[0]
 }
 
-export function pickDefaultColorId(usedColorIds) {
+// Exactly one swatch per family - the first shade in that family's ordered
+// list not already assigned to another team - omitting a family entirely
+// once all 6 of its shades are in use (fewer than 6 options is then
+// expected, not a bug).
+export function getAvailableColorOptions(usedColorIds) {
   const usedSet = new Set(usedColorIds)
-  const firstUnused = TEAM_COLOR_PALETTE.find((entry) => !usedSet.has(entry.id))
-  return (firstUnused ?? TEAM_COLOR_PALETTE[0]).id
+  const options = []
+  for (const { family, shades } of TEAM_COLOR_FAMILIES) {
+    for (let index = 0; index < shades.length; index += 1) {
+      const id = `${family}-${index + 1}`
+      if (!usedSet.has(id)) {
+        options.push(TEAM_COLOR_PALETTE.find((entry) => entry.id === id))
+        break
+      }
+    }
+  }
+  return options
+}
+
+export function pickDefaultColorId(usedColorIds) {
+  const options = getAvailableColorOptions(usedColorIds)
+  if (options.length === 0) return TEAM_COLOR_PALETTE[0].id
+  return options[Math.floor(Math.random() * options.length)].id
 }
 
 const DEFAULT_ICON_NAME = 'UsersFour'
@@ -233,6 +290,7 @@ export const TEAM_ICON_CATEGORIES = [
       { name: 'Storefront', Icon: Storefront },
       { name: 'ShoppingBag', Icon: ShoppingBag },
       { name: 'ShoppingCart', Icon: ShoppingCart },
+      { name: 'Tag', Icon: Tag },
       { name: 'Bank', Icon: Bank },
       { name: 'Wallet', Icon: Wallet },
       { name: 'CreditCard', Icon: CreditCard },
@@ -287,12 +345,15 @@ export function getTeamIconComponent(iconName) {
 }
 
 const KEYWORD_ICON_MAP = [
-  { keywords: ['design'], iconName: 'PencilRuler' },
-  { keywords: ['dev', 'desenvolv', 'engenharia', 'tech', 'tecno'], iconName: 'Code' },
-  { keywords: ['venda', 'comercial', 'sales', 'negocio', 'negóci'], iconName: 'ShoppingCart' },
-  { keywords: ['log', 'operac', 'operaç'], iconName: 'Truck' },
-  { keywords: ['rh', 'pessoa', 'people', 'humano', 'gente'], iconName: 'GraduationCap' },
+  { keywords: ['venda', 'comercial', 'sales', 'negocio', 'negóci'], iconName: 'Tag' },
+  { keywords: ['design', 'produto'], iconName: 'PencilRuler' },
   { keywords: ['marketing', 'growth', 'crescimento'], iconName: 'Megaphone' },
+  { keywords: ['dev', 'desenvolv', 'engenharia', 'tech', 'tecno'], iconName: 'Code' },
+  { keywords: ['financeiro', 'finança', 'financa'], iconName: 'Wallet' },
+  { keywords: ['rh', 'pessoa', 'people', 'humano', 'gente'], iconName: 'UsersFour' },
+  { keywords: ['suporte', 'atendimento', 'cs'], iconName: 'Headset' },
+  { keywords: ['juridico', 'jurídico', 'legal'], iconName: 'Scales' },
+  { keywords: ['log', 'operac', 'operaç'], iconName: 'Truck' },
 ]
 
 export function guessTeamIconName(name) {

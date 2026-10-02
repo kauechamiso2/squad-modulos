@@ -50,8 +50,26 @@
   background: var(--color-overlay);
 }
 
-.collaborators-table__header-spacer {
-  width: 40px;
+.collaborators-table__status {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.collaborators-table__icones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/*
+ * Desligado e Fim de contrato: todo o texto no tom claro do Figma
+ * (10331:3265), o pill na cor normal. O checkbox do Figma nesse estado e o
+ * mesmo Square.svg das outras linhas, entao nao muda.
+ */
+.collaborators-table__row--esmaecida .collaborators-table__texto {
+  color: var(--gp-texto-esmaecido);
 }
 
 .collaborators-table__checkbox-cell {

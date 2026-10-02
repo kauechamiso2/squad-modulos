@@ -85,6 +85,8 @@ function TimesFiltrosPanel({ isOpen, onClose, filters, onSave }) {
   return (
     <>
       <PainelLateral
+        className="gp-painel gp-painel--rolagem-afastada"
+        classNameVeu="gp-painel"
         aberto={isOpen}
         titulo="Filtros"
         iconeFechar={closeIcon}
