@@ -425,3 +425,11 @@
   border-color: var(--color-text);
   background: var(--color-overlay);
 }
+
+/* Nome de time repetido (secao 6): 12px, #ff2633, abaixo do campo. */
+.time-step__erro-nome {
+  margin: -48px 0 0;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--gp-status-desligado-texto);
+}

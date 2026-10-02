@@ -8,6 +8,7 @@ import { perfilTravado } from '../../utils/cadastro.js'
 import { STATUS, getStatus, marcarItemDaRescisao, podeDesligar } from '../../utils/colaboradorStatus.js'
 import { COLLECTIONS, addItem, getCollection, setCollection } from '../../utils/storage.js'
 import { novaNota } from '../../utils/notas.js'
+import { timeComNome } from '../../utils/teamOptions.js'
 import { useToast } from '../toast/ToastContext.jsx'
 import '../status/StatusPill.css'
 import './ColaboradorDetail.css'
@@ -105,7 +106,14 @@ function ColaboradorDetail({ id, mode, aberto, onClose, onExpand, onCollapse, on
       onAdicionarNota={adicionarNota}
       onMarcarComoFeito={marcarComoFeito}
       onAbrirRecurso={onAbrirRecurso}
-      onCriarTime={(nome) => addItem(COLLECTIONS.TIMES, { name: nome, pending: true })}
+      // Time novo digitado no campo Time: se o nome ja existir (completo ou
+      // pendente), usa o existente em vez de criar outro (secao 6).
+      onCriarTime={(nome) => {
+        const existente = timeComNome(getCollection(COLLECTIONS.TIMES), nome)
+        if (existente) return existente.name
+        addItem(COLLECTIONS.TIMES, { name: nome.trim(), pending: true })
+        return nome.trim()
+      }}
     />
   )
 
